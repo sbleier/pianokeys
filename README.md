@@ -13,3 +13,7 @@ Put screenshots here
 #### Contributors
 
 bellaremer
+leoraspinner
+atkachuk13
+andrewoid
+sbleier
