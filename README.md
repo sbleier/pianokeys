@@ -12,6 +12,7 @@ Put screenshots here
 
 #### Contributors
 
+leoraspinner
 atkachuk13
 andrewoid
 sbleier
