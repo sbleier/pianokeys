@@ -5,14 +5,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PianoGUI extends JFrame
+public class PianoGui extends JFrame
 {
-    private final String[] KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B", "C"};
-    private final Color KEY_COLOR = Color.WHITE;
+    private static final String[] KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B", "C"};
+    private static final Color KEY_COLOR = Color.WHITE;
 
     JButton[] buttons = new JButton[KEY_NAMES.length];
 
-    public PianoGUI()
+    public PianoGui()
     {
         setTitle("Piano Keys");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,6 +44,7 @@ public class PianoGUI extends JFrame
             {
                 key.setBackground(Color.LIGHT_GRAY);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt)
             {
                 key.setBackground(KEY_COLOR);
