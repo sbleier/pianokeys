@@ -1,6 +1,8 @@
-import javax.sound.midi.MidiUnavailableException;
+package tkachuk.aharon.sounds;
 
-import static org.junit.jupiter.api.Assertions.*;
+import tkachuk.aharon.sounds.PianoSound;
+
+import javax.sound.midi.MidiUnavailableException;
 
 class PianoSoundTest
 {
