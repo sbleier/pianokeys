@@ -1,12 +1,14 @@
-package tkachuk.aharon.sounds;
-
-import tkachuk.aharon.sounds.PianoSound;
+package pianokeys;
 
 import javax.sound.midi.MidiUnavailableException;
 
+import org.junit.jupiter.api.Test;
+
 class PianoSoundTest
 {
-    public static void main(String[] args) throws MidiUnavailableException
+
+    @Test
+    public void testPianoPlayback() throws MidiUnavailableException
     {
         PianoSound piano = new PianoSound();
 
@@ -17,7 +19,7 @@ class PianoSoundTest
             {
                 System.out.println("Playing note " + i);
                 piano.playNote(i);
-                Thread.sleep(1000); // Wait 500ms
+                Thread.sleep(1000); // Wait 1000ms
                 piano.stopNote(i);
                 Thread.sleep(500); // Small gap between notes
             }
@@ -38,7 +40,8 @@ class PianoSoundTest
             {
                 System.out.println("Playing note " + i);
                 piano.playNote(i);
-                Thread.sleep(1000); // Wait 500ms
+                Thread.sleep(1000); // Wait 1000ms
+
                 piano.stopNote(i);
                 Thread.sleep(500); // Small gap between notes
             }
@@ -54,13 +57,10 @@ class PianoSoundTest
             piano.stopNote(1);
             piano.stopNote(3);
             piano.stopNote(5);
-        } catch (
-                InterruptedException e)
-
+        } catch (InterruptedException e)
         {
             e.printStackTrace();
         } finally
-
         {
             piano.cleanup();
         }
