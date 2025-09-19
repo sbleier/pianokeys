@@ -5,20 +5,20 @@ import javax.sound.midi.*;
 public class PianoSound
 {
     // MIDI note constants
-    private final int NOTE_C4 = 60;
-    private final int NOTE_D4 = 62;
-    private final int NOTE_E4 = 64;
-    private final int NOTE_F4 = 65;
-    private final int NOTE_G4 = 67;
-    private final int NOTE_A4 = 69;
-    private final int NOTE_B4 = 71;
-    private final int NOTE_C5 = 72;
+    private final int c4 = 60;
+    private final int d4 = 62;
+    private final int e4 = 64;
+    private final int f4 = 65;
+    private final int g4 = 67;
+    private final int a4 = 69;
+    private final int b4 = 71;
+    private final int c5 = 72;
 
     private Synthesizer synthesizer;
     private MidiChannel channel;
 
     // Use the constants in your array
-    private int[] notes = {NOTE_A4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_G4, NOTE_A4, NOTE_B4, NOTE_C5};
+    private int[] notes = {c4, d4, e4, f4, g4, a4, b4, c5};
 
     public PianoSound() throws MidiUnavailableException
     {
