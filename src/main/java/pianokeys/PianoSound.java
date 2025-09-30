@@ -14,17 +14,27 @@ public class PianoSound
     private final int b4 = 71;
     private final int c5 = 72;
 
-    private Synthesizer synthesizer;
-    private MidiChannel channel;
+    private final Synthesizer synthesizer;
+    private final MidiChannel channel;
 
     // Use the constants in your array
-    private int[] notes = {c4, d4, e4, f4, g4, a4, b4, c5};
+    private final int[] notes = {c4, d4, e4, f4, g4, a4, b4, c5};
 
     public PianoSound() throws MidiUnavailableException
     {
         synthesizer = MidiSystem.getSynthesizer();
         synthesizer.open();
         channel = synthesizer.getChannels()[0];
+    }
+
+    public MidiChannel getChannel()
+    {
+        return channel;
+    }
+
+    public Synthesizer getSynthesizer()
+    {
+        return synthesizer;
     }
 
     public void playNote(int keyIndex)
