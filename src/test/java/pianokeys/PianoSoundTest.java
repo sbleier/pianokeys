@@ -1,57 +1,57 @@
 package pianokeys;
 
-import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class PianoSoundTest
 {
+    MidiChannel channel = mock();
+    Synthesizer synthesizer = mock();
 
     @Test
     void playNote() throws MidiUnavailableException
     {
         // given
-        PianoSound piano = new PianoSound();
+        PianoSound piano = new PianoSound(synthesizer, channel);
 
         // when
-        piano.playNote(2);
+        piano.playNote(PianoSound.C4);
 
         // then
-        assertTrue(piano.getSynthesizer().isOpen());
+        verify(channel).noteOn(PianoSound.C4, 127);
     }
 
     @Test
     void stopNote() throws MidiUnavailableException
     {
         // given
-        PianoSound piano = new PianoSound();
-        piano.playNote(2);
+        PianoSound piano = new PianoSound(synthesizer, channel);
 
         // when
-        piano.stopNote(2);
+        piano.stopNote(PianoSound.C4);
 
         // then
-        assertTrue(piano.getSynthesizer().isOpen());
+        verify(channel).noteOff(PianoSound.C4);
     }
 
     @Test
     void cleanup() throws MidiUnavailableException
     {
         // given
-        PianoSound piano = new PianoSound();
-        Synthesizer synthesizer = piano.getSynthesizer();
+        PianoSound piano = new PianoSound(synthesizer, channel);
 
         // when
-        assertTrue(synthesizer.isOpen());
         piano.cleanup();
 
         // then
-        assertFalse(synthesizer.isOpen());
+        verify(synthesizer).close();
     }
+
 
 }

@@ -1,30 +1,30 @@
 package pianokeys;
 
 import javax.sound.midi.*;
+import java.nio.channels.Channel;
 
 public class PianoSound
 {
     // MIDI note constants
-    private final int c4 = 60;
-    private final int d4 = 62;
-    private final int e4 = 64;
-    private final int f4 = 65;
-    private final int g4 = 67;
-    private final int a4 = 69;
-    private final int b4 = 71;
-    private final int c5 = 72;
+    public static final int C4 = 60;
+    public static final int D4 = 62;
+    public static final int E4 = 64;
+    public static final int F4 = 65;
+    public static final int G4 = 67;
+    public static final int A4 = 69;
+    public static final int B4 = 71;
+    public static final int C5 = 72;
 
     private final Synthesizer synthesizer;
     private final MidiChannel channel;
 
     // Use the constants in your array
-    private final int[] notes = {c4, d4, e4, f4, g4, a4, b4, c5};
+    public static final int[] notes = {C4, D4, E4, F4, G4, A4, B4, C5};
 
-    public PianoSound() throws MidiUnavailableException
+    public PianoSound(Synthesizer synthesizer, MidiChannel channel) throws MidiUnavailableException
     {
-        synthesizer = MidiSystem.getSynthesizer();
-        synthesizer.open();
-        channel = synthesizer.getChannels()[0];
+        this.synthesizer = synthesizer;
+        this.channel = channel;
     }
 
     public MidiChannel getChannel()
@@ -37,20 +37,14 @@ public class PianoSound
         return synthesizer;
     }
 
-    public void playNote(int keyIndex)
+    public void playNote(int note)
     {
-        if (keyIndex >= 0 && keyIndex < notes.length)
-        {
-            channel.noteOn(notes[keyIndex], 127); // velocity 127 (max volume)
-        }
+            channel.noteOn(note, 127); // velocity 127 (max volume)
     }
 
-    public void stopNote(int keyIndex)
+    public void stopNote(int note)
     {
-        if (keyIndex >= 0 && keyIndex < notes.length)
-        {
-            channel.noteOff(notes[keyIndex]);
-        }
+            channel.noteOff(note);
     }
 
     public void cleanup()
