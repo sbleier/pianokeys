@@ -55,7 +55,7 @@ public class PianoGui extends JFrame
         int blackKeyWidth = 60;
         int blackKeyHeight = 120;
 
-        // same thing to loop through black keys to make
+        // same thing to loop through black keys to make them
         for (int i = 0; i < BLACK_KEY_NAMES.length; i++)
         {
             if (!BLACK_KEY_NAMES[i].isEmpty())
