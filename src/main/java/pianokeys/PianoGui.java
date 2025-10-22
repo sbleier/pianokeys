@@ -119,8 +119,7 @@ public class PianoGui extends JFrame
                 if (key.contains(evt.getPoint()))
                 {
                     key.setBackground(LIGHT_GRAY);
-                }
-                else
+                } else
                 {
                     key.setBackground(WHITE);
                 }
@@ -175,8 +174,7 @@ public class PianoGui extends JFrame
                 if (key.contains(evt.getPoint()))
                 {
                     key.setBackground(LIGHT_GRAY);
-                }
-                else
+                } else
                 {
                     key.setBackground(BLACK);
                 }
