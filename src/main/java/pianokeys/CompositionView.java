@@ -1,0 +1,79 @@
+package pianokeys;
+
+import javax.swing.JComponent;
+import java.awt.Color;
+import java.awt.Graphics;
+
+import static java.awt.Color.BLACK;
+import static java.awt.Color.CYAN;
+import static java.awt.Color.ORANGE;
+import static pianokeys.PianoSound.C4;
+
+public class CompositionView extends JComponent {
+
+    /**
+     * Width of one second
+     */
+    private static final int SECOND_WIDTH = 20;
+
+    private static final int NOTE_HEIGHT = 10;
+
+    /**
+     * Width of the current time vertical line
+     */
+    private static final int CURRENT_TIME_WIDTH = 2;
+
+    private double currentTime = 1.25;
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        displayNote(g, 5.25, 10.75, PianoSound.D4);
+        displayNote(g, 0, 5, PianoSound.E4);
+        displayNote(g, 1, 2, PianoSound.A4);
+        displayNote(g, 0, 2, PianoSound.B4);
+        displayNote(g, 4.5, 6.25, PianoSound.F4);
+
+        displayCurrentTimeLine(g);
+    }
+
+    private void displayNote(Graphics g, double noteStartTimeSeconds, double noteEndTimeSeconds, int note) {
+        int modifiedNote = note - C4;
+        int x1 = (int) (noteStartTimeSeconds * SECOND_WIDTH);
+        int x2 = (int) (noteEndTimeSeconds * SECOND_WIDTH);
+        int y1 = modifiedNote * NOTE_HEIGHT;
+        g.setColor(CYAN);
+        g.fillRect(x1, y1, x2-x1, NOTE_HEIGHT);
+        g.setColor(BLACK);
+        g.drawRect(x1, y1, x2-x1, NOTE_HEIGHT);
+    }
+
+    private void displayCurrentTimeLine(Graphics g) {
+        int currentTimeX = (int) (currentTime * SECOND_WIDTH);
+        g.setColor(ORANGE);
+        g.fillRect(currentTimeX, 0, CURRENT_TIME_WIDTH, getHeight());
+    }
+
+    public double getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(double currentTime) {
+        this.currentTime = currentTime;
+        repaint();
+    }
+
+    public void addTime(double delta) {
+        this.currentTime += delta;
+        repaint();
+    }
+
+    /**
+     * Sets the notes displayed in this CompositionView
+     */
+    public void setNotes() {
+        repaint();
+    }
+
+}
