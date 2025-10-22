@@ -8,6 +8,7 @@ import java.awt.event.MouseAdapter;
 
 public class PianoGui extends JFrame
 {
+    // declared everything
     private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B", "C"};
     private static final String[] BLACK_KEY_NAMES = {"C#", "D#", "", "F#", "G#", "A#", ""};
     private static final Color WHITE_KEY_COLOR = Color.WHITE;
@@ -20,6 +21,7 @@ public class PianoGui extends JFrame
 
     public PianoGui()
     {
+        // constructor
         setTitle("Piano Keys");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -40,6 +42,7 @@ public class PianoGui extends JFrame
         int whiteKeyWidth = 100;
         int whiteKeyHeight = 200;
 
+        // loop runs 8 times to lay out all the white keys and label them properly
         for (int i = 0; i < WHITE_KEY_NAMES.length; i++)
         {
             JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i]);
@@ -52,6 +55,7 @@ public class PianoGui extends JFrame
         int blackKeyWidth = 60;
         int blackKeyHeight = 120;
 
+        // same thing to loop through black keys to make
         for (int i = 0; i < BLACK_KEY_NAMES.length; i++)
         {
             if (!BLACK_KEY_NAMES[i].isEmpty())
