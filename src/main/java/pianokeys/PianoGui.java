@@ -1,5 +1,9 @@
 package pianokeys;
 
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,8 +29,15 @@ public class PianoGui extends JFrame
     private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length];
     private JButton[] blackButtons = new JButton[BLACK_KEY_NAMES.length];
 
-    public PianoGui()
-    {
+    //dropdown to change instrument
+    private JComboBox<String> instrumentDropdown;
+    //array of possible instruments
+    private static String[] instruments = {"piano", "guitar", "violin", "trumpet"};
+    private static PianoSound sound;
+
+
+
+    public PianoGui() {
         // constructor
         setTitle("Piano Keys");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,6 +92,14 @@ public class PianoGui extends JFrame
         layeredPane.add(blackKeysPanel, Integer.valueOf(1));
 
         add(layeredPane, BorderLayout.CENTER);
+
+        instrumentDropdown = new JComboBox<>(instruments);
+
+        instrumentDropdown.addActionListener(e -> {
+            String instrument = (String) instrumentDropdown.getSelectedItem();
+            sound.setInstrument(instrument);
+        });
+        add(instrumentDropdown, BorderLayout.SOUTH);
     }
 
     private JButton createWhitePianoKey(String whiteKeyName)

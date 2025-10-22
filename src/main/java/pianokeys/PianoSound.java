@@ -52,4 +52,13 @@ public class PianoSound
         synthesizer.close();
     }
 
+    public void setInstrument(String instrumentName) {
+        switch (instrumentName) {
+            case "piano" -> channel.programChange(0);
+            case "guitar" -> channel.programChange(24);
+            case "violin" -> channel.programChange(40);
+            case "trumpet" -> channel.programChange(56);
+            default -> channel.programChange(0); //default: piano
+        }
+    }
 }
