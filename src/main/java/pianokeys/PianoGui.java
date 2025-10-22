@@ -5,19 +5,23 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PianoGui extends JFrame
 {
     // declared everything
     private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B", "C"};
     private static final String[] BLACK_KEY_NAMES = {"C#", "D#", "", "F#", "G#", "A#", ""};
-    private static final Color WHITE_KEY_COLOR = Color.WHITE;
-    private static final Color BLACK_KEY_COLOR = Color.BLACK;
+
+    // White keys
+    private static int WHITE_KEY_WIDTH = 100;
+    private static int WHITE_KEY_HEIGHT = 200;
+    // Black keys
+    private static int BLACK_KEY_WIDTH = 60;
+    private static int BLACK_KEY_HEIGHT = 120;
 
     JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length];
     JButton[] blackButtons = new JButton[BLACK_KEY_NAMES.length];
-
-    JPanel whitePanel = new JPanel(new GridLayout(WHITE_KEY_NAMES.length, 1));
 
     public PianoGui()
     {
@@ -38,22 +42,14 @@ public class PianoGui extends JFrame
         blackKeysPanel.setLayout(null);
         blackKeysPanel.setOpaque(false);
 
-        // White keys
-        int whiteKeyWidth = 100;
-        int whiteKeyHeight = 200;
-
         // loop runs 8 times to lay out all the white keys and label them properly
         for (int i = 0; i < WHITE_KEY_NAMES.length; i++)
         {
             JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i]);
             whiteButtons[i] = button;
-            button.setBounds(i * whiteKeyWidth, 0, whiteKeyWidth, whiteKeyHeight);
+            button.setBounds(i * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
             whiteKeysPanel.add(button);
         }
-
-        // Black keys
-        int blackKeyWidth = 60;
-        int blackKeyHeight = 120;
 
         // same thing to loop through black keys to make them
         for (int i = 0; i < BLACK_KEY_NAMES.length; i++)
@@ -64,19 +60,19 @@ public class PianoGui extends JFrame
                 blackButtons[i] = button;
 
                 // make sure that the black keys are between the white keys
-                int blackKeyX = (i * whiteKeyWidth) + whiteKeyWidth - (blackKeyWidth / 2);
-                button.setBounds(blackKeyX, 0, blackKeyWidth, blackKeyHeight);
+                int blackKeyX = (i * WHITE_KEY_WIDTH) + WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2);
+                button.setBounds(blackKeyX, 0, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
                 blackKeysPanel.add(button);
             }
         }
 
         // Layered pane to make the black keys on white keys
         JLayeredPane layeredPane = new JLayeredPane();
-        int totalWidth = WHITE_KEY_NAMES.length * whiteKeyWidth;
-        layeredPane.setPreferredSize(new Dimension(totalWidth, whiteKeyHeight));
+        int totalWidth = WHITE_KEY_NAMES.length * WHITE_KEY_WIDTH;
+        layeredPane.setPreferredSize(new Dimension(totalWidth, WHITE_KEY_HEIGHT));
 
-        whiteKeysPanel.setBounds(0, 0, totalWidth, whiteKeyHeight);
-        blackKeysPanel.setBounds(0, 0, totalWidth, whiteKeyHeight);
+        whiteKeysPanel.setBounds(0, 0, totalWidth, WHITE_KEY_HEIGHT);
+        blackKeysPanel.setBounds(0, 0, totalWidth, WHITE_KEY_HEIGHT);
 
         // using different layers to add the panels
         layeredPane.add(whiteKeysPanel, Integer.valueOf(0));
@@ -90,7 +86,7 @@ public class PianoGui extends JFrame
         JButton key = new JButton(whiteKeyName);
 
         // make it look like a piano key
-        key.setBackground(WHITE_KEY_COLOR);
+        key.setBackground(Color.WHITE);
         key.setForeground(Color.BLACK);
         key.setFont(new Font("Arial", Font.BOLD, 16));
         key.setFocusPainted(false);
@@ -101,14 +97,14 @@ public class PianoGui extends JFrame
         // hover to show the key
         key.addMouseListener(new MouseAdapter()
         {
-            public void mouseEntered(java.awt.event.MouseEvent evt)
+            public void mouseEntered(MouseEvent evt)
             {
                 key.setBackground(Color.LIGHT_GRAY);
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt)
             {
-                key.setBackground(WHITE_KEY_COLOR);
+                key.setBackground(Color.WHITE);
             }
         });
 
@@ -128,7 +124,7 @@ public class PianoGui extends JFrame
     {
         JButton key = new JButton(blackKeyName);
 
-        key.setBackground(BLACK_KEY_COLOR);
+        key.setBackground(Color.BLACK);
         key.setForeground(Color.WHITE);
         key.setFont(new Font("Arial", Font.BOLD, 16));
         key.setFocusPainted(false);
@@ -138,14 +134,14 @@ public class PianoGui extends JFrame
 
         key.addMouseListener(new MouseAdapter()
         {
-            public void mouseEntered(java.awt.event.MouseEvent evt)
+            public void mouseEntered(MouseEvent evt)
             {
                 key.setBackground(Color.DARK_GRAY);
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt)
             {
-                key.setBackground(BLACK_KEY_COLOR);
+                key.setBackground(Color.BLACK);
             }
         });
 
