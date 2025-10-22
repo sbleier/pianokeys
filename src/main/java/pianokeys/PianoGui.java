@@ -14,14 +14,14 @@ public class PianoGui extends JFrame
     private static final String[] BLACK_KEY_NAMES = {"C#", "D#", "", "F#", "G#", "A#", ""};
 
     // White keys
-    private static int WHITE_KEY_WIDTH = 100;
-    private static int WHITE_KEY_HEIGHT = 200;
+    private static final int WHITE_KEY_WIDTH = 100;
+    private static final int WHITE_KEY_HEIGHT = 200;
     // Black keys
-    private static int BLACK_KEY_WIDTH = 60;
-    private static int BLACK_KEY_HEIGHT = 120;
+    private static final int BLACK_KEY_WIDTH = 60;
+    private static final int BLACK_KEY_HEIGHT = 120;
 
-    JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length];
-    JButton[] blackButtons = new JButton[BLACK_KEY_NAMES.length];
+    private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length];
+    private JButton[] blackButtons = new JButton[BLACK_KEY_NAMES.length];
 
     public PianoGui()
     {
