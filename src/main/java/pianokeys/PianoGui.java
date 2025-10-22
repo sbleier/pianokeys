@@ -22,8 +22,8 @@ public class PianoGui extends JFrame
     private static final int BLACK_KEY_WIDTH = 60;
     private static final int BLACK_KEY_HEIGHT = 120;
 
-    private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length];
-    private JButton[] blackButtons = new JButton[BLACK_KEY_NAMES.length];
+    private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * 7];
+    private JButton[] blackButtons = new JButton[35];
 
     public PianoGui()
     {
@@ -44,33 +44,48 @@ public class PianoGui extends JFrame
         blackKeysPanel.setLayout(null);
         blackKeysPanel.setOpaque(false);
 
-        // loop runs 8 times to lay out all the white keys and label them properly
-        for (int i = 0; i < WHITE_KEY_NAMES.length; i++)
+        // nested for loop to run each octave to get 56 white keys
+        // switched out i for keyIndex so that we can loop through without them all overlapping
+        for (int octave = 0; octave < 7; octave++)
         {
-            JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i]);
-            whiteButtons[i] = button;
-            button.setBounds(i * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
-            whiteKeysPanel.add(button);
+            for (int i = 0; i < WHITE_KEY_NAMES.length; i++)
+            {
+                JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i]);
+
+                // calculating position across all the indexes not just the first loop
+                int keyIndex = octave * WHITE_KEY_NAMES.length + i;
+                whiteButtons[keyIndex] = button;
+
+                button.setBounds(keyIndex * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
+                whiteKeysPanel.add(button);
+            }
         }
 
-        // same thing to loop through black keys to make them
-        for (int i = 0; i < BLACK_KEY_NAMES.length; i++)
+        int blackKeyIndex = 0;
+        for (int octave = 0; octave < 7; octave++)
         {
-            if (!BLACK_KEY_NAMES[i].isEmpty())
+            for (int i = 0; i < BLACK_KEY_NAMES.length; i++)
             {
-                JButton button = createBlackPianoKey(BLACK_KEY_NAMES[i]);
-                blackButtons[i] = button;
+                if (!BLACK_KEY_NAMES[i].isEmpty())
+                {
+                    JButton button = createBlackPianoKey(BLACK_KEY_NAMES[i]);
+                    blackButtons[blackKeyIndex] = button;
 
-                // make sure that the black keys are between the white keys
-                int blackKeyX = (i * WHITE_KEY_WIDTH) + WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2);
-                button.setBounds(blackKeyX, 0, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
-                blackKeysPanel.add(button);
+                    int whiteKeyPosition = octave * WHITE_KEY_NAMES.length + i;
+
+                    // make sure that the black keys are between the white keys
+                    int blackKeyX = (whiteKeyPosition * WHITE_KEY_WIDTH) + WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2);
+                    button.setBounds(blackKeyX, 0, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
+                    blackKeysPanel.add(button);
+
+                    blackKeyIndex++;
+                }
             }
         }
 
         // Layered pane to make the black keys on white keys
         JLayeredPane layeredPane = new JLayeredPane();
-        int totalWidth = WHITE_KEY_NAMES.length * WHITE_KEY_WIDTH;
+        int totalWidth = WHITE_KEY_NAMES.length * 7 * WHITE_KEY_WIDTH;
         layeredPane.setPreferredSize(new Dimension(totalWidth, WHITE_KEY_HEIGHT));
 
         whiteKeysPanel.setBounds(0, 0, totalWidth, WHITE_KEY_HEIGHT);
