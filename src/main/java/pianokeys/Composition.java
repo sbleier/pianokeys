@@ -5,7 +5,12 @@ import java.util.Arrays;
 
 public class Composition
 {
-    private ArrayList<Note> noteList = new ArrayList<>();
+    private final ArrayList<Note> noteList = new ArrayList<>();
+
+    public ArrayList<Note> getNoteList()
+    {
+        return noteList;
+    }
 
     // single note
     public void addNote(Note note)
@@ -18,5 +23,4 @@ public class Composition
     {
         noteList.addAll(Arrays.stream(notes).toList());
     }
-
 }

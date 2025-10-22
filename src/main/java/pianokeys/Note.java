@@ -1,31 +1,8 @@
 package pianokeys;
 
-public class Note
+public record Note()
 {
-    private String key;
-    private double startTime;
-    private double endTime;
-
-    public Note(String key, double startTime, double endTime)
-    {
-        this.key = key;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-
-    public String getKey()
-    {
-        return key;
-    }
-
-    public double getStartTime()
-    {
-        return startTime;
-    }
-
-    public double getEndTime()
-    {
-        return endTime;
-    }
-
+    public static int key;
+    public static double startTime;
+    public static double endTime;
 }
