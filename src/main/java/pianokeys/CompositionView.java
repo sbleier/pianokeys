@@ -12,10 +12,13 @@ import static pianokeys.PianoSound.C4;
 public class CompositionView extends JComponent {
 
     /**
-     * Width of one second
+     * Width of one second when displaying notes in the View.
      */
     private static final int SECOND_WIDTH = 20;
 
+    /**
+     * Height of each note. This might need to be a percentage of the height of the View.
+     */
     private static final int NOTE_HEIGHT = 10;
 
     /**
@@ -23,12 +26,14 @@ public class CompositionView extends JComponent {
      */
     private static final int CURRENT_TIME_WIDTH = 2;
 
+    // This will change over time.
     private double currentTime = 1.25;
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        // This is test data.
         displayNote(g, 5.25, 10.75, PianoSound.D4);
         displayNote(g, 0, 5, PianoSound.E4);
         displayNote(g, 1, 2, PianoSound.A4);
