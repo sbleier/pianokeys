@@ -44,9 +44,9 @@ public class CompositionView extends JComponent {
         int x2 = (int) (noteEndTimeSeconds * SECOND_WIDTH);
         int y1 = modifiedNote * NOTE_HEIGHT;
         g.setColor(CYAN);
-        g.fillRect(x1, y1, x2-x1, NOTE_HEIGHT);
+        g.fillRect(x1, y1, x2 - x1, NOTE_HEIGHT);
         g.setColor(BLACK);
-        g.drawRect(x1, y1, x2-x1, NOTE_HEIGHT);
+        g.drawRect(x1, y1, x2 - x1, NOTE_HEIGHT);
     }
 
     private void displayCurrentTimeLine(Graphics g) {
