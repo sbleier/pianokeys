@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static java.awt.Color.*;
+
 public class PianoGui extends JFrame
 {
     // declared everything
@@ -36,7 +38,7 @@ public class PianoGui extends JFrame
         JPanel whiteKeysPanel = new JPanel();
         whiteKeysPanel.setLayout(null);
         whiteKeysPanel.setOpaque(true);
-        whiteKeysPanel.setBackground(Color.LIGHT_GRAY);
+        whiteKeysPanel.setBackground(LIGHT_GRAY);
 
         JPanel blackKeysPanel = new JPanel();
         blackKeysPanel.setLayout(null);
@@ -86,11 +88,11 @@ public class PianoGui extends JFrame
         JButton key = new JButton(whiteKeyName);
 
         // make it look like a piano key
-        key.setBackground(Color.WHITE);
-        key.setForeground(Color.BLACK);
+        key.setBackground(WHITE);
+        key.setForeground(BLACK);
         key.setFont(new Font("Arial", Font.BOLD, 16));
         key.setFocusPainted(false);
-        key.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        key.setBorder(BorderFactory.createLineBorder(BLACK, 2));
         key.setOpaque(true);
         key.setContentAreaFilled(true);
 
@@ -99,13 +101,31 @@ public class PianoGui extends JFrame
         {
             public void mouseEntered(MouseEvent evt)
             {
-                key.setBackground(Color.LIGHT_GRAY);
+                key.setBackground(LIGHT_GRAY);
             }
 
-            public void mouseExited(java.awt.event.MouseEvent evt)
+            public void mouseExited(MouseEvent evt)
             {
-                key.setBackground(Color.WHITE);
+                key.setBackground(WHITE);
             }
+
+            public void mousePressed(MouseEvent evt)
+            {
+                key.setBackground(DARK_GRAY);
+            }
+
+            public void mouseReleased(MouseEvent evt)
+            {
+                if (key.contains(evt.getPoint()))
+                {
+                    key.setBackground(LIGHT_GRAY);
+                }
+                else
+                {
+                    key.setBackground(WHITE);
+                }
+            }
+
         });
 
         key.addActionListener(new ActionListener()
@@ -124,8 +144,8 @@ public class PianoGui extends JFrame
     {
         JButton key = new JButton(blackKeyName);
 
-        key.setBackground(Color.BLACK);
-        key.setForeground(Color.WHITE);
+        key.setBackground(BLACK);
+        key.setForeground(WHITE);
         key.setFont(new Font("Arial", Font.BOLD, 16));
         key.setFocusPainted(false);
         key.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
@@ -136,12 +156,30 @@ public class PianoGui extends JFrame
         {
             public void mouseEntered(MouseEvent evt)
             {
-                key.setBackground(Color.DARK_GRAY);
+                key.setBackground(LIGHT_GRAY);
             }
 
-            public void mouseExited(java.awt.event.MouseEvent evt)
+            public void mouseExited(MouseEvent evt)
             {
-                key.setBackground(Color.BLACK);
+                key.setBackground(BLACK);
+            }
+
+            public void mousePressed(MouseEvent evt)
+            {
+                key.setBackground(DARK_GRAY);
+            }
+
+            public void mouseReleased(MouseEvent evt)
+            {
+                // Check if mouse is still over the component
+                if (key.contains(evt.getPoint()))
+                {
+                    key.setBackground(LIGHT_GRAY);
+                }
+                else
+                {
+                    key.setBackground(BLACK);
+                }
             }
         });
 
@@ -154,6 +192,7 @@ public class PianoGui extends JFrame
                 key.setBackground(Color.GRAY);
             }
         });
+
         return key;
     }
 
