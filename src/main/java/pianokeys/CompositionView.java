@@ -1,7 +1,6 @@
 package pianokeys;
 
 import javax.swing.JComponent;
-import java.awt.Color;
 import java.awt.Graphics;
 
 import static java.awt.Color.BLACK;
@@ -9,6 +8,11 @@ import static java.awt.Color.CYAN;
 import static java.awt.Color.ORANGE;
 import static pianokeys.PianoSound.C4;
 
+/**
+ * This displays the notes visually as rectangles.
+ * The position on the x axis is time.
+ * The position on the y axis is where the note is on the scale.
+ */
 public class CompositionView extends JComponent {
 
     /**
