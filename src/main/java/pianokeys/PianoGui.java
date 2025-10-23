@@ -12,7 +12,7 @@ import static java.awt.Color.*;
 public class PianoGui extends JFrame
 {
     // declared everything
-    private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B", "C"};
+    private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final String[] BLACK_KEY_NAMES = {"C#", "D#", "", "F#", "G#", "A#", ""};
 
     // White keys
@@ -30,7 +30,7 @@ public class PianoGui extends JFrame
         // constructor
         setTitle("Piano Keys");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(800, 350);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
 
@@ -95,7 +95,12 @@ public class PianoGui extends JFrame
         layeredPane.add(whiteKeysPanel, Integer.valueOf(0));
         layeredPane.add(blackKeysPanel, Integer.valueOf(1));
 
-        add(layeredPane, BorderLayout.CENTER);
+        // uses a scroll method so that you can easily see all the keys
+        JScrollPane scrollPane = new JScrollPane
+                (layeredPane, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        add(scrollPane, BorderLayout.CENTER);
+
     }
 
     private JButton createWhitePianoKey(String whiteKeyName)
