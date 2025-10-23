@@ -96,8 +96,7 @@ public class PianoGui extends JFrame
         layeredPane.add(blackKeysPanel, Integer.valueOf(1));
 
         // uses a scroll method so that you can easily see all the keys
-        JScrollPane scrollPane = new JScrollPane
-                (layeredPane, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+        JScrollPane scrollPane = new JScrollPane(layeredPane, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
                         JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane, BorderLayout.CENTER);
 
