@@ -2,10 +2,7 @@ package pianokeys;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import javax.sound.midi.*;
 
 import static java.awt.Color.*;
@@ -28,7 +25,7 @@ public class PianoGui extends JFrame
 
     // MIDI sound system
     private PianoSound sound;
-    private int[] blackKeyNotes = {61, 63, -1, 66, 68, 70, -1}; // C#, D#, skip, F#, G#, A#, skip
+    //private int[] blackKeyNotes = {61, 63, -1, 66, 68, 70, -1}; // C#, D#, skip, F#, G#, A#, skip
 
     public PianoGui()
     {
@@ -45,7 +42,6 @@ public class PianoGui extends JFrame
             synthesizer.open();
             MidiChannel channel = synthesizer.getChannels()[0];
             sound = new PianoSound(synthesizer, channel);
-            //channel.programChange(0); // Set to piano sound
         } catch (MidiUnavailableException e) {
             System.err.println("MIDI system unavailable: " + e.getMessage());
         }
@@ -63,7 +59,7 @@ public class PianoGui extends JFrame
         // loop runs 8 times to lay out all the white keys and label them properly
         for (int i = 0; i < WHITE_KEY_NAMES.length; i++)
         {
-            JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i], i);
+            JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i], PianoSound.notes[i]);
             whiteButtons[i] = button;
             button.setBounds(i * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
             whiteKeysPanel.add(button);
@@ -74,7 +70,8 @@ public class PianoGui extends JFrame
         {
             if (!BLACK_KEY_NAMES[i].isEmpty())
             {
-                JButton button = createBlackPianoKey(BLACK_KEY_NAMES[i], i);
+                // each button directly corresponds to the correct note
+                JButton button = createBlackPianoKey(BLACK_KEY_NAMES[i], PianoSound.blackNotes[i]);
                 blackButtons[i] = button;
 
                 // make sure that the black keys are between the white keys
@@ -99,9 +96,9 @@ public class PianoGui extends JFrame
         add(layeredPane, BorderLayout.CENTER);
 
         // Cleanup MIDI when window closes
-        addWindowListener(new java.awt.event.WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+            public void windowClosing(WindowEvent windowEvent) {
                 if (sound != null) {
                     sound.cleanup();
                 }
@@ -109,10 +106,10 @@ public class PianoGui extends JFrame
         });
     }
 
-    private JButton createWhitePianoKey(String whiteKeyName, int index)
+    private JButton createWhitePianoKey(String whiteKeyName, int note)
     {
         JButton key = new JButton(whiteKeyName);
-        final int noteToPlay = PianoSound.notes[index];
+        final int noteToPlay = note;
 
         // make it look like a piano key
         key.setBackground(WHITE);
@@ -172,10 +169,10 @@ public class PianoGui extends JFrame
         return key;
     }
 
-    private JButton createBlackPianoKey(String blackKeyName, int index)
+    private JButton createBlackPianoKey(String blackKeyName, int note)
     {
         JButton key = new JButton(blackKeyName);
-        final int noteToPlay = blackKeyNotes[index];
+        final int noteToPlay = note;
 
         key.setBackground(BLACK);
         key.setForeground(WHITE);
