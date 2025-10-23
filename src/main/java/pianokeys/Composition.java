@@ -23,4 +23,7 @@ public class Composition
     {
         noteList.addAll(Arrays.stream(notes).toList());
     }
+
 }
+
+

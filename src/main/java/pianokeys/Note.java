@@ -1,8 +1,5 @@
 package pianokeys;
 
-public record Note()
+public record Note(int key, double startTime, double endTime)
 {
-    public static int key;
-    public static double startTime;
-    public static double endTime;
 }
