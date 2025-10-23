@@ -25,7 +25,6 @@ public class PianoGui extends JFrame
 
     // MIDI sound system
     private PianoSound sound;
-    //private int[] blackKeyNotes = {61, 63, -1, 66, 68, 70, -1}; // C#, D#, skip, F#, G#, A#, skip
 
     public PianoGui()
     {
@@ -59,7 +58,7 @@ public class PianoGui extends JFrame
         // loop runs 8 times to lay out all the white keys and label them properly
         for (int i = 0; i < WHITE_KEY_NAMES.length; i++)
         {
-            JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i], PianoSound.notes[i]);
+            JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i], PianoSound.whiteNotes[i]);
             whiteButtons[i] = button;
             button.setBounds(i * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
             whiteKeysPanel.add(button);

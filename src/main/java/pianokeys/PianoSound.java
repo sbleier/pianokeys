@@ -1,7 +1,6 @@
 package pianokeys;
 
 import javax.sound.midi.*;
-import java.nio.channels.Channel;
 
 public class PianoSound
 {
@@ -26,7 +25,7 @@ public class PianoSound
     private final MidiChannel channel;
 
     // Use the constants in your array
-    public static final int[] notes = {C4, D4, E4, F4, G4, A4, B4, C5};
+    public static final int[] whiteNotes = {C4, D4, E4, F4, G4, A4, B4, C5};
     public static final int[] blackNotes = {C4_SHARP, D4_SHARP, -1, F4_SHARP, G4_SHARP, A4_SHARP, -1};
 
     public PianoSound(Synthesizer synthesizer, MidiChannel channel) throws MidiUnavailableException
