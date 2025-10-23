@@ -7,14 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CompositionTest
 {
-    Composition composition;
-
     @Test
     void addNote()
     {
-        composition = new Composition();
         // given
-        Note note = new Note(60, 1, 1.25);
+        Composition composition = new Composition();
+        Note note = new Note(PianoSound.A4, 1, 1.25);
 
         // when
         composition.addNote(note);
@@ -27,10 +25,10 @@ class CompositionTest
     @Test
     void addNotes()
     {
-        composition = new Composition();
         // given
-        Note note1 = new Note(60, 1, 1.25);
-        Note note2 = new Note(37, 3.45, 4);
+        Composition composition = new Composition();
+        Note note1 = new Note(PianoSound.B4, 1, 1.25);
+        Note note2 = new Note(PianoSound.C4, 3.45, 4);
 
         // when
         composition.addNotes(note1, note2);
