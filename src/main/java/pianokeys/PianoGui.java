@@ -133,13 +133,15 @@ public class PianoGui extends JFrame
     {
         // Centering the scroll pane to open on middle C - in octave 4 (0-based, so 3 is the 4th octave)
         SwingUtilities.invokeLater(() -> {
-            int middleCOctave = 3;
-            int middleCIndex = middleCOctave * WHITE_KEY_NAMES.length;
+            int middleCoctave = 3;
+            int middleCindex = middleCoctave * WHITE_KEY_NAMES.length;
 
-            int middleCX = middleCIndex * WHITE_KEY_WIDTH - (scrollPane.getViewport().getWidth() / 2) + (WHITE_KEY_WIDTH / 2);
-            middleCX = Math.max(0, Math.min(middleCX, scrollPane.getHorizontalScrollBar().getMaximum() - scrollPane.getViewport().getWidth()));
+            int middleCx = middleCindex * WHITE_KEY_WIDTH -
+                    (scrollPane.getViewport().getWidth() / 2) + (WHITE_KEY_WIDTH / 2);
+            middleCx = Math.max(0, Math.min(middleCx, scrollPane.getHorizontalScrollBar().getMaximum() -
+                    scrollPane.getViewport().getWidth()));
 
-            scrollPane.getHorizontalScrollBar().setValue(middleCX);
+            scrollPane.getHorizontalScrollBar().setValue(middleCx);
         });
     }
 
