@@ -108,8 +108,6 @@ public class PianoGui extends JFrame
     private JButton createWhitePianoKey(String whiteKeyName, int note)
     {
         JButton key = new JButton(whiteKeyName);
-        final int noteToPlay = note;
-
         // make it look like a piano key
         key.setBackground(WHITE);
         key.setForeground(BLACK);
@@ -136,14 +134,14 @@ public class PianoGui extends JFrame
             {
                 key.setBackground(DARK_GRAY);
                 if (sound != null) {
-                    sound.playNote(noteToPlay);
+                    sound.playNote(note);
                 }
             }
 
             public void mouseReleased(MouseEvent evt)
             {
                 if (sound != null) {
-                    sound.stopNote(noteToPlay);
+                    sound.stopNote(note);
                 }
 
                 if (key.contains(evt.getPoint()))
@@ -171,8 +169,6 @@ public class PianoGui extends JFrame
     private JButton createBlackPianoKey(String blackKeyName, int note)
     {
         JButton key = new JButton(blackKeyName);
-        final int noteToPlay = note;
-
         key.setBackground(BLACK);
         key.setForeground(WHITE);
         key.setFont(new Font("Arial", Font.BOLD, 16));
@@ -197,14 +193,14 @@ public class PianoGui extends JFrame
             {
                 key.setBackground(DARK_GRAY);
                 if (sound != null) {
-                    sound.playNote(noteToPlay);
+                    sound.playNote(note);
                 }
             }
 
             public void mouseReleased(MouseEvent evt)
             {
                 if (sound != null) {
-                    sound.stopNote(noteToPlay);
+                    sound.stopNote(note);
                 }
 
                 // Check if mouse is still over the component
