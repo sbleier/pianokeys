@@ -2,6 +2,9 @@ package pianokeys;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,13 +32,13 @@ class CompositionTest
         Composition composition = new Composition();
         Note note1 = new Note(PianoSound.B4, 1, 1.25);
         Note note2 = new Note(PianoSound.C4, 3.45, 4);
+        ArrayList<Note> notes = new ArrayList<>(Arrays.asList(note1, note2));
 
         // when
         composition.addNotes(note1, note2);
 
         // then
         assertEquals(2, composition.getNoteList().size());
-        assertTrue(composition.getNoteList().contains(note1));
-        assertTrue(composition.getNoteList().contains(note2));
+        assertEquals(composition.getNoteList(), notes);
     }
 }
