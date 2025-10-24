@@ -27,22 +27,31 @@ public class PianoGui extends JFrame
 
     public PianoGui()
     {
-        // constructor
+        setUpFrame();
+        JPanel whiteKeysPanel = createWhiteKeysPanel();
+        JPanel blackKeysPanel = createBlackKeysPanel();
+
+        JLayeredPane layeredPane = createLayeredPane(whiteKeysPanel, blackKeysPanel);
+        JScrollPane scrollPane = createScrollPane(layeredPane);
+        add(scrollPane, BorderLayout.CENTER);
+
+        centerOnMiddleC(scrollPane);
+    }
+
+    private void setUpFrame()
+    {
         setTitle("Piano Keys");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 350);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
+    }
 
-        // Create the panels for white and black keys
-        JPanel whiteKeysPanel = new JPanel();
-        whiteKeysPanel.setLayout(null);
+    private JPanel createWhiteKeysPanel()
+    {
+        JPanel whiteKeysPanel = new JPanel(null);
         whiteKeysPanel.setOpaque(true);
         whiteKeysPanel.setBackground(LIGHT_GRAY);
-
-        JPanel blackKeysPanel = new JPanel();
-        blackKeysPanel.setLayout(null);
-        blackKeysPanel.setOpaque(false);
 
         // nested for loop to run each octave to get 56 white keys
         // switched out i for keyIndex so that we can loop through without them all overlapping
@@ -60,6 +69,14 @@ public class PianoGui extends JFrame
                 whiteKeysPanel.add(button);
             }
         }
+        return whiteKeysPanel;
+    }
+
+    private JPanel createBlackKeysPanel()
+    {
+        JPanel blackKeysPanel = new JPanel();
+        blackKeysPanel.setLayout(null);
+        blackKeysPanel.setOpaque(false);
 
         int blackKeyIndex = 0;
         for (int octave = 0; octave < 7; octave++)
@@ -82,7 +99,11 @@ public class PianoGui extends JFrame
                 }
             }
         }
+        return blackKeysPanel;
+    }
 
+    private JLayeredPane createLayeredPane(JPanel whiteKeysPanel, JPanel blackKeysPanel)
+    {
         // Layered pane to make the black keys on white keys
         JLayeredPane layeredPane = new JLayeredPane();
         int totalWidth = WHITE_KEY_NAMES.length * 7 * WHITE_KEY_WIDTH;
@@ -95,11 +116,31 @@ public class PianoGui extends JFrame
         layeredPane.add(whiteKeysPanel, Integer.valueOf(0));
         layeredPane.add(blackKeysPanel, Integer.valueOf(1));
 
-        // uses a scroll method so that you can easily see all the keys
-        JScrollPane scrollPane = new JScrollPane(layeredPane, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-                        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        add(scrollPane, BorderLayout.CENTER);
+        return layeredPane;
+    }
 
+    private JScrollPane createScrollPane(JLayeredPane layeredPane)
+    {
+        // uses a scroll method so that you can easily see all the keys
+        return new JScrollPane(
+                layeredPane,
+                JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        );
+    }
+
+    private void centerOnMiddleC(JScrollPane scrollPane)
+    {
+        // Centering the scroll pane to open on middle C - in octave 4 (0-based, so 3 is the 4th octave)
+        SwingUtilities.invokeLater(() -> {
+            int middleCOctave = 3;
+            int middleCIndex = middleCOctave * WHITE_KEY_NAMES.length;
+
+            int middleCX = middleCIndex * WHITE_KEY_WIDTH - (scrollPane.getViewport().getWidth() / 2) + (WHITE_KEY_WIDTH / 2);
+            middleCX = Math.max(0, Math.min(middleCX, scrollPane.getHorizontalScrollBar().getMaximum() - scrollPane.getViewport().getWidth()));
+
+            scrollPane.getHorizontalScrollBar().setValue(middleCX);
+        });
     }
 
     private JButton createWhitePianoKey(String whiteKeyName)
