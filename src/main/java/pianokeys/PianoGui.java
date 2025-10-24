@@ -136,10 +136,10 @@ public class PianoGui extends JFrame
             int middleCoctave = 3;
             int middleCindex = middleCoctave * WHITE_KEY_NAMES.length;
 
-            int middleCx = middleCindex * WHITE_KEY_WIDTH -
-                    (scrollPane.getViewport().getWidth() / 2) + (WHITE_KEY_WIDTH / 2);
-            middleCx = Math.max(0, Math.min(middleCx, scrollPane.getHorizontalScrollBar().getMaximum() -
-                    scrollPane.getViewport().getWidth()));
+            int middleCx = middleCindex * WHITE_KEY_WIDTH
+                    - (scrollPane.getViewport().getWidth() / 2) + (WHITE_KEY_WIDTH / 2);
+            middleCx = Math.max(0, Math.min(middleCx, scrollPane.getHorizontalScrollBar().getMaximum()
+                    - scrollPane.getViewport().getWidth()));
 
             scrollPane.getHorizontalScrollBar().setValue(middleCx);
         });
