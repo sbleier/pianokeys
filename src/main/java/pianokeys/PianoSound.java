@@ -20,7 +20,7 @@ public class PianoSound
     private final MidiChannel channel;
 
     //array of possible instruments
-    private static final String[] instruments = {"piano", "guitar", "violin", "trumpet"};
+    public static final String[] instruments = {"piano", "guitar", "violin", "trumpet"};
 
     // Use the constants in your array
     public static final int[] notes = {C4, D4, E4, F4, G4, A4, B4, C5};
@@ -41,9 +41,6 @@ public class PianoSound
         return synthesizer;
     }
 
-    public static String[] getInstruments() {
-        return instruments;
-    }
 
     public void playNote(int note)
     {
