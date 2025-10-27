@@ -1,6 +1,7 @@
 package pianokeys;
 
 import javax.sound.midi.*;
+import javax.swing.*;
 import java.nio.channels.Channel;
 
 public class PianoSound
@@ -17,6 +18,10 @@ public class PianoSound
 
     private final Synthesizer synthesizer;
     private final MidiChannel channel;
+
+    //array of possible instruments
+    private static final String[] instruments = {"piano", "guitar", "violin", "trumpet"};
+    private static final JComboBox<String> instrumentDropdown = new JComboBox<>(instruments);
 
     // Use the constants in your array
     public static final int[] notes = {C4, D4, E4, F4, G4, A4, B4, C5};
@@ -52,6 +57,7 @@ public class PianoSound
         synthesizer.close();
     }
 
+    //https://docs.oracle.com/javase/8/docs/api/javax/sound/midi/MidiChannel.html
     public void setInstrument(String instrumentName) {
         switch (instrumentName) {
             case "piano" -> channel.programChange(0);
