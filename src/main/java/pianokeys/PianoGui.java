@@ -32,7 +32,7 @@ public class PianoGui extends JFrame
     //dropdown to change instrument
     private JComboBox<String> instrumentDropdown;
     //array of possible instruments
-    private String[] instruments = {"piano", "guitar", "violin", "trumpet"};
+    //private String[] instruments = {"piano", "guitar", "violin", "trumpet"};
     private static PianoSound sound;
 
 
@@ -93,7 +93,7 @@ public class PianoGui extends JFrame
 
         add(layeredPane, BorderLayout.CENTER);
 
-        instrumentDropdown = new JComboBox<>(instruments);
+        instrumentDropdown = new JComboBox<>(PianoSound.getInstruments());
 
         instrumentDropdown.addActionListener(e -> {
             String instrument = (String) instrumentDropdown.getSelectedItem();

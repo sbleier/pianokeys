@@ -21,7 +21,6 @@ public class PianoSound
 
     //array of possible instruments
     private static final String[] instruments = {"piano", "guitar", "violin", "trumpet"};
-    private static final JComboBox<String> instrumentDropdown = new JComboBox<>(instruments);
 
     // Use the constants in your array
     public static final int[] notes = {C4, D4, E4, F4, G4, A4, B4, C5};
@@ -40,6 +39,10 @@ public class PianoSound
     public Synthesizer getSynthesizer()
     {
         return synthesizer;
+    }
+
+    public static String[] getInstruments() {
+        return instruments;
     }
 
     public void playNote(int note)
