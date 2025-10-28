@@ -2,8 +2,7 @@ package pianokeys;
 
 import javax.sound.midi.*;
 
-public class PianoSound
-{
+public class PianoSound {
     // MIDI note constants
     public static final int C4 = 60;
     public static final int D4 = 62;
@@ -27,34 +26,28 @@ public class PianoSound
     public static final int[] whiteNotes = {C4, D4, E4, F4, G4, A4, B4, C5};
     public static final int[] blackNotes = {C4_SHARP, D4_SHARP, -1, F4_SHARP, G4_SHARP, A4_SHARP, -1};
 
-    public PianoSound(Synthesizer synthesizer, MidiChannel channel) throws MidiUnavailableException
-    {
+    public PianoSound(Synthesizer synthesizer, MidiChannel channel) throws MidiUnavailableException {
         this.synthesizer = synthesizer;
         this.channel = channel;
     }
 
-    public MidiChannel getChannel()
-    {
+    public MidiChannel getChannel() {
         return channel;
     }
 
-    public Synthesizer getSynthesizer()
-    {
+    public Synthesizer getSynthesizer() {
         return synthesizer;
     }
 
-    public void playNote(int note)
-    {
-            channel.noteOn(note, 127); // velocity 127 (max volume)
+    public void playNote(int note) {
+        channel.noteOn(note, 127); // velocity 127 (max volume)
     }
 
-    public void stopNote(int note)
-    {
-            channel.noteOff(note);
+    public void stopNote(int note) {
+        channel.noteOff(note);
     }
 
-    public void cleanup()
-    {
+    public void cleanup() {
         synthesizer.close();
     }
 
