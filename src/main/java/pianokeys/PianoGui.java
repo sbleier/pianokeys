@@ -19,7 +19,9 @@ public class PianoGui extends JFrame {
     private static final int BLACK_KEY_WIDTH = 30;
     private static final int BLACK_KEY_HEIGHT = 170;
 
-    private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * 7];
+    private static final int OCTAVES = 7;
+
+    private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * OCTAVES];
     private JButton[] blackButtons = new JButton[35];
 
     // MIDI sound system
@@ -84,7 +86,7 @@ public class PianoGui extends JFrame {
 
         // nested for loop to run each octave to get 56 white keys
         // switched out i for keyIndex so that we can loop through without them all overlapping
-        for (int octave = 0; octave < 7; octave++) {
+        for (int octave = 0; octave < OCTAVES; octave++) {
             for (int i = 0; i < WHITE_KEY_NAMES.length; i++) {
                 int note = getWhiteNoteForOctave(octave, i);
                 JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i], note);
@@ -106,7 +108,7 @@ public class PianoGui extends JFrame {
         blackKeysPanel.setOpaque(false);
 
         int blackKeyIndex = 0;
-        for (int octave = 0; octave < 7; octave++) {
+        for (int octave = 0; octave < OCTAVES; octave++) {
             for (int i = 0; i < BLACK_KEY_NAMES.length; i++) {
                 if (!BLACK_KEY_NAMES[i].isEmpty()) {
                     int note = getBlackNoteForOctave(octave, i);
