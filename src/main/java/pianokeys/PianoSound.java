@@ -24,7 +24,6 @@ public class PianoSound
     private final Synthesizer synthesizer;
     private final MidiChannel channel;
 
-    // Use the constants in your array
     public static final int[] whiteNotes = {C4, D4, E4, F4, G4, A4, B4, C5};
     public static final int[] blackNotes = {C4_SHARP, D4_SHARP, -1, F4_SHARP, G4_SHARP, A4_SHARP, -1};
 
