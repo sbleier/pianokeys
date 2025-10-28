@@ -86,7 +86,6 @@ public class PianoGui extends JFrame {
         // switched out i for keyIndex so that we can loop through without them all overlapping
         for (int octave = 0; octave < 7; octave++) {
             for (int i = 0; i < WHITE_KEY_NAMES.length; i++) {
-                //JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i]);
                 int note = getWhiteNoteForOctave(octave, i);
                 JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i], note);
 
