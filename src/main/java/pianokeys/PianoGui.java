@@ -22,7 +22,7 @@ public class PianoGui extends JFrame {
     private static final int OCTAVES = 7;
 
     private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * OCTAVES];
-    private JButton[] blackButtons = new JButton[35];
+    private JButton[] blackButtons = new JButton[5 * OCTAVES];
 
     // MIDI sound system
     private PianoSound sound;
@@ -134,7 +134,7 @@ public class PianoGui extends JFrame {
     private JLayeredPane createLayeredPane(JPanel whiteKeysPanel, JPanel blackKeysPanel) {
         // Layered pane to make the black keys on white keys
         JLayeredPane layeredPane = new JLayeredPane();
-        int totalWidth = WHITE_KEY_NAMES.length * 7 * WHITE_KEY_WIDTH;
+        int totalWidth = WHITE_KEY_NAMES.length * OCTAVES * WHITE_KEY_WIDTH;
         layeredPane.setPreferredSize(new Dimension(totalWidth, WHITE_KEY_HEIGHT));
 
         whiteKeysPanel.setBounds(0, 0, totalWidth, WHITE_KEY_HEIGHT);
