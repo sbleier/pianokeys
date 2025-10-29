@@ -1,6 +1,8 @@
 package pianokeys;
 
 import javax.sound.midi.*;
+import javax.swing.*;
+import java.nio.channels.Channel;
 
 public class PianoSound {
     // MIDI note constants
@@ -25,6 +27,8 @@ public class PianoSound {
 
     public static final int[] whiteNotes = {C4, D4, E4, F4, G4, A4, B4, C5};
     public static final int[] blackNotes = {C4_SHARP, D4_SHARP, -1, F4_SHARP, G4_SHARP, A4_SHARP, -1};
+
+    public static final String[] instruments = {"piano", "guitar", "violin", "trumpet"};
 
     public PianoSound(Synthesizer synthesizer, MidiChannel channel) throws MidiUnavailableException {
         this.synthesizer = synthesizer;
@@ -51,5 +55,14 @@ public class PianoSound {
         synthesizer.close();
     }
 
+    //https://midiprog.com/program-numbers/
+    public void setInstrument(String instrumentName) {
+        switch (instrumentName) {
+            case "piano" -> channel.programChange(0);
+            case "guitar" -> channel.programChange(24);
+            case "violin" -> channel.programChange(40);
+            case "trumpet" -> channel.programChange(56);
+            default -> channel.programChange(0); //default: piano
+        }
+    }
 }
-

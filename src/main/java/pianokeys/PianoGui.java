@@ -1,9 +1,17 @@
 package pianokeys;
 
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.sound.midi.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static java.awt.Color.*;
 
@@ -24,10 +32,15 @@ public class PianoGui extends JFrame {
     private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * OCTAVES];
     private JButton[] blackButtons = new JButton[5 * OCTAVES];
 
+    //dropdown to change instrument
+    private JComboBox<String> instrumentDropdown;
+    //array of possible instruments
+
     // MIDI sound system
     private PianoSound sound;
 
-    public PianoGui() {
+    public PianoGui()
+    {
         setUpFrame();
         initMidi();
         JPanel whiteKeysPanel = createWhiteKeysPanel();
@@ -79,7 +92,8 @@ public class PianoGui extends JFrame {
         });
     }
 
-    private JPanel createWhiteKeysPanel() {
+    private JPanel createWhiteKeysPanel()
+    {
         JPanel whiteKeysPanel = new JPanel(null);
         whiteKeysPanel.setOpaque(true);
         whiteKeysPanel.setBackground(LIGHT_GRAY);
@@ -144,13 +158,26 @@ public class PianoGui extends JFrame {
         layeredPane.add(whiteKeysPanel, Integer.valueOf(0));
         layeredPane.add(blackKeysPanel, Integer.valueOf(1));
 
+
+        add(layeredPane, BorderLayout.CENTER);
+
+        instrumentDropdown = new JComboBox<>(PianoSound.instruments);
+
+        instrumentDropdown.addActionListener(e -> {
+            String instrument = (String) instrumentDropdown.getSelectedItem();
+            sound.setInstrument(instrument);
+        });
+        add(instrumentDropdown, BorderLayout.SOUTH);
         return layeredPane;
     }
 
     private JScrollPane createScrollPane(JLayeredPane layeredPane) {
         // uses a scroll method so that you can easily see all the keys
-        return new JScrollPane(layeredPane, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        return new JScrollPane(
+                layeredPane,
+                JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        );
     }
 
     private void centerOnMiddleC(JScrollPane scrollPane) {
