@@ -13,7 +13,9 @@ import static pianokeys.PianoSound.C4;
  * The position on the x axis is time.
  * The position on the y axis is where the note is on the scale.
  */
-public class CompositionView extends JComponent {
+public class CompositionView extends JComponent
+{
+    private Composition composition;
 
     /**
      * Width of one second when displaying notes in the View.
@@ -33,9 +35,18 @@ public class CompositionView extends JComponent {
     // This will change over time.
     private double currentTime = 1.25;
 
+    // Use the composition from the composition class
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g)
+    {
         super.paintComponent(g);
+
+        // if the composition (array) is full / has notes in it,
+        // for each note
+        if (composition != null)
+        {
+
+        }
 
         // This is test data.
         displayNote(g, 5.25, 10.75, PianoSound.D4);
@@ -81,7 +92,9 @@ public class CompositionView extends JComponent {
     /**
      * Sets the notes displayed in this CompositionView
      */
-    public void setNotes() {
+    public void setComposition(Composition composition)
+    {
+        this.composition = composition;
         repaint();
     }
 
