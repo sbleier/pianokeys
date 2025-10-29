@@ -35,8 +35,8 @@ public class PianoGui extends JFrame
     private PianoSound sound;
 
 
-
-    public PianoGui() {
+    public PianoGui()
+    {
         // constructor
 
         setUpFrame();
@@ -45,6 +45,11 @@ public class PianoGui extends JFrame
 
         JLayeredPane layeredPane = createLayeredPane(whiteKeysPanel, blackKeysPanel);
         JScrollPane scrollPane = createScrollPane(layeredPane);
+
+        CompositionView compositionView = new CompositionView();
+        compositionView.setPreferredSize(new Dimension(800, 200));
+
+        add(compositionView, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         centerOnMiddleC(scrollPane);
@@ -54,7 +59,7 @@ public class PianoGui extends JFrame
     {
         setTitle("Piano Keys");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 350);
+        setSize(800, 550);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
     }
@@ -133,7 +138,8 @@ public class PianoGui extends JFrame
 
         instrumentDropdown = new JComboBox<>(PianoSound.instruments);
 
-        instrumentDropdown.addActionListener(e -> {
+        instrumentDropdown.addActionListener(e ->
+        {
             String instrument = (String) instrumentDropdown.getSelectedItem();
             sound.setInstrument(instrument);
         });
@@ -154,7 +160,8 @@ public class PianoGui extends JFrame
     private void centerOnMiddleC(JScrollPane scrollPane)
     {
         // Centering the scroll pane to open on middle C - in octave 4 (0-based, so 3 is the 4th octave)
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() ->
+        {
             int middleCoctave = 3;
             int middleCindex = middleCoctave * WHITE_KEY_NAMES.length;
 
