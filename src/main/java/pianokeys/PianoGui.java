@@ -16,18 +16,19 @@ import static java.awt.Color.*;
 public class PianoGui extends JFrame
 {
     // declared everything
-    private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B", "C"};
+    private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final String[] BLACK_KEY_NAMES = {"C#", "D#", "", "F#", "G#", "A#", ""};
 
     // White keys
-    private static final int WHITE_KEY_WIDTH = 100;
-    private static final int WHITE_KEY_HEIGHT = 200;
+    private static final int WHITE_KEY_WIDTH = 50;
+    private static final int WHITE_KEY_HEIGHT = 250;
     // Black keys
-    private static final int BLACK_KEY_WIDTH = 60;
-    private static final int BLACK_KEY_HEIGHT = 120;
+    private static final int BLACK_KEY_WIDTH = 30;
+    private static final int BLACK_KEY_HEIGHT = 170;
 
-    private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length];
-    private JButton[] blackButtons = new JButton[BLACK_KEY_NAMES.length];
+    private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * 7];
+    private JButton[] blackButtons = new JButton[35];
+
 
     //dropdown to change instrument
     private JComboBox<String> instrumentDropdown;
@@ -38,49 +39,88 @@ public class PianoGui extends JFrame
 
     public PianoGui() {
         // constructor
+
+
+        setUpFrame();
+        JPanel whiteKeysPanel = createWhiteKeysPanel();
+        JPanel blackKeysPanel = createBlackKeysPanel();
+
+        JLayeredPane layeredPane = createLayeredPane(whiteKeysPanel, blackKeysPanel);
+        JScrollPane scrollPane = createScrollPane(layeredPane);
+        add(scrollPane, BorderLayout.CENTER);
+
+        centerOnMiddleC(scrollPane);
+    }
+
+    private void setUpFrame()
+    {
         setTitle("Piano Keys");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(800, 350);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
+    }
 
-        // Create the panels for white and black keys
-        JPanel whiteKeysPanel = new JPanel();
-        whiteKeysPanel.setLayout(null);
+    private JPanel createWhiteKeysPanel()
+    {
+        JPanel whiteKeysPanel = new JPanel(null);
         whiteKeysPanel.setOpaque(true);
         whiteKeysPanel.setBackground(LIGHT_GRAY);
 
+        // nested for loop to run each octave to get 56 white keys
+        // switched out i for keyIndex so that we can loop through without them all overlapping
+        for (int octave = 0; octave < 7; octave++)
+        {
+            for (int i = 0; i < WHITE_KEY_NAMES.length; i++)
+            {
+                JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i]);
+
+                // calculating position across all the indexes not just the first loop
+                int keyIndex = octave * WHITE_KEY_NAMES.length + i;
+                whiteButtons[keyIndex] = button;
+
+                button.setBounds(keyIndex * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
+                whiteKeysPanel.add(button);
+            }
+        }
+        return whiteKeysPanel;
+    }
+
+    private JPanel createBlackKeysPanel()
+    {
         JPanel blackKeysPanel = new JPanel();
         blackKeysPanel.setLayout(null);
         blackKeysPanel.setOpaque(false);
 
-        // loop runs 8 times to lay out all the white keys and label them properly
-        for (int i = 0; i < WHITE_KEY_NAMES.length; i++)
+        int blackKeyIndex = 0;
+        for (int octave = 0; octave < 7; octave++)
         {
-            JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i]);
-            whiteButtons[i] = button;
-            button.setBounds(i * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
-            whiteKeysPanel.add(button);
-        }
-
-        // same thing to loop through black keys to make them
-        for (int i = 0; i < BLACK_KEY_NAMES.length; i++)
-        {
-            if (!BLACK_KEY_NAMES[i].isEmpty())
+            for (int i = 0; i < BLACK_KEY_NAMES.length; i++)
             {
-                JButton button = createBlackPianoKey(BLACK_KEY_NAMES[i]);
-                blackButtons[i] = button;
+                if (!BLACK_KEY_NAMES[i].isEmpty())
+                {
+                    JButton button = createBlackPianoKey(BLACK_KEY_NAMES[i]);
+                    blackButtons[blackKeyIndex] = button;
 
-                // make sure that the black keys are between the white keys
-                int blackKeyX = (i * WHITE_KEY_WIDTH) + WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2);
-                button.setBounds(blackKeyX, 0, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
-                blackKeysPanel.add(button);
+                    int whiteKeyPosition = octave * WHITE_KEY_NAMES.length + i;
+
+                    // make sure that the black keys are between the white keys
+                    int blackKeyX = (whiteKeyPosition * WHITE_KEY_WIDTH) + WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2);
+                    button.setBounds(blackKeyX, 0, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
+                    blackKeysPanel.add(button);
+
+                    blackKeyIndex++;
+                }
             }
         }
+        return blackKeysPanel;
+    }
 
+    private JLayeredPane createLayeredPane(JPanel whiteKeysPanel, JPanel blackKeysPanel)
+    {
         // Layered pane to make the black keys on white keys
         JLayeredPane layeredPane = new JLayeredPane();
-        int totalWidth = WHITE_KEY_NAMES.length * WHITE_KEY_WIDTH;
+        int totalWidth = WHITE_KEY_NAMES.length * 7 * WHITE_KEY_WIDTH;
         layeredPane.setPreferredSize(new Dimension(totalWidth, WHITE_KEY_HEIGHT));
 
         whiteKeysPanel.setBounds(0, 0, totalWidth, WHITE_KEY_HEIGHT);
@@ -89,6 +129,7 @@ public class PianoGui extends JFrame
         // using different layers to add the panels
         layeredPane.add(whiteKeysPanel, Integer.valueOf(0));
         layeredPane.add(blackKeysPanel, Integer.valueOf(1));
+
 
         add(layeredPane, BorderLayout.CENTER);
 
@@ -99,6 +140,33 @@ public class PianoGui extends JFrame
             sound.setInstrument(instrument);
         });
         add(instrumentDropdown, BorderLayout.SOUTH);
+        return layeredPane;
+    }
+
+    private JScrollPane createScrollPane(JLayeredPane layeredPane)
+    {
+        // uses a scroll method so that you can easily see all the keys
+        return new JScrollPane(
+                layeredPane,
+                JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        );
+    }
+
+    private void centerOnMiddleC(JScrollPane scrollPane)
+    {
+        // Centering the scroll pane to open on middle C - in octave 4 (0-based, so 3 is the 4th octave)
+        SwingUtilities.invokeLater(() -> {
+            int middleCoctave = 3;
+            int middleCindex = middleCoctave * WHITE_KEY_NAMES.length;
+
+            int middleCx = middleCindex * WHITE_KEY_WIDTH
+                    - (scrollPane.getViewport().getWidth() / 2) + (WHITE_KEY_WIDTH / 2);
+            middleCx = Math.max(0, Math.min(middleCx, scrollPane.getHorizontalScrollBar().getMaximum()
+                    - scrollPane.getViewport().getWidth()));
+
+            scrollPane.getHorizontalScrollBar().setValue(middleCx);
+        });
     }
 
     private JButton createWhitePianoKey(String whiteKeyName)
