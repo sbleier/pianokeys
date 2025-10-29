@@ -57,7 +57,7 @@ public class PianoSound
         synthesizer.close();
     }
 
-    //https://docs.oracle.com/javase/8/docs/api/javax/sound/midi/MidiChannel.html
+    //https://midiprog.com/program-numbers/
     public void setInstrument(String instrumentName) {
         switch (instrumentName) {
             case "piano" -> channel.programChange(0);
