@@ -4,8 +4,7 @@ import javax.sound.midi.*;
 import javax.swing.*;
 import java.nio.channels.Channel;
 
-public class PianoSound
-{
+public class PianoSound {
     // MIDI note constants
     public static final int C4 = 60;
     public static final int D4 = 62;
@@ -16,44 +15,43 @@ public class PianoSound
     public static final int B4 = 71;
     public static final int C5 = 72;
 
+    // Black key (sharp) note constants
+    public static final int C4_SHARP = 61;
+    public static final int D4_SHARP = 63;
+    public static final int F4_SHARP = 66;
+    public static final int G4_SHARP = 68;
+    public static final int A4_SHARP = 70;
+
     private final Synthesizer synthesizer;
     private final MidiChannel channel;
 
-    //array of possible instruments
+    public static final int[] whiteNotes = {C4, D4, E4, F4, G4, A4, B4, C5};
+    public static final int[] blackNotes = {C4_SHARP, D4_SHARP, -1, F4_SHARP, G4_SHARP, A4_SHARP, -1};
+
     public static final String[] instruments = {"piano", "guitar", "violin", "trumpet"};
 
-    // Use the constants in your array
-    public static final int[] notes = {C4, D4, E4, F4, G4, A4, B4, C5};
-
-    public PianoSound(Synthesizer synthesizer, MidiChannel channel) throws MidiUnavailableException
-    {
+    public PianoSound(Synthesizer synthesizer, MidiChannel channel) throws MidiUnavailableException {
         this.synthesizer = synthesizer;
         this.channel = channel;
     }
 
-    public MidiChannel getChannel()
-    {
+    public MidiChannel getChannel() {
         return channel;
     }
 
-    public Synthesizer getSynthesizer()
-    {
+    public Synthesizer getSynthesizer() {
         return synthesizer;
     }
 
-
-    public void playNote(int note)
-    {
-            channel.noteOn(note, 127); // velocity 127 (max volume)
+    public void playNote(int note) {
+        channel.noteOn(note, 127); // velocity 127 (max volume)
     }
 
-    public void stopNote(int note)
-    {
-            channel.noteOff(note);
+    public void stopNote(int note) {
+        channel.noteOff(note);
     }
 
-    public void cleanup()
-    {
+    public void cleanup() {
         synthesizer.close();
     }
 
