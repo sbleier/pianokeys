@@ -170,6 +170,7 @@ public class PianoGui extends JFrame {
 
     private JButton createWhitePianoKey(String whiteKeyName, int note) {
         JButton key = new JButton(whiteKeyName);
+
         // make it look like a piano key
         key.setBackground(WHITE);
         key.setForeground(BLACK);
