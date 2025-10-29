@@ -1,6 +1,7 @@
 package pianokeys;
 
 import javax.sound.midi.*;
+import javax.swing.*;
 import java.nio.channels.Channel;
 
 public class PianoSound
@@ -17,6 +18,9 @@ public class PianoSound
 
     private final Synthesizer synthesizer;
     private final MidiChannel channel;
+
+    //array of possible instruments
+    public static final String[] instruments = {"piano", "guitar", "violin", "trumpet"};
 
     // Use the constants in your array
     public static final int[] notes = {C4, D4, E4, F4, G4, A4, B4, C5};
@@ -37,6 +41,7 @@ public class PianoSound
         return synthesizer;
     }
 
+
     public void playNote(int note)
     {
             channel.noteOn(note, 127); // velocity 127 (max volume)
@@ -52,4 +57,14 @@ public class PianoSound
         synthesizer.close();
     }
 
+    //https://midiprog.com/program-numbers/
+    public void setInstrument(String instrumentName) {
+        switch (instrumentName) {
+            case "piano" -> channel.programChange(0);
+            case "guitar" -> channel.programChange(24);
+            case "violin" -> channel.programChange(40);
+            case "trumpet" -> channel.programChange(56);
+            default -> channel.programChange(0); //default: piano
+        }
+    }
 }
