@@ -29,17 +29,15 @@ public class PianoGui extends JFrame
     private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * 7];
     private JButton[] blackButtons = new JButton[35];
 
-
     //dropdown to change instrument
     private JComboBox<String> instrumentDropdown;
     //array of possible instruments
-    private static PianoSound sound;
+    private PianoSound sound;
 
 
 
     public PianoGui() {
         // constructor
-
 
         setUpFrame();
         JPanel whiteKeysPanel = createWhiteKeysPanel();
