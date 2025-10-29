@@ -55,7 +55,7 @@ public class PianoGui extends JFrame {
 
     private int getBlackNoteForOctave(int octave, int blackIndex) {
         int base = PianoSound.blackNotes[blackIndex];
-        if (base == -1) return -1;
+        if (base == -1) { return -1; }
         return base + (octave - 3) * 12;
     }
 
@@ -74,7 +74,7 @@ public class PianoGui extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (sound != null) sound.cleanup();
+                if (sound != null) { sound.cleanup(); }
             }
         });
     }
@@ -112,7 +112,7 @@ public class PianoGui extends JFrame {
             for (int i = 0; i < BLACK_KEY_NAMES.length; i++) {
                 if (!BLACK_KEY_NAMES[i].isEmpty()) {
                     int note = getBlackNoteForOctave(octave, i);
-                    if (note == -1) continue; // skip keys that don't exist (like between E-F or B-C)
+                    if (note == -1) { continue; } // skip keys that don't exist (like between E-F or B-C)
                     JButton button = createBlackPianoKey(BLACK_KEY_NAMES[i], note);
 
                     blackButtons[blackKeyIndex] = button;
@@ -159,10 +159,10 @@ public class PianoGui extends JFrame {
             int middleCoctave = 3;
             int middleCindex = middleCoctave * WHITE_KEY_NAMES.length;
 
-            int middleCx = middleCindex * WHITE_KEY_WIDTH - (scrollPane.getViewport().getWidth() / 2) +
-                    (WHITE_KEY_WIDTH / 2);
-            middleCx = Math.max(0, Math.min(middleCx, scrollPane.getHorizontalScrollBar().getMaximum() -
-                    scrollPane.getViewport().getWidth()));
+            int middleCx = middleCindex * WHITE_KEY_WIDTH - (scrollPane.getViewport().getWidth() / 2)
+                    + (WHITE_KEY_WIDTH / 2);
+            middleCx = Math.max(0, Math.min(middleCx, scrollPane.getHorizontalScrollBar().getMaximum()
+                    - scrollPane.getViewport().getWidth()));
 
             scrollPane.getHorizontalScrollBar().setValue(middleCx);
         });
