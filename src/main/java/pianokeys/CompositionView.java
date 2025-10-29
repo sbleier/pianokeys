@@ -2,6 +2,7 @@ package pianokeys;
 
 import javax.swing.JComponent;
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 import static java.awt.Color.BLACK;
 import static java.awt.Color.CYAN;
@@ -15,7 +16,6 @@ import static pianokeys.PianoSound.C4;
  */
 public class CompositionView extends JComponent
 {
-    private Composition composition;
 
     /**
      * Width of one second when displaying notes in the View.
@@ -35,25 +35,24 @@ public class CompositionView extends JComponent
     // This will change over time.
     private double currentTime = 1.25;
 
+    private Composition composition = new Composition();
+
     // Use the composition from the composition class
     @Override
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
 
-        // if the composition (array) is full / has notes in it,
-        // for each note
-        if (composition != null)
+        /*
+         * if the composition (array) is full / has notes in it,
+         * for each note, it loops through every note in the composition
+         * for each note, you call the existing display note method: which has startTime, endTime, key
+         */
+        ArrayList<Note> notes = composition.getNoteList();
+        for (Note note : notes)
         {
-
+            displayNote(g, note.startTime(), note.endTime(), note.key());
         }
-
-        // This is test data.
-        displayNote(g, 5.25, 10.75, PianoSound.D4);
-        displayNote(g, 0, 5, PianoSound.E4);
-        displayNote(g, 1, 2, PianoSound.A4);
-        displayNote(g, 0, 2, PianoSound.B4);
-        displayNote(g, 4.5, 6.25, PianoSound.F4);
 
         displayCurrentTimeLine(g);
     }
