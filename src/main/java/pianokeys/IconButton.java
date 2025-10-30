@@ -53,6 +53,9 @@ public class IconButton extends JButton
                         g2d.fillRect(x + 8, y + 3, 2, 10);
                         g2d.fillRect(x + 8, y + 3, 5, 2);
                         break;
+                    default:
+                        System.err.println("Unknown icon shape: " + shape);
+                        break;
                 }
             }
 
