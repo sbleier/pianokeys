@@ -1,7 +1,10 @@
 package pianokeys;
 
-import javax.swing.JComponent;
-import java.awt.Graphics;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import static java.awt.Color.BLACK;
 import static java.awt.Color.CYAN;
@@ -13,7 +16,9 @@ import static pianokeys.PianoSound.C4;
  * The position on the x axis is time.
  * The position on the y axis is where the note is on the scale.
  */
-public class CompositionView extends JComponent {
+public class CompositionView extends JComponent
+{
+    private Composition composition;
 
     /**
      * Width of one second when displaying notes in the View.
@@ -81,8 +86,71 @@ public class CompositionView extends JComponent {
     /**
      * Sets the notes displayed in this CompositionView
      */
-    public void setNotes() {
+    public void setComposition(Composition composition)
+    {
+        this.composition = composition;
         repaint();
     }
 
+    public CompositionView()
+    {
+        // Use MouseListener for the clicking
+        addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if (SwingUtilities.isLeftMouseButton(e))
+                {
+                    if (e.getClickCount() == 2)
+                    {
+                        // Double click to delete note
+                        deleteNoteAtPoint(e.getPoint());
+                    } else if (e.getClickCount() == 1)
+                    {
+                        // Single click to set current time
+                        setTimeAtPoint(e.getPoint());
+                    }
+                }
+            }
+        });
+    }
+
+    private void deleteNoteAtPoint(Point p)
+    {
+        // Calculate the time and note from the mouse coordinates
+        double clickedTime = (double) p.x / SECOND_WIDTH;
+        int clickedNote = ((getHeight() - p.y) / NOTE_HEIGHT) + PianoSound.C4; // reverse calculation
+
+        ArrayList<Note> notes = composition.getNoteList();
+
+        // Find the note that was clicked
+        Note noteToDelete = null;
+        for (Note note : notes)
+        {
+            if (clickedNote == note.key()
+                    && clickedTime >= note.startTime()
+                    && clickedTime <= note.endTime())
+            {
+                noteToDelete = note;
+                break;
+            }
+        }
+
+        if (noteToDelete != null)
+        {
+            notes.remove(noteToDelete);
+            repaint();
+        }
+    }
+
+    private void setTimeAtPoint(Point p)
+    {
+        double newTime = (double) p.x / SECOND_WIDTH;
+
+        // Make sure that the time isn't negative
+        if (newTime < 0) newTime = 0;
+
+        setCurrentTime(newTime);
+    }
 }
