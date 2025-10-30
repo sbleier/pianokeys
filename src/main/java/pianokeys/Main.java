@@ -14,6 +14,7 @@ public class Main
 
         PianoGui gui = new PianoGui();
         gui.setVisible(true);
+
     }
 }
 
