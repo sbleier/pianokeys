@@ -26,12 +26,11 @@ public class CompositionRunnable implements Runnable {
         while (time <= max) {
 
             //loop through noteList to play all notes
-            for (Note note: composition.getNoteList()) {
+            for (Note note : composition.getNoteList()) {
 
                 if (note.endTime() == time) {
                     sound.stopNote(note.key());
-                }
-                else if (note.startTime() == time) {
+                } else if (note.startTime() == time) {
                     sound.playNote(note.key());
                 }
 
