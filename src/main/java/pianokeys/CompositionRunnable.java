@@ -38,7 +38,8 @@ public class CompositionRunnable implements Runnable {
 
             try {
                 Thread.sleep((long) (STEP * 1000));
-            } catch (InterruptedException ignored) {
+            } catch (InterruptedException e) {
+                System.err.println(e.getMessage());
 
             }
 
