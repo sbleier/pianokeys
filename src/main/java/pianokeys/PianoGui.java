@@ -15,7 +15,8 @@ import java.awt.event.MouseEvent;
 
 import static java.awt.Color.*;
 
-public class PianoGui extends JFrame {
+public class PianoGui extends JFrame
+{
     // declared everything
     private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final String[] BLACK_KEY_NAMES = {"C#", "D#", "", "F#", "G#", "A#", ""};
@@ -42,7 +43,6 @@ public class PianoGui extends JFrame {
     public PianoGui()
     {
         setUpFrame();
-        initMidi();
         JPanel whiteKeysPanel = createWhiteKeysPanel();
         JPanel blackKeysPanel = createBlackKeysPanel();
 
@@ -50,16 +50,58 @@ public class PianoGui extends JFrame {
         JScrollPane scrollPane = createScrollPane(layeredPane);
 
         CompositionView compositionView = new CompositionView();
-        compositionView.setPreferredSize(new Dimension(800, 200));
+        compositionView.setPreferredSize(new Dimension(2000, 400));
 
-        add(compositionView, BorderLayout.NORTH);
+        // vertical scroll bar for CompositionView
+        JScrollPane compositionScrollPane = new JScrollPane(
+                compositionView,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        );
+        compositionScrollPane.setPreferredSize(new Dimension(800, 200));
+
+        // horizontal scrollbar for composition
+        JScrollBar horizontalScrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 100, 0, 2000);
+
+        horizontalScrollBar.addAdjustmentListener(e ->
+        {
+            int value = e.getValue();
+            compositionScrollPane.getViewport().setViewPosition(new Point(value, 0));
+        });
+
+        // buttons panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton erase = new IconButton("Erase", Color.RED, "erase");
+        JButton restart = new IconButton("Restart", Color.BLUE, "restart");
+        JButton record = new IconButton("Record", Color.RED, "record");
+        JButton play = new IconButton("Play", Color.GREEN, "play");
+        JButton chooseInstrument = new IconButton("Choose Instrument", Color.ORANGE, "instrument");
+
+        buttonPanel.add(erase);
+        buttonPanel.add(restart);
+        buttonPanel.add(record);
+        buttonPanel.add(play);
+        buttonPanel.add(chooseInstrument);
+
+        // panel to hold buttons at top and scrollpane
+        JPanel compositionPanel = new JPanel(new BorderLayout());
+        compositionPanel.add(buttonPanel, BorderLayout.NORTH);
+        compositionPanel.add(compositionScrollPane, BorderLayout.CENTER);
+
+        // panel to hold composition and scrollbar
+        JPanel compositionWithScrollbar = new JPanel(new BorderLayout());
+        compositionWithScrollbar.add(compositionPanel, BorderLayout.CENTER);
+        compositionWithScrollbar.add(horizontalScrollBar, BorderLayout.SOUTH);
+
+        add(compositionWithScrollbar, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         centerOnMiddleC(scrollPane);
-        midiCleanup();
+
     }
 
-    private void setUpFrame() {
+    private void setUpFrame()
+    {
         setTitle("Piano Keys");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 550);
@@ -67,32 +109,46 @@ public class PianoGui extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    private int getWhiteNoteForOctave(int octave, int whiteIndex) {
+    private int getWhiteNoteForOctave(int octave, int whiteIndex)
+    {
         return PianoSound.whiteNotes[whiteIndex] + (octave - 3) * 12;
     }
 
-    private int getBlackNoteForOctave(int octave, int blackIndex) {
+    private int getBlackNoteForOctave(int octave, int blackIndex)
+    {
         int base = PianoSound.blackNotes[blackIndex];
-        if (base == -1) { return -1; }
+        if (base == -1)
+        {
+            return -1;
+        }
         return base + (octave - 3) * 12;
     }
 
-    private void initMidi() {
-        try {
+    private void initMidi()
+    {
+        try
+        {
             Synthesizer synthesizer = MidiSystem.getSynthesizer();
             synthesizer.open();
             MidiChannel channel = synthesizer.getChannels()[0];
             sound = new PianoSound(synthesizer, channel);
-        } catch (MidiUnavailableException e) {
+        } catch (MidiUnavailableException e)
+        {
             System.err.println("MIDI system unavailable: " + e.getMessage());
         }
     }
 
-    private void midiCleanup() {
-        addWindowListener(new WindowAdapter() {
+    private void midiCleanup()
+    {
+        addWindowListener(new WindowAdapter()
+        {
             @Override
-            public void windowClosing(WindowEvent e) {
-                if (sound != null) { sound.cleanup(); }
+            public void windowClosing(WindowEvent e)
+            {
+                if (sound != null)
+                {
+                    sound.cleanup();
+                }
             }
         });
     }
@@ -105,8 +161,10 @@ public class PianoGui extends JFrame {
 
         // nested for loop to run each octave to get 56 white keys
         // switched out i for keyIndex so that we can loop through without them all overlapping
-        for (int octave = 0; octave < OCTAVES; octave++) {
-            for (int i = 0; i < WHITE_KEY_NAMES.length; i++) {
+        for (int octave = 0; octave < OCTAVES; octave++)
+        {
+            for (int i = 0; i < WHITE_KEY_NAMES.length; i++)
+            {
                 int note = getWhiteNoteForOctave(octave, i);
                 JButton button = createWhitePianoKey(WHITE_KEY_NAMES[i], note);
 
@@ -121,17 +179,24 @@ public class PianoGui extends JFrame {
         return whiteKeysPanel;
     }
 
-    private JPanel createBlackKeysPanel() {
+    private JPanel createBlackKeysPanel()
+    {
         JPanel blackKeysPanel = new JPanel();
         blackKeysPanel.setLayout(null);
         blackKeysPanel.setOpaque(false);
 
         int blackKeyIndex = 0;
-        for (int octave = 0; octave < OCTAVES; octave++) {
-            for (int i = 0; i < BLACK_KEY_NAMES.length; i++) {
-                if (!BLACK_KEY_NAMES[i].isEmpty()) {
+        for (int octave = 0; octave < OCTAVES; octave++)
+        {
+            for (int i = 0; i < BLACK_KEY_NAMES.length; i++)
+            {
+                if (!BLACK_KEY_NAMES[i].isEmpty())
+                {
                     int note = getBlackNoteForOctave(octave, i);
-                    if (note == -1) { continue; } // skip keys that don't exist (like between E-F or B-C)
+                    if (note == -1)
+                    {
+                        continue;
+                    } // skip keys that don't exist (like between E-F or B-C)
                     JButton button = createBlackPianoKey(BLACK_KEY_NAMES[i], note);
 
                     blackButtons[blackKeyIndex] = button;
@@ -150,7 +215,8 @@ public class PianoGui extends JFrame {
         return blackKeysPanel;
     }
 
-    private JLayeredPane createLayeredPane(JPanel whiteKeysPanel, JPanel blackKeysPanel) {
+    private JLayeredPane createLayeredPane(JPanel whiteKeysPanel, JPanel blackKeysPanel)
+    {
         // Layered pane to make the black keys on white keys
         JLayeredPane layeredPane = new JLayeredPane();
         int totalWidth = WHITE_KEY_NAMES.length * OCTAVES * WHITE_KEY_WIDTH;
@@ -177,7 +243,8 @@ public class PianoGui extends JFrame {
         return layeredPane;
     }
 
-    private JScrollPane createScrollPane(JLayeredPane layeredPane) {
+    private JScrollPane createScrollPane(JLayeredPane layeredPane)
+    {
         // uses a scroll method so that you can easily see all the keys
         return new JScrollPane(
                 layeredPane,
@@ -186,7 +253,8 @@ public class PianoGui extends JFrame {
         );
     }
 
-    private void centerOnMiddleC(JScrollPane scrollPane) {
+    private void centerOnMiddleC(JScrollPane scrollPane)
+    {
         // Centering the scroll pane to open on middle C - in octave 4 (0-based, so 3 is the 4th octave)
         SwingUtilities.invokeLater(() ->
         {
@@ -202,7 +270,8 @@ public class PianoGui extends JFrame {
         });
     }
 
-    private JButton createWhitePianoKey(String whiteKeyName, int note) {
+    private JButton createWhitePianoKey(String whiteKeyName, int note)
+    {
         JButton key = new JButton(whiteKeyName);
 
         // make it look like a piano key
@@ -215,46 +284,58 @@ public class PianoGui extends JFrame {
         key.setContentAreaFilled(true);
 
         // hover to show the key
-        key.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent evt) {
+        key.addMouseListener(new MouseAdapter()
+        {
+            public void mouseEntered(MouseEvent evt)
+            {
                 key.setBackground(LIGHT_GRAY);
             }
 
-            public void mouseExited(MouseEvent evt) {
+            public void mouseExited(MouseEvent evt)
+            {
                 key.setBackground(WHITE);
             }
 
-            public void mousePressed(MouseEvent evt) {
+            public void mousePressed(MouseEvent evt)
+            {
                 key.setBackground(DARK_GRAY);
-                if (sound != null) {
+                if (sound != null)
+                {
                     sound.playNote(note);
                 }
             }
 
-            public void mouseReleased(MouseEvent evt) {
-                if (sound != null) {
+            public void mouseReleased(MouseEvent evt)
+            {
+                if (sound != null)
+                {
                     sound.stopNote(note);
                 }
 
-                if (key.contains(evt.getPoint())) {
+                if (key.contains(evt.getPoint()))
+                {
                     key.setBackground(LIGHT_GRAY);
-                } else {
+                } else
+                {
                     key.setBackground(WHITE);
                 }
             }
 
         });
 
-        key.addActionListener(new ActionListener() {
+        key.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 System.out.println("Key pressed: " + whiteKeyName);
             }
         });
         return key;
     }
 
-    private JButton createBlackPianoKey(String blackKeyName, int note) {
+    private JButton createBlackPianoKey(String blackKeyName, int note)
+    {
         JButton key = new JButton(blackKeyName);
         key.setBackground(BLACK);
         key.setForeground(WHITE);
@@ -264,39 +345,50 @@ public class PianoGui extends JFrame {
         key.setOpaque(true);
         key.setContentAreaFilled(true);
 
-        key.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent evt) {
+        key.addMouseListener(new MouseAdapter()
+        {
+            public void mouseEntered(MouseEvent evt)
+            {
                 key.setBackground(LIGHT_GRAY);
             }
 
-            public void mouseExited(MouseEvent evt) {
+            public void mouseExited(MouseEvent evt)
+            {
                 key.setBackground(BLACK);
             }
 
-            public void mousePressed(MouseEvent evt) {
+            public void mousePressed(MouseEvent evt)
+            {
                 key.setBackground(DARK_GRAY);
-                if (sound != null) {
+                if (sound != null)
+                {
                     sound.playNote(note);
                 }
             }
 
-            public void mouseReleased(MouseEvent evt) {
-                if (sound != null) {
+            public void mouseReleased(MouseEvent evt)
+            {
+                if (sound != null)
+                {
                     sound.stopNote(note);
                 }
 
                 // Check if mouse is still over the component
-                if (key.contains(evt.getPoint())) {
+                if (key.contains(evt.getPoint()))
+                {
                     key.setBackground(LIGHT_GRAY);
-                } else {
+                } else
+                {
                     key.setBackground(BLACK);
                 }
             }
         });
 
-        key.addActionListener(new ActionListener() {
+        key.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 System.out.println("Key pressed: " + blackKeyName);
             }
         });

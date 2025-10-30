@@ -1,11 +1,9 @@
 package pianokeys;
 
-import javax.swing.JComponent;
-import java.awt.Graphics;
+import javax.swing.*;
+import java.awt.*;
 
-import static java.awt.Color.BLACK;
-import static java.awt.Color.CYAN;
-import static java.awt.Color.ORANGE;
+import static java.awt.Color.*;
 import static pianokeys.PianoSound.C4;
 
 /**
@@ -13,7 +11,8 @@ import static pianokeys.PianoSound.C4;
  * The position on the x axis is time.
  * The position on the y axis is where the note is on the scale.
  */
-public class CompositionView extends JComponent {
+public class CompositionView extends JComponent
+{
 
     /**
      * Width of one second when displaying notes in the View.
@@ -34,7 +33,8 @@ public class CompositionView extends JComponent {
     private double currentTime = 1.25;
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g)
+    {
         super.paintComponent(g);
 
         // This is test data.
@@ -47,7 +47,8 @@ public class CompositionView extends JComponent {
         displayCurrentTimeLine(g);
     }
 
-    private void displayNote(Graphics g, double noteStartTimeSeconds, double noteEndTimeSeconds, int note) {
+    private void displayNote(Graphics g, double noteStartTimeSeconds, double noteEndTimeSeconds, int note)
+    {
         int modifiedNote = note - C4;
         int x1 = (int) (noteStartTimeSeconds * SECOND_WIDTH);
         int x2 = (int) (noteEndTimeSeconds * SECOND_WIDTH);
@@ -58,22 +59,26 @@ public class CompositionView extends JComponent {
         g.drawRect(x1, y1, x2 - x1, NOTE_HEIGHT);
     }
 
-    private void displayCurrentTimeLine(Graphics g) {
+    private void displayCurrentTimeLine(Graphics g)
+    {
         int currentTimeX = (int) (currentTime * SECOND_WIDTH);
         g.setColor(ORANGE);
         g.fillRect(currentTimeX, 0, CURRENT_TIME_WIDTH, getHeight());
     }
 
-    public double getCurrentTime() {
+    public double getCurrentTime()
+    {
         return currentTime;
     }
 
-    public void setCurrentTime(double currentTime) {
+    public void setCurrentTime(double currentTime)
+    {
         this.currentTime = currentTime;
         repaint();
     }
 
-    public void addTime(double delta) {
+    public void addTime(double delta)
+    {
         this.currentTime += delta;
         repaint();
     }
@@ -81,7 +86,8 @@ public class CompositionView extends JComponent {
     /**
      * Sets the notes displayed in this CompositionView
      */
-    public void setNotes() {
+    public void setNotes()
+    {
         repaint();
     }
 
