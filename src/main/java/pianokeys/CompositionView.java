@@ -149,7 +149,10 @@ public class CompositionView extends JComponent
         double newTime = (double) p.x / SECOND_WIDTH;
 
         // Make sure that the time isn't negative
-        if (newTime < 0) newTime = 0;
+        if (newTime < 0)
+        {
+            newTime = 0;
+        }
 
         setCurrentTime(newTime);
     }
