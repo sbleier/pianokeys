@@ -14,7 +14,7 @@ public class CompositionViewTest
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1600, 400); // Set size large enough for clear view
 
-            CompositionView compView = new CompositionView();
+            final CompositionView compView = new CompositionView();
 
             Composition composition = new Composition();
 
