@@ -16,6 +16,10 @@ import java.awt.event.MouseEvent;
 import static java.awt.Color.*;
 
 public class PianoGui extends JFrame {
+
+    private final Composition composition = new Composition();
+    private long recordStartTime = -1;
+
     // declared everything
     private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final String[] BLACK_KEY_NAMES = {"C#", "D#", "", "F#", "G#", "A#", ""};
@@ -209,22 +213,45 @@ public class PianoGui extends JFrame {
 
         // hover to show the key
         key.addMouseListener(new MouseAdapter() {
+
+            private long pressTime;
+            @Override
             public void mouseEntered(MouseEvent evt) {
                 key.setBackground(LIGHT_GRAY);
             }
 
+            @Override
             public void mouseExited(MouseEvent evt) {
                 key.setBackground(WHITE);
             }
 
+            @Override
             public void mousePressed(MouseEvent evt) {
                 key.setBackground(DARK_GRAY);
+                long currentTime = System.currentTimeMillis();
+
+                if (recordStartTime == -1) {
+                    recordStartTime = currentTime; // when it started
+                }
+                pressTime = currentTime - recordStartTime; // makes it 0 for the first key - how long since start
+
                 if (sound != null) {
                     sound.playNote(note);
                 }
             }
 
+            @Override
             public void mouseReleased(MouseEvent evt) {
+
+                long releaseTime = System.currentTimeMillis() - recordStartTime; // time since first key pressed
+                double startSec = pressTime / 1000.0;
+                double endSec = releaseTime / 1000.0;
+
+                // create and store the note in the composition
+                composition.addNote(new Note(note, startSec, endSec));
+                System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
+                System.out.println("Total notes recorded: " + composition.getNoteList().size());
+
                 if (sound != null) {
                     sound.stopNote(note);
                 }
@@ -258,22 +285,47 @@ public class PianoGui extends JFrame {
         key.setContentAreaFilled(true);
 
         key.addMouseListener(new MouseAdapter() {
+            private long pressTime;
+
+            @Override
             public void mouseEntered(MouseEvent evt) {
                 key.setBackground(LIGHT_GRAY);
             }
 
+            @Override
             public void mouseExited(MouseEvent evt) {
                 key.setBackground(BLACK);
             }
 
+            @Override
             public void mousePressed(MouseEvent evt) {
                 key.setBackground(DARK_GRAY);
+
+                long currentTime = System.currentTimeMillis();
+
+                // If this is the first note, mark the start of the recording
+                if (recordStartTime == -1) {
+                    recordStartTime = currentTime;
+                }
+
+                pressTime = currentTime - recordStartTime; // make it relative to start
                 if (sound != null) {
                     sound.playNote(note);
                 }
             }
 
+            @Override
             public void mouseReleased(MouseEvent evt) {
+
+                long releaseTime = System.currentTimeMillis() - recordStartTime;
+
+                double startSec = pressTime / 1000.0;
+                double endSec = releaseTime / 1000.0;
+
+                composition.addNote(new Note(note, startSec, endSec));
+                System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
+                System.out.println("Total notes recorded: " + composition.getNoteList().size());
+
                 if (sound != null) {
                     sound.stopNote(note);
                 }
