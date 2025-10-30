@@ -2,12 +2,16 @@ package pianokeys;
 
 import org.junit.jupiter.api.Test;
 
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 class CompositionTest
 {
@@ -40,4 +44,6 @@ class CompositionTest
         // then
         assertEquals(composition.getNoteList(), notes);
     }
+
+
 }
