@@ -21,7 +21,7 @@ public class PianoSound {
     public static final int E5 = 76;
 
 
-     // Black key (sharp) note constants
+    // Black key (sharp) note constants
     public static final int C4_SHARP = 61;
     public static final int D4_SHARP = 63;
     public static final int F4_SHARP = 66;
