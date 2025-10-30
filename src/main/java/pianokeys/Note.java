@@ -1,7 +1,7 @@
 package pianokeys;
 
 /**
- * @param key
+ * @param key       from PianoSound
  * @param startTime in seconds
  * @param endTime   in seconds
  */
@@ -13,7 +13,7 @@ public record Note(int key, double startTime, double endTime) {
     public static final double TIME_STEP = 1 / 8.0;
 
     /**
-     * @param time
+     * @param time in seconds
      * @return time rounded to the nearest 8th of a second.
      */
     public static double roundToNearestEight(double time) {
