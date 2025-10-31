@@ -16,14 +16,7 @@ public class CompositionRunnable implements Runnable {
     public void run() {
         double time = 0;
 
-        double max = 0;
-        for (Note note : composition.getNoteList()) {
-            if (note.endTime() > max) {
-                max = note.endTime();
-            }
-        }
-
-        while (time <= max) {
+        while (time <= composition.duration()) {
 
             //loop through noteList to play all notes
             for (Note note : composition.getNoteList()) {

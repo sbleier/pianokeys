@@ -63,8 +63,14 @@ public class Composition
     }
 
     // returns duration
-    public double duration(Note note) {
-        return (note.endTime() - note.startTime());
+    public double duration() {
+        double duration = 0;
+        for (Note note : getNoteList()) {
+            if (note.endTime() > duration) {
+                duration = note.endTime();
+            }
+        }
+        return duration;
     }
 
 
