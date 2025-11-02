@@ -10,7 +10,7 @@ import static org.mockito.Mockito.mock;
 
 public class Main
 {
-    public static void main(String[] args) throws MidiUnavailableException {
+    public static void main(String[] args) {
 
         PianoGui gui = new PianoGui();
         gui.setVisible(true);

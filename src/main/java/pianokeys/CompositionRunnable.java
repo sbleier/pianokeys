@@ -2,15 +2,12 @@ package pianokeys;
 
 public class CompositionRunnable implements Runnable {
 
-    public double step = 1 / 8.0;
+    public static final double STEP = 1 / 8.0;
 
+    private double step;
     private final PianoSound sound;
     private Composition composition;
 
-    public CompositionRunnable(PianoSound sound, Composition composition) {
-        this.sound = sound;
-        this.composition = composition;
-    }
 
     public CompositionRunnable(PianoSound sound, Composition composition, double step) {
         this.sound = sound;
@@ -38,7 +35,7 @@ public class CompositionRunnable implements Runnable {
             try {
                 Thread.sleep((long) (step * 1000));
             } catch (InterruptedException e) {
-               throw new RuntimeException(e);
+               e.printStackTrace();
 
             }
 

@@ -28,7 +28,6 @@ class CompositionRunnableTest {
         // when
         runnable.run();
 
-
         //then
         verify(channel).noteOn(PianoSound.C4, 127);
         verify(channel).noteOff(PianoSound.C4);
