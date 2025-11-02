@@ -93,6 +93,8 @@ public class CompositionView extends JComponent
                     case KeyEvent.VK_RIGHT:
                         addTime(0.125); //move forward 1/8 second
                         break;
+                    default:
+                        break;
                 }
 
             }
