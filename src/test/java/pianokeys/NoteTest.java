@@ -29,8 +29,8 @@ class NoteTest {
         Note noteB4 = new Note(Note.B4, 0.0, 0.125);
         assertEquals("B4", noteB4.getName());
 
-        Note nodeD_Sharp5 = new Note(Note.D_SHARP5, 0.0, 0.125);
-        assertEquals("D#5", nodeD_Sharp5.getName());
+        Note noteDsharp5 = new Note(Note.D_SHARP5, 0.0, 0.125);
+        assertEquals("D#5", noteDsharp5.getName());
     }
 
 }
