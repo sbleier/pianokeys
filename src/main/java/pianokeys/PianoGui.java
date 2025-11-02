@@ -112,7 +112,7 @@ public class PianoGui extends JFrame {
             for (int i = 0; i < BLACK_KEY_NAMES.length; i++) {
                 if (!BLACK_KEY_NAMES[i].isEmpty()) {
                     int note = getBlackNoteForOctave(octave, i);
-                    if (note == -1) continue;
+                    if (note == -1) { continue;}
 
                     JButton key = makeKey(BLACK_KEY_NAMES[i], BLACK, WHITE, BorderFactory.createLineBorder(Color.GRAY,
                             1));
@@ -153,9 +153,9 @@ public class PianoGui extends JFrame {
             public void mousePressed(MouseEvent e) {
                 key.setBackground(pressedColor);
                 long now = System.currentTimeMillis();
-                if (recordStartTime == -1) recordStartTime = now;
+                if (recordStartTime == -1) { recordStartTime = now; }
                 pressTime = now - recordStartTime;
-                if (sound != null) sound.playNote(note);
+                if (sound != null) { sound.playNote(note); }
             }
 
             @Override
@@ -168,7 +168,7 @@ public class PianoGui extends JFrame {
                 System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
                 System.out.println("Total notes recorded: " + composition.getNoteList().size());
 
-                if (sound != null) sound.stopNote(note);
+                if (sound != null) { sound.stopNote(note); }
 
                 if (key.contains(e.getPoint())) {
                     key.setBackground(hoverColor);
@@ -206,7 +206,7 @@ public class PianoGui extends JFrame {
 
     private int getBlackNoteForOctave(int octave, int blackIndex) {
         int base = PianoSound.blackNotes[blackIndex];
-        if (base == -1) return -1;
+        if (base == -1)  { return -1; }
         return base + (octave - 3) * 12;
     }
 
@@ -252,3 +252,5 @@ public class PianoGui extends JFrame {
         });
     }
 }
+
+
