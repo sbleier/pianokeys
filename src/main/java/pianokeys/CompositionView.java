@@ -3,14 +3,16 @@ package pianokeys;
 import javax.swing.JComponent;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static java.awt.Color.*;
 import static pianokeys.PianoSound.C4;
 
 /**
  * This displays the notes visually as rectangles.
- * The position on the x axis is time.
- * The position on the y axis is where the note is on the scale.
+ * The position on the x-axis is time.
+ * The position on the y-axis is where the note is on the scale.
  */
 public class CompositionView extends JComponent
 {
@@ -38,14 +40,30 @@ public class CompositionView extends JComponent
 
     /**
      * Number of notes to display vertically
+     * 1 octave is 12 notes including the flats and sharps
      * 2 octaves = 24 notes
      */
-    private static final int NOTE_RANGE = 24;
 
     // This will change over time.
     private double currentTime = 1.25;
 
     private Composition composition = new Composition();
+
+    // Helper method to get the unique keys sorted
+    private List<Integer> getUniqueSortedKeys()
+    {
+        List<Integer> uniqueKeys = new ArrayList<>();
+        for (Note note : composition.getNoteList())
+        {
+            int key = note.key();
+            if (!uniqueKeys.contains(Integer.valueOf(key)))
+            {
+                uniqueKeys.add(key);
+            }
+        }
+        Collections.sort(uniqueKeys);
+        return uniqueKeys;
+    }
 
     // Use the composition from the composition class
     @Override
@@ -59,10 +77,11 @@ public class CompositionView extends JComponent
          * for each note, it loops through every note in the composition
          * for each note, you call the existing display note method: which has startTime, endTime, key
          */
-        ArrayList<Note> notes = composition.getNoteList();
-        for (Note note : notes)
+        List<Integer> uniqueKeys = getUniqueSortedKeys();
+
+        for (Note note : composition.getNoteList())
         {
-            displayNote(g, note.startTime(), note.endTime(), note.key());
+            displayNote(g, note, uniqueKeys);
         }
 
         displayCurrentTimeLine(g);
@@ -73,8 +92,6 @@ public class CompositionView extends JComponent
     {
         Graphics2D g2d = (Graphics2D) g;
         int maxTime = 20;   // shows 20 seconds
-
-        int viewWidth = maxTime * SECOND_WIDTH;
         int viewHeight = getHeight();
 
         for (int second = 0; second <= maxTime; second++)
@@ -106,14 +123,14 @@ public class CompositionView extends JComponent
 
     }
 
-    private void displayNote(Graphics g, double noteStartTimeSeconds, double noteEndTimeSeconds, int note)
+    private void displayNote(Graphics g, Note note, List<Integer> uniqueKeys)
     {
-        int modifiedNote = note - C4;
-        int x1 = (int) (noteStartTimeSeconds * SECOND_WIDTH);
-        int x2 = (int) (noteEndTimeSeconds * SECOND_WIDTH);
+        int rowIndex = uniqueKeys.indexOf(Integer.valueOf(note.key()));
+        int x1 = (int) (note.startTime() * SECOND_WIDTH);
+        int x2 = (int) (note.endTime() * SECOND_WIDTH);
 
         // flips the Y axis so that the higher notes at the top and lower notes on the bottom
-        int y1 = getHeight() - (modifiedNote + 1) * NOTE_HEIGHT;
+        int y1 = getHeight() - (rowIndex + 1) * NOTE_HEIGHT;
 
         g.setColor(CYAN);
         g.fillRect(x1, y1, x2 - x1, NOTE_HEIGHT);
@@ -122,17 +139,8 @@ public class CompositionView extends JComponent
 
         // Add the note name to the block as it is played
         g.setColor(BLACK);
-        String noteLabel = getNoteName(note);
+        String noteLabel = note.getNoteName();
         g.drawString(noteLabel, x1 + 5, y1 + NOTE_HEIGHT / 2 + 5);
-
-    }
-
-    private String getNoteName(int note)
-    {
-        String[] noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-        int octave = (note / 12) - 1;  // MIDI note number to octave
-        int noteIndex = note % 12;
-        return noteNames[noteIndex] + octave;
     }
 
     private void displayCurrentTimeLine(Graphics g)
