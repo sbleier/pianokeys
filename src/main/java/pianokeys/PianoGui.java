@@ -112,7 +112,7 @@ public class PianoGui extends JFrame {
             for (int i = 0; i < BLACK_KEY_NAMES.length; i++) {
                 if (!BLACK_KEY_NAMES[i].isEmpty()) {
                     int note = getBlackNoteForOctave(octave, i);
-                    if (note == -1) { continue;}
+                    if (note == -1) { continue; }
 
                     JButton key = makeKey(BLACK_KEY_NAMES[i], BLACK, WHITE, BorderFactory.createLineBorder(Color.GRAY,
                             1));
