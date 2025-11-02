@@ -1,14 +1,14 @@
 package pianokeys;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class CompositionRunnableTest {
 
@@ -22,10 +22,12 @@ class CompositionRunnableTest {
         Composition comp = new Composition();
         comp.addNote(new Note(PianoSound.C4, 0.0, 0.25));
         comp.addNote(new Note(PianoSound.D4, 0.25, 0.5));
-        CompositionRunnable runnable = new CompositionRunnable(sound, comp);
+        CompositionRunnable runnable = new CompositionRunnable(sound, comp, 0.0);
 
-        //when
+
+        // when
         runnable.run();
+
 
         //then
         verify(channel).noteOn(PianoSound.C4, 127);
