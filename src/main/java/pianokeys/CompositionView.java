@@ -2,12 +2,10 @@ package pianokeys;
 
 import javax.swing.JComponent;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 
 import static java.awt.Color.*;
-import static pianokeys.PianoSound.C4;
 
 /**
  * This displays the notes visually as rectangles.
@@ -52,17 +50,16 @@ public class CompositionView extends JComponent
     // Helper method to get the unique keys sorted
     private List<Integer> getUniqueSortedKeys()
     {
-        List<Integer> uniqueKeys = new ArrayList<>();
+        Set<Integer> uniqueKeys = new HashSet<>();
         for (Note note : composition.getNoteList())
         {
-            int key = note.key();
-            if (!uniqueKeys.contains(Integer.valueOf(key)))
-            {
-                uniqueKeys.add(key);
-            }
+                uniqueKeys.add(note.key());
         }
-        Collections.sort(uniqueKeys);
-        return uniqueKeys;
+
+        // Convert to a List and sort it once
+        List<Integer> sortedKeys = new ArrayList<>(uniqueKeys);
+        Collections.sort(sortedKeys);
+        return sortedKeys;
     }
 
     // Use the composition from the composition class
@@ -139,7 +136,7 @@ public class CompositionView extends JComponent
 
         // Add the note name to the block as it is played
         g.setColor(BLACK);
-        String noteLabel = note.getNoteName();
+        String noteLabel = note.getName();
         g.drawString(noteLabel, x1 + 5, y1 + NOTE_HEIGHT / 2 + 5);
     }
 
