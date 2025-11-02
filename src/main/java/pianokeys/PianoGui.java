@@ -18,6 +18,7 @@ public class PianoGui extends JFrame {
 
     private final Composition composition = new Composition();
     private long recordStartTime = -1;
+    private long currentPressTime = -1;
 
     // declared everything
     private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
@@ -246,8 +247,6 @@ public class PianoGui extends JFrame {
         // hover to show the key
         key.addMouseListener(new MouseAdapter() {
 
-            private long pressTime;
-
             @Override
             public void mouseEntered(MouseEvent evt) {
                 key.setBackground(LIGHT_GRAY);
@@ -261,12 +260,12 @@ public class PianoGui extends JFrame {
             @Override
             public void mousePressed(MouseEvent evt) {
                 key.setBackground(DARK_GRAY);
-                pressTime = startRecord(note);
+                currentPressTime = startRecord(note);
             }
 
             @Override
             public void mouseReleased(MouseEvent evt) {
-                endRecord(note, pressTime);
+                endRecord(note, currentPressTime);
                 if (key.contains(evt.getPoint())) {
                     key.setBackground(LIGHT_GRAY);
                 } else {
@@ -296,7 +295,6 @@ public class PianoGui extends JFrame {
         key.setContentAreaFilled(true);
 
         key.addMouseListener(new MouseAdapter() {
-            private long pressTime;
 
             @Override
             public void mouseEntered(MouseEvent evt) {
@@ -311,12 +309,12 @@ public class PianoGui extends JFrame {
             @Override
             public void mousePressed(MouseEvent evt) {
                 key.setBackground(DARK_GRAY);
-                pressTime = startRecord(note);
+                currentPressTime = startRecord(note);
             }
 
             @Override
             public void mouseReleased(MouseEvent evt) {
-                endRecord(note, pressTime);
+                endRecord(note, currentPressTime);
                 // Check if mouse is still over the component
                 if (key.contains(evt.getPoint())) {
                     key.setBackground(LIGHT_GRAY);
