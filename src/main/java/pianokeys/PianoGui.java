@@ -39,8 +39,7 @@ public class PianoGui extends JFrame {
     // MIDI sound system
     private PianoSound sound;
 
-    public PianoGui()
-    {
+    public PianoGui() {
         setUpFrame();
         initMidi();
         JPanel whiteKeysPanel = createWhiteKeysPanel();
@@ -68,7 +67,9 @@ public class PianoGui extends JFrame {
 
     private int getBlackNoteForOctave(int octave, int blackIndex) {
         int base = PianoSound.blackNotes[blackIndex];
-        if (base == -1) { return -1; }
+        if (base == -1) {
+            return -1;
+        }
         return base + (octave - 3) * 12;
     }
 
@@ -87,13 +88,14 @@ public class PianoGui extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (sound != null) { sound.cleanup(); }
+                if (sound != null) {
+                    sound.cleanup();
+                }
             }
         });
     }
 
-    private JPanel createWhiteKeysPanel()
-    {
+    private JPanel createWhiteKeysPanel() {
         JPanel whiteKeysPanel = new JPanel(null);
         whiteKeysPanel.setOpaque(true);
         whiteKeysPanel.setBackground(LIGHT_GRAY);
@@ -126,7 +128,9 @@ public class PianoGui extends JFrame {
             for (int i = 0; i < BLACK_KEY_NAMES.length; i++) {
                 if (!BLACK_KEY_NAMES[i].isEmpty()) {
                     int note = getBlackNoteForOctave(octave, i);
-                    if (note == -1) { continue; } // skip keys that don't exist (like between E-F or B-C)
+                    if (note == -1) {
+                        continue;
+                    } // skip keys that don't exist (like between E-F or B-C)
                     JButton button = createBlackPianoKey(BLACK_KEY_NAMES[i], note);
 
                     blackButtons[blackKeyIndex] = button;
@@ -197,9 +201,10 @@ public class PianoGui extends JFrame {
 
     private JButton createWhitePianoKey(String whiteKeyName, int note) {
         JButton key = new JButton(whiteKeyName);
+        key.putClientProperty("midiNote", note);
 
         // make it look like a piano key
-        key.setBackground(WHITE);
+        //key.setBackground(WHITE);
         key.setForeground(BLACK);
         key.setFont(new Font("Arial", Font.BOLD, 16));
         key.setFocusPainted(false);
@@ -207,14 +212,27 @@ public class PianoGui extends JFrame {
         key.setOpaque(true);
         key.setContentAreaFilled(true);
 
+        final Color baseColor;
+        final Color hoverColor;
+        if (note == PianoSound.C4) {
+            baseColor  = new Color(255, 245, 200);
+            hoverColor = new Color(255, 235, 180);
+            key.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+            key.setToolTipText("Middle C (C4)");
+        } else {
+            baseColor  = WHITE;
+            hoverColor = LIGHT_GRAY;
+        }
+        key.setBackground(baseColor);
+
         // hover to show the key
         key.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent evt) {
-                key.setBackground(LIGHT_GRAY);
+                key.setBackground(hoverColor);
             }
 
             public void mouseExited(MouseEvent evt) {
-                key.setBackground(WHITE);
+                key.setBackground(baseColor);
             }
 
             public void mousePressed(MouseEvent evt) {
@@ -230,9 +248,9 @@ public class PianoGui extends JFrame {
                 }
 
                 if (key.contains(evt.getPoint())) {
-                    key.setBackground(LIGHT_GRAY);
+                    key.setBackground(hoverColor);
                 } else {
-                    key.setBackground(WHITE);
+                    key.setBackground(baseColor);
                 }
             }
 
