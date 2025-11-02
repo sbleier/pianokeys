@@ -1,7 +1,11 @@
 package pianokeys;
 
-import javax.swing.JComponent;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import javax.swing.JComponent;
 import java.util.*;
 import java.util.List;
 
@@ -14,7 +18,6 @@ import static java.awt.Color.*;
  */
 public class CompositionView extends JComponent
 {
-
     /**
      * Width of one second when displaying notes in the View.
      * Increased so that you can see the 8th subdivisions clearly
@@ -44,8 +47,31 @@ public class CompositionView extends JComponent
 
     // This will change over time.
     private double currentTime = 1.25;
-
     private Composition composition = new Composition();
+
+    public CompositionView()
+    {
+        // Use MouseListener for the clicking
+        addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if (SwingUtilities.isLeftMouseButton(e))
+                {
+                    if (e.getClickCount() == 1)
+                    {
+                        // Single click to set current time
+                        setTimeAtPoint(e.getPoint());
+                    } else if (e.getClickCount() == 2)
+                    {
+                        // Double click to delete note
+                        deleteNoteAtPoint(e.getPoint());
+                    }
+                }
+            }
+        });
+    }
 
     // Helper method to get the unique keys sorted
     private List<Integer> getUniqueSortedKeys()
@@ -170,4 +196,38 @@ public class CompositionView extends JComponent
         repaint();
     }
 
+    private void deleteNoteAtPoint(Point p)
+    {
+        // Calculate the time and note from the mouse coordinates
+        double clickedTime = (double) p.x / SECOND_WIDTH;
+        int clickedNote = ((getHeight() - p.y) / NOTE_HEIGHT) + PianoSound.C4; // reverse calculation
+
+        ArrayList<Note> notes = composition.getNoteList();
+
+        // Find the note that was clicked
+        for (Note note : new ArrayList<>(notes))
+        {
+            if (clickedNote == note.key()
+                    && clickedTime >= note.startTime()
+                    && clickedTime <= note.endTime())
+            {
+                notes.remove(note);
+                repaint();
+                break;
+            }
+        }
+    }
+
+    private void setTimeAtPoint(Point p)
+    {
+        double newTime = (double) p.x / SECOND_WIDTH;
+
+        // Make sure that the time isn't negative
+        if (newTime < 0)
+        {
+            newTime = 0;
+        }
+
+        setCurrentTime(newTime);
+    }
 }
