@@ -47,8 +47,31 @@ public class CompositionView extends JComponent
 
     // This will change over time.
     private double currentTime = 1.25;
-
     private Composition composition = new Composition();
+
+    public CompositionView()
+    {
+        // Use MouseListener for the clicking
+        addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if (SwingUtilities.isLeftMouseButton(e))
+                {
+                    if (e.getClickCount() == 1)
+                    {
+                        // Single click to set current time
+                        setTimeAtPoint(e.getPoint());
+                    } else if (e.getClickCount() == 2)
+                    {
+                        // Double click to delete note
+                        deleteNoteAtPoint(e.getPoint());
+                    }
+                }
+            }
+        });
+    }
 
     // Helper method to get the unique keys sorted
     private List<Integer> getUniqueSortedKeys()
@@ -162,30 +185,6 @@ public class CompositionView extends JComponent
     public void addTime(double delta) {
         this.currentTime += delta;
         repaint();
-    }
-
-    public CompositionView()
-    {
-        // Use MouseListener for the clicking
-        addMouseListener(new MouseAdapter()
-        {
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if (SwingUtilities.isLeftMouseButton(e))
-                {
-                    if (e.getClickCount() == 1)
-                    {
-                        // Single click to set current time
-                        setTimeAtPoint(e.getPoint());
-                    } else if (e.getClickCount() == 2)
-                    {
-                        // Double click to delete note
-                        deleteNoteAtPoint(e.getPoint());
-                    }
-                }
-            }
-        });
     }
 
     /**
