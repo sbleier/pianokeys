@@ -19,7 +19,7 @@ class NoteTest {
     }
 
     @Test
-    void GetName() {
+    void getName() {
         Note noteC5 = new Note(Note.C5, 0.0, 0.125);
         assertEquals("C5", noteC5.getName());
 
