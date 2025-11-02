@@ -83,15 +83,6 @@ public class CompositionView extends JComponent
         repaint();
     }
 
-    /**
-     * Sets the notes displayed in this CompositionView
-     */
-    public void setComposition(Composition composition)
-    {
-        this.composition = composition;
-        repaint();
-    }
-
     public CompositionView()
     {
         // Use MouseListener for the clicking
@@ -102,18 +93,27 @@ public class CompositionView extends JComponent
             {
                 if (SwingUtilities.isLeftMouseButton(e))
                 {
-                    if (e.getClickCount() == 2)
-                    {
-                        // Double click to delete note
-                        deleteNoteAtPoint(e.getPoint());
-                    } else if (e.getClickCount() == 1)
+                    if (e.getClickCount() == 1)
                     {
                         // Single click to set current time
                         setTimeAtPoint(e.getPoint());
+                    } else if (e.getClickCount() == 2)
+                    {
+                        // Double click to delete note
+                        deleteNoteAtPoint(e.getPoint());
                     }
                 }
             }
         });
+    }
+
+    /**
+     * Sets the notes displayed in this CompositionView
+     */
+    public void setComposition(Composition composition)
+    {
+        this.composition = composition;
+        repaint();
     }
 
     private void deleteNoteAtPoint(Point p)
@@ -125,22 +125,16 @@ public class CompositionView extends JComponent
         ArrayList<Note> notes = composition.getNoteList();
 
         // Find the note that was clicked
-        Note noteToDelete = null;
-        for (Note note : notes)
+        for (Note note : new ArrayList<>(notes))
         {
             if (clickedNote == note.key()
                     && clickedTime >= note.startTime()
                     && clickedTime <= note.endTime())
             {
-                noteToDelete = note;
+                notes.remove(note);
+                repaint();
                 break;
             }
-        }
-
-        if (noteToDelete != null)
-        {
-            notes.remove(noteToDelete);
-            repaint();
         }
     }
 
