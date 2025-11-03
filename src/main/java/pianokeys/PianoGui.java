@@ -7,7 +7,6 @@ import javax.sound.midi.Synthesizer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.sound.midi.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -17,6 +16,11 @@ import static java.awt.Color.*;
 
 public class PianoGui extends JFrame
 {
+
+    private final Composition composition = new Composition();
+    private long recordStartTime = -1;
+    private long currentPressTime = -1;
+
     // declared everything
     private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final String[] BLACK_KEY_NAMES = {"C#", "D#", "", "F#", "G#", "A#", ""};
@@ -29,6 +33,9 @@ public class PianoGui extends JFrame
     private static final int BLACK_KEY_HEIGHT = 170;
 
     private static final int OCTAVES = 7;
+
+    private static final Color C_BASE_COLOR = new Color(255, 245, 200);
+    private static final Color C_HOVER_COLOR = new Color(255, 235, 180);
 
     private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * OCTAVES];
     private JButton[] blackButtons = new JButton[5 * OCTAVES];
@@ -49,6 +56,8 @@ public class PianoGui extends JFrame
         JLayeredPane layeredPane = createLayeredPane(whiteKeysPanel, blackKeysPanel);
         JScrollPane pianoScrollPane = createScrollPane(layeredPane);
 
+        add(pianoScrollPane, BorderLayout.SOUTH);
+
         CompositionView compositionView = new CompositionView();
         compositionView.setPreferredSize(new Dimension(2000, 400));
 
@@ -59,6 +68,8 @@ public class PianoGui extends JFrame
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS
         );
         compositionScrollPane.setPreferredSize(new Dimension(800, 200));
+
+        add(compositionScrollPane);
 
         // buttons panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -75,8 +86,6 @@ public class PianoGui extends JFrame
         buttonPanel.add(chooseInstrument);
 
         add(buttonPanel, BorderLayout.NORTH);
-        add(compositionScrollPane);
-        add(pianoScrollPane, BorderLayout.SOUTH);
 
         centerOnMiddleC(pianoScrollPane);
     }
@@ -115,7 +124,7 @@ public class PianoGui extends JFrame
             sound = new PianoSound(synthesizer, channel);
         } catch (MidiUnavailableException e)
         {
-            System.err.println("MIDI system unavailable: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -251,12 +260,45 @@ public class PianoGui extends JFrame
         });
     }
 
+    private long startRecord(int note)
+    {
+        long currentTime = System.currentTimeMillis();
+
+        if (recordStartTime == -1)
+        {
+            recordStartTime = currentTime; // when it started
+        }
+        long pressTime = currentTime - recordStartTime; // makes it 0 for the first key - how long since start
+
+        if (sound != null)
+        {
+            sound.playNote(note);
+        }
+        return pressTime;
+    }
+
+    private void endRecord(int note, long pressTime)
+    {
+        long releaseTime = System.currentTimeMillis() - recordStartTime; // time since first key pressed
+        double startSec = pressTime / 1000.0;
+        double endSec = releaseTime / 1000.0;
+
+        // create and store the note in the composition
+        composition.addNote(new Note(note, startSec, endSec));
+        System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
+        System.out.println("Total notes recorded: " + composition.getNoteList().size());
+
+        if (sound != null)
+        {
+            sound.stopNote(note);
+        }
+    }
+
     private JButton createWhitePianoKey(String whiteKeyName, int note)
     {
         JButton key = new JButton(whiteKeyName);
 
         // make it look like a piano key
-        key.setBackground(WHITE);
         key.setForeground(BLACK);
         key.setFont(new Font("Arial", Font.BOLD, 16));
         key.setFocusPainted(false);
@@ -264,41 +306,54 @@ public class PianoGui extends JFrame
         key.setOpaque(true);
         key.setContentAreaFilled(true);
 
+        final Color baseColor;
+        final Color hoverColor;
+        if (note == PianoSound.C4)
+        {
+            baseColor = C_BASE_COLOR;
+            hoverColor = C_HOVER_COLOR;
+            key.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+            key.setToolTipText("Middle C (C4)");
+        } else
+        {
+            baseColor = WHITE;
+            hoverColor = LIGHT_GRAY;
+        }
+        key.setBackground(baseColor);
+
         // hover to show the key
         key.addMouseListener(new MouseAdapter()
         {
+
+            @Override
             public void mouseEntered(MouseEvent evt)
             {
-                key.setBackground(LIGHT_GRAY);
+                key.setBackground(hoverColor);
             }
 
+            @Override
             public void mouseExited(MouseEvent evt)
             {
-                key.setBackground(WHITE);
+                key.setBackground(baseColor);
             }
 
+            @Override
             public void mousePressed(MouseEvent evt)
             {
                 key.setBackground(DARK_GRAY);
-                if (sound != null)
-                {
-                    sound.playNote(note);
-                }
+                currentPressTime = startRecord(note);
             }
 
+            @Override
             public void mouseReleased(MouseEvent evt)
             {
-                if (sound != null)
-                {
-                    sound.stopNote(note);
-                }
-
+                endRecord(note, currentPressTime);
                 if (key.contains(evt.getPoint()))
                 {
-                    key.setBackground(LIGHT_GRAY);
+                    key.setBackground(hoverColor);
                 } else
                 {
-                    key.setBackground(WHITE);
+                    key.setBackground(baseColor);
                 }
             }
 
@@ -328,32 +383,30 @@ public class PianoGui extends JFrame
 
         key.addMouseListener(new MouseAdapter()
         {
+
+            @Override
             public void mouseEntered(MouseEvent evt)
             {
                 key.setBackground(LIGHT_GRAY);
             }
 
+            @Override
             public void mouseExited(MouseEvent evt)
             {
                 key.setBackground(BLACK);
             }
 
+            @Override
             public void mousePressed(MouseEvent evt)
             {
                 key.setBackground(DARK_GRAY);
-                if (sound != null)
-                {
-                    sound.playNote(note);
-                }
+                currentPressTime = startRecord(note);
             }
 
+            @Override
             public void mouseReleased(MouseEvent evt)
             {
-                if (sound != null)
-                {
-                    sound.stopNote(note);
-                }
-
+                endRecord(note, currentPressTime);
                 // Check if mouse is still over the component
                 if (key.contains(evt.getPoint()))
                 {
