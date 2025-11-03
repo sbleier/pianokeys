@@ -4,15 +4,15 @@ public class CompositionRunnable implements Runnable {
 
     public static final double STEP = 1 / 8.0;
 
-    private double step;
+    private double sleepMs;
     private final PianoSound sound;
     private Composition composition;
 
 
-    public CompositionRunnable(PianoSound sound, Composition composition, double step) {
+    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs) {
         this.sound = sound;
         this.composition = composition;
-        this.step = step;
+        this.sleepMs = sleepMs;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CompositionRunnable implements Runnable {
             }
 
             try {
-                Thread.sleep((long) (step * 1000));
+                Thread.sleep((long) (sleepMs * 1000));
             } catch (InterruptedException e) {
                e.printStackTrace();
 
