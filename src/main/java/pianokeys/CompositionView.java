@@ -88,10 +88,10 @@ public class CompositionView extends JComponent
                 switch (e.getKeyCode())
                 {
                     case KeyEvent.VK_LEFT:
-                        addTime(-0.125); //move back 1/8th second
+                        addTime(-Note.TIME_STEP); //move back 1/8th second
                         break;
                     case KeyEvent.VK_RIGHT:
-                        addTime(0.125); //move forward 1/8 second
+                        addTime(Note.TIME_STEP); //move forward 1/8 second
                         break;
                     default:
                         break;
@@ -207,8 +207,7 @@ public class CompositionView extends JComponent
     }
 
     public void setCurrentTime(double currentTime) {
-        double snappedTime = Math.round(currentTime * 8.0) / 8.0; //snaps to the nearest 1/8th second increment
-        this.currentTime = snappedTime;
+        this.currentTime = Note.roundToNearestEight(currentTime);
         repaint();
     }
 
