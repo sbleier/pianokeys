@@ -29,6 +29,9 @@ public class PianoGui extends JFrame {
 
     private static final int OCTAVES = 7;
 
+    private static final Color C_BASE_COLOR  = new Color(255, 245, 200);
+    private static final Color C_HOVER_COLOR = new Color(255, 235, 180);
+
     private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * OCTAVES];
     private JButton[] blackButtons = new JButton[5 * OCTAVES];
 
@@ -201,10 +204,8 @@ public class PianoGui extends JFrame {
 
     private JButton createWhitePianoKey(String whiteKeyName, int note) {
         JButton key = new JButton(whiteKeyName);
-        key.putClientProperty("midiNote", note);
 
         // make it look like a piano key
-        //key.setBackground(WHITE);
         key.setForeground(BLACK);
         key.setFont(new Font("Arial", Font.BOLD, 16));
         key.setFocusPainted(false);
@@ -215,8 +216,8 @@ public class PianoGui extends JFrame {
         final Color baseColor;
         final Color hoverColor;
         if (note == PianoSound.C4) {
-            baseColor  = new Color(255, 245, 200);
-            hoverColor = new Color(255, 235, 180);
+            baseColor  = C_BASE_COLOR;
+            hoverColor = C_HOVER_COLOR;
             key.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
             key.setToolTipText("Middle C (C4)");
         } else {
