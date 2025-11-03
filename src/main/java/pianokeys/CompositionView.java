@@ -2,6 +2,8 @@ package pianokeys;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -51,12 +53,17 @@ public class CompositionView extends JComponent
 
     public CompositionView()
     {
+        setFocusable(true);
+        requestFocusInWindow();
+
         // Use MouseListener for the clicking
         addMouseListener(new MouseAdapter()
         {
             @Override
             public void mouseClicked(MouseEvent e)
             {
+                requestFocusInWindow();
+
                 if (SwingUtilities.isLeftMouseButton(e))
                 {
                     if (e.getClickCount() == 1)
@@ -70,6 +77,28 @@ public class CompositionView extends JComponent
                     }
                 }
             }
+        });
+
+        //Added KeyListener for arrow key controls for moving time
+        addKeyListener(new KeyAdapter()
+        {
+            @Override
+            public void keyPressed(KeyEvent e)
+            {
+                switch (e.getKeyCode())
+                {
+                    case KeyEvent.VK_LEFT:
+                        addTime(-Note.TIME_STEP); //move back 1/8th second
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        addTime(Note.TIME_STEP); //move forward 1/8 second
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
         });
     }
 
@@ -178,13 +207,12 @@ public class CompositionView extends JComponent
     }
 
     public void setCurrentTime(double currentTime) {
-        this.currentTime = currentTime;
+        this.currentTime = Note.roundToNearestEight(currentTime);
         repaint();
     }
 
     public void addTime(double delta) {
-        this.currentTime += delta;
-        repaint();
+        setCurrentTime(this.getCurrentTime() + delta);
     }
 
     /**
