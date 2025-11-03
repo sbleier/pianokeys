@@ -47,35 +47,26 @@ public class PianoGui extends JFrame
         JPanel blackKeysPanel = createBlackKeysPanel();
 
         JLayeredPane layeredPane = createLayeredPane(whiteKeysPanel, blackKeysPanel);
-        JScrollPane scrollPane = createScrollPane(layeredPane);
+        JScrollPane pianoScrollPane = createScrollPane(layeredPane);
 
         CompositionView compositionView = new CompositionView();
         compositionView.setPreferredSize(new Dimension(2000, 400));
 
-        // vertical scroll bar for CompositionView
+        // vertical and  horizontal scroll panes for CompositionView
         JScrollPane compositionScrollPane = new JScrollPane(
                 compositionView,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS
         );
         compositionScrollPane.setPreferredSize(new Dimension(800, 200));
 
-        // horizontal scrollbar for composition
-        JScrollBar horizontalScrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 100, 0, 2000);
-
-        horizontalScrollBar.addAdjustmentListener(e ->
-        {
-            int value = e.getValue();
-            compositionScrollPane.getViewport().setViewPosition(new Point(value, 0));
-        });
-
         // buttons panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton erase = new IconButton("Erase", Color.RED, "erase");
-        JButton restart = new IconButton("Restart", Color.BLUE, "restart");
-        JButton record = new IconButton("Record", Color.RED, "record");
-        JButton play = new IconButton("Play", Color.GREEN, "play");
-        JButton chooseInstrument = new IconButton("Choose Instrument", Color.ORANGE, "instrument");
+        JButton erase = new JButton(new ImageIcon(getClass().getResource("/images/erase.png")));
+        JButton restart = new JButton(new ImageIcon(getClass().getResource("/images/restart.png")));
+        JButton record = new JButton(new ImageIcon(getClass().getResource("/images/record.png")));
+        JButton play = new JButton(new ImageIcon(getClass().getResource("/images/play.png")));
+        JButton chooseInstrument = new JButton(new ImageIcon(getClass().getResource("/images/instrument.png")));
 
         buttonPanel.add(erase);
         buttonPanel.add(restart);
@@ -83,21 +74,11 @@ public class PianoGui extends JFrame
         buttonPanel.add(play);
         buttonPanel.add(chooseInstrument);
 
-        // panel to hold buttons at top and scrollpane
-        JPanel compositionPanel = new JPanel(new BorderLayout());
-        compositionPanel.add(buttonPanel, BorderLayout.NORTH);
-        compositionPanel.add(compositionScrollPane, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.NORTH);
+        add(compositionScrollPane);
+        add(pianoScrollPane, BorderLayout.SOUTH);
 
-        // panel to hold composition and scrollbar
-        JPanel compositionWithScrollbar = new JPanel(new BorderLayout());
-        compositionWithScrollbar.add(compositionPanel, BorderLayout.CENTER);
-        compositionWithScrollbar.add(horizontalScrollBar, BorderLayout.SOUTH);
-
-        add(compositionWithScrollbar, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
-
-        centerOnMiddleC(scrollPane);
-
+        centerOnMiddleC(pianoScrollPane);
     }
 
     private void setUpFrame()
