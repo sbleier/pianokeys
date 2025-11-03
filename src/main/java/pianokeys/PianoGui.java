@@ -7,7 +7,6 @@ import javax.sound.midi.Synthesizer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.sound.midi.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -16,6 +15,11 @@ import java.awt.event.MouseEvent;
 import static java.awt.Color.*;
 
 public class PianoGui extends JFrame {
+
+    private final Composition composition = new Composition();
+    private long recordStartTime = -1;
+    private long currentPressTime = -1;
+
     // declared everything
     private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
     private static final String[] BLACK_KEY_NAMES = {"C#", "D#", "", "F#", "G#", "A#", ""};
@@ -39,8 +43,7 @@ public class PianoGui extends JFrame {
     // MIDI sound system
     private PianoSound sound;
 
-    public PianoGui()
-    {
+    public PianoGui() {
         setUpFrame();
         initMidi();
         JPanel whiteKeysPanel = createWhiteKeysPanel();
@@ -68,7 +71,9 @@ public class PianoGui extends JFrame {
 
     private int getBlackNoteForOctave(int octave, int blackIndex) {
         int base = PianoSound.blackNotes[blackIndex];
-        if (base == -1) { return -1; }
+        if (base == -1) {
+            return -1;
+        }
         return base + (octave - 3) * 12;
     }
 
@@ -87,13 +92,14 @@ public class PianoGui extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (sound != null) { sound.cleanup(); }
+                if (sound != null) {
+                    sound.cleanup();
+                }
             }
         });
     }
 
-    private JPanel createWhiteKeysPanel()
-    {
+    private JPanel createWhiteKeysPanel() {
         JPanel whiteKeysPanel = new JPanel(null);
         whiteKeysPanel.setOpaque(true);
         whiteKeysPanel.setBackground(LIGHT_GRAY);
@@ -126,7 +132,9 @@ public class PianoGui extends JFrame {
             for (int i = 0; i < BLACK_KEY_NAMES.length; i++) {
                 if (!BLACK_KEY_NAMES[i].isEmpty()) {
                     int note = getBlackNoteForOctave(octave, i);
-                    if (note == -1) { continue; } // skip keys that don't exist (like between E-F or B-C)
+                    if (note == -1) {
+                        continue;
+                    } // skip keys that don't exist (like between E-F or B-C)
                     JButton button = createBlackPianoKey(BLACK_KEY_NAMES[i], note);
 
                     blackButtons[blackKeyIndex] = button;
@@ -195,6 +203,35 @@ public class PianoGui extends JFrame {
         });
     }
 
+    private long startRecord(int note) {
+        long currentTime = System.currentTimeMillis();
+
+        if (recordStartTime == -1) {
+            recordStartTime = currentTime; // when it started
+        }
+        long pressTime = currentTime - recordStartTime; // makes it 0 for the first key - how long since start
+
+        if (sound != null) {
+            sound.playNote(note);
+        }
+        return pressTime;
+    }
+
+    private void endRecord(int note, long pressTime) {
+        long releaseTime = System.currentTimeMillis() - recordStartTime; // time since first key pressed
+        double startSec = pressTime / 1000.0;
+        double endSec = releaseTime / 1000.0;
+
+        // create and store the note in the composition
+        composition.addNote(new Note(note, startSec, endSec));
+        System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
+        System.out.println("Total notes recorded: " + composition.getNoteList().size());
+
+        if (sound != null) {
+            sound.stopNote(note);
+        }
+    }
+
     private JButton createWhitePianoKey(String whiteKeyName, int note) {
         JButton key = new JButton(whiteKeyName);
 
@@ -209,26 +246,26 @@ public class PianoGui extends JFrame {
 
         // hover to show the key
         key.addMouseListener(new MouseAdapter() {
+
+            @Override
             public void mouseEntered(MouseEvent evt) {
                 key.setBackground(LIGHT_GRAY);
             }
 
+            @Override
             public void mouseExited(MouseEvent evt) {
                 key.setBackground(WHITE);
             }
 
+            @Override
             public void mousePressed(MouseEvent evt) {
                 key.setBackground(DARK_GRAY);
-                if (sound != null) {
-                    sound.playNote(note);
-                }
+                currentPressTime = startRecord(note);
             }
 
+            @Override
             public void mouseReleased(MouseEvent evt) {
-                if (sound != null) {
-                    sound.stopNote(note);
-                }
-
+                endRecord(note, currentPressTime);
                 if (key.contains(evt.getPoint())) {
                     key.setBackground(LIGHT_GRAY);
                 } else {
@@ -258,26 +295,26 @@ public class PianoGui extends JFrame {
         key.setContentAreaFilled(true);
 
         key.addMouseListener(new MouseAdapter() {
+
+            @Override
             public void mouseEntered(MouseEvent evt) {
                 key.setBackground(LIGHT_GRAY);
             }
 
+            @Override
             public void mouseExited(MouseEvent evt) {
                 key.setBackground(BLACK);
             }
 
+            @Override
             public void mousePressed(MouseEvent evt) {
                 key.setBackground(DARK_GRAY);
-                if (sound != null) {
-                    sound.playNote(note);
-                }
+                currentPressTime = startRecord(note);
             }
 
+            @Override
             public void mouseReleased(MouseEvent evt) {
-                if (sound != null) {
-                    sound.stopNote(note);
-                }
-
+                endRecord(note, currentPressTime);
                 // Check if mouse is still over the component
                 if (key.contains(evt.getPoint())) {
                     key.setBackground(LIGHT_GRAY);
