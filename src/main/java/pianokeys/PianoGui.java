@@ -33,6 +33,9 @@ public class PianoGui extends JFrame {
 
     private static final int OCTAVES = 7;
 
+    private static final Color C_BASE_COLOR  = new Color(255, 245, 200);
+    private static final Color C_HOVER_COLOR = new Color(255, 235, 180);
+
     private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * OCTAVES];
     private JButton[] blackButtons = new JButton[5 * OCTAVES];
 
@@ -236,7 +239,6 @@ public class PianoGui extends JFrame {
         JButton key = new JButton(whiteKeyName);
 
         // make it look like a piano key
-        key.setBackground(WHITE);
         key.setForeground(BLACK);
         key.setFont(new Font("Arial", Font.BOLD, 16));
         key.setFocusPainted(false);
@@ -244,17 +246,30 @@ public class PianoGui extends JFrame {
         key.setOpaque(true);
         key.setContentAreaFilled(true);
 
+        final Color baseColor;
+        final Color hoverColor;
+        if (note == PianoSound.C4) {
+            baseColor  = C_BASE_COLOR;
+            hoverColor = C_HOVER_COLOR;
+            key.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+            key.setToolTipText("Middle C (C4)");
+        } else {
+            baseColor  = WHITE;
+            hoverColor = LIGHT_GRAY;
+        }
+        key.setBackground(baseColor);
+
         // hover to show the key
         key.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseEntered(MouseEvent evt) {
-                key.setBackground(LIGHT_GRAY);
+                key.setBackground(hoverColor);
             }
 
             @Override
             public void mouseExited(MouseEvent evt) {
-                key.setBackground(WHITE);
+                key.setBackground(baseColor);
             }
 
             @Override
@@ -267,9 +282,9 @@ public class PianoGui extends JFrame {
             public void mouseReleased(MouseEvent evt) {
                 endRecord(note, currentPressTime);
                 if (key.contains(evt.getPoint())) {
-                    key.setBackground(LIGHT_GRAY);
+                    key.setBackground(hoverColor);
                 } else {
-                    key.setBackground(WHITE);
+                    key.setBackground(baseColor);
                 }
             }
 
