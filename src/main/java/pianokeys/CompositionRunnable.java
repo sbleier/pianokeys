@@ -39,7 +39,7 @@ public class CompositionRunnable implements Runnable {
 
             }
 
-            time += step;
+            time += STEP;
         }
 
     }
