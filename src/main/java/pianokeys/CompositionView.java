@@ -108,7 +108,7 @@ public class CompositionView extends JComponent
         Set<Integer> uniqueKeys = new HashSet<>();
         for (Note note : composition.getNoteList())
         {
-                uniqueKeys.add(note.key());
+            uniqueKeys.add(note.key());
         }
 
         // Convert to a List and sort it once
@@ -202,16 +202,19 @@ public class CompositionView extends JComponent
         g.fillRect(currentTimeX, 0, CURRENT_TIME_WIDTH, getHeight());
     }
 
-    public double getCurrentTime() {
+    public double getCurrentTime()
+    {
         return currentTime;
     }
 
-    public void setCurrentTime(double currentTime) {
+    public void setCurrentTime(double currentTime)
+    {
         this.currentTime = Note.roundToNearestEight(currentTime);
         repaint();
     }
 
-    public void addTime(double delta) {
+    public void addTime(double delta)
+    {
         setCurrentTime(this.getCurrentTime() + delta);
     }
 

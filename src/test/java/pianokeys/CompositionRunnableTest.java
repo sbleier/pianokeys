@@ -10,13 +10,15 @@ import javax.sound.midi.Synthesizer;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CompositionRunnableTest {
+class CompositionRunnableTest
+{
 
     Synthesizer synthesizer = mock();
     MidiChannel channel = mock();
 
     @Test
-    public void run() throws MidiUnavailableException {
+    public void run() throws MidiUnavailableException
+    {
         //given
         PianoSound sound = new PianoSound(synthesizer, channel);
         Composition comp = new Composition();
@@ -33,7 +35,6 @@ class CompositionRunnableTest {
         verify(channel).noteOff(PianoSound.C4);
         verify(channel).noteOn(PianoSound.D4, 127);
         verify(channel).noteOff(PianoSound.D4);
-
 
 
     }

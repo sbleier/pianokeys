@@ -5,10 +5,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pianokeys.Note.roundToNearestEight;
 
-class NoteTest {
+class NoteTest
+{
 
     @Test
-    public void roundToNearestEighth() {
+    public void roundToNearestEighth()
+    {
         // then
         assertEquals(0, roundToNearestEight(0));
         assertEquals(.125, roundToNearestEight(.12));
@@ -19,7 +21,8 @@ class NoteTest {
     }
 
     @Test
-    void getName() {
+    void getName()
+    {
         Note noteC5 = new Note(Note.C5, 0.0, 0.125);
         assertEquals("C5", noteC5.getName());
 

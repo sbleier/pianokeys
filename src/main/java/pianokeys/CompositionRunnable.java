@@ -1,6 +1,7 @@
 package pianokeys;
 
-public class CompositionRunnable implements Runnable {
+public class CompositionRunnable implements Runnable
+{
 
     public static final double STEP = 1 / 8.0;
 
@@ -9,33 +10,41 @@ public class CompositionRunnable implements Runnable {
     private Composition composition;
 
 
-    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs) {
+    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs)
+    {
         this.sound = sound;
         this.composition = composition;
         this.sleepMs = sleepMs;
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
         double time = 0;
 
-        while (time <= composition.duration()) {
+        while (time <= composition.duration())
+        {
 
             //loop through noteList to play all notes
-            for (Note note : composition.getNoteList()) {
+            for (Note note : composition.getNoteList())
+            {
 
-                if (note.endTime() == time) {
+                if (note.endTime() == time)
+                {
                     sound.stopNote(note.key());
-                } else if (note.startTime() == time) {
+                } else if (note.startTime() == time)
+                {
                     sound.playNote(note.key());
                 }
 
             }
 
-            try {
+            try
+            {
                 Thread.sleep((long) (sleepMs * 1000));
-            } catch (InterruptedException e) {
-               e.printStackTrace();
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
 
             }
 

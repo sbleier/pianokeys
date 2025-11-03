@@ -10,10 +10,12 @@ import static pianokeys.PianoSound.C4;
 import static pianokeys.PianoSound.D4;
 import static pianokeys.PianoSound.E4;
 
-class SimpleCompositionFactoryTest {
+class SimpleCompositionFactoryTest
+{
 
     @Test
-    public void toComposition() {
+    public void toComposition()
+    {
         // given
         var factory = new SimpleCompositionFactory();
 
