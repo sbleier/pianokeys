@@ -47,3 +47,5 @@ out/
 build/
 .DS_STORE
 **/apikey.properties
+!.idea/codeStyles/Project.xml
+!.idea/codeStyles/codeStyleConfig.xml

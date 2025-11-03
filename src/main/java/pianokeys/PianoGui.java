@@ -16,7 +16,6 @@ import static java.awt.Color.*;
 
 public class PianoGui extends JFrame
 {
-
     private final Composition composition = new Composition();
     private long recordStartTime = -1;
     private long currentPressTime = -1;
@@ -107,6 +106,7 @@ public class PianoGui extends JFrame
     private int getBlackNoteForOctave(int octave, int blackIndex)
     {
         int base = PianoSound.blackNotes[blackIndex];
+
         if (base == -1)
         {
             return -1;
@@ -183,6 +183,7 @@ public class PianoGui extends JFrame
                 if (!BLACK_KEY_NAMES[i].isEmpty())
                 {
                     int note = getBlackNoteForOctave(octave, i);
+
                     if (note == -1)
                     {
                         continue;
@@ -288,6 +289,7 @@ public class PianoGui extends JFrame
         System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
         System.out.println("Total notes recorded: " + composition.getNoteList().size());
 
+
         if (sound != null)
         {
             sound.stopNote(note);
@@ -308,6 +310,7 @@ public class PianoGui extends JFrame
 
         final Color baseColor;
         final Color hoverColor;
+
         if (note == PianoSound.C4)
         {
             baseColor = C_BASE_COLOR;

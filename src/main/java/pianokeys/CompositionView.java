@@ -213,6 +213,7 @@ public class CompositionView extends JComponent
         repaint();
     }
 
+
     public void addTime(double delta)
     {
         setCurrentTime(this.getCurrentTime() + delta);

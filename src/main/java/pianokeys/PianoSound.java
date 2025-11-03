@@ -4,7 +4,8 @@ import javax.sound.midi.*;
 import javax.swing.*;
 import java.nio.channels.Channel;
 
-public class PianoSound {
+public class PianoSound
+{
     // MIDI note constants
     public static final int C4 = 60;
     public static final int D4 = 62;
@@ -14,6 +15,12 @@ public class PianoSound {
     public static final int A4 = 69;
     public static final int B4 = 71;
     public static final int C5 = 72;
+
+
+    public static final int D5 = 74;
+    public static final int D5_SHARP = 75;
+    public static final int E5 = 76;
+
 
     // Black key (sharp) note constants
     public static final int C4_SHARP = 61;
@@ -30,34 +37,42 @@ public class PianoSound {
 
     public static final String[] instruments = {"piano", "guitar", "violin", "trumpet"};
 
-    public PianoSound(Synthesizer synthesizer, MidiChannel channel) throws MidiUnavailableException {
+    public PianoSound(Synthesizer synthesizer, MidiChannel channel) throws MidiUnavailableException
+    {
         this.synthesizer = synthesizer;
         this.channel = channel;
     }
 
-    public MidiChannel getChannel() {
+    public MidiChannel getChannel()
+    {
         return channel;
     }
 
-    public Synthesizer getSynthesizer() {
+    public Synthesizer getSynthesizer()
+    {
         return synthesizer;
     }
 
-    public void playNote(int note) {
+    public void playNote(int note)
+    {
         channel.noteOn(note, 127); // velocity 127 (max volume)
     }
 
-    public void stopNote(int note) {
+    public void stopNote(int note)
+    {
         channel.noteOff(note);
     }
 
-    public void cleanup() {
+    public void cleanup()
+    {
         synthesizer.close();
     }
 
     //https://midiprog.com/program-numbers/
-    public void setInstrument(String instrumentName) {
-        switch (instrumentName) {
+    public void setInstrument(String instrumentName)
+    {
+        switch (instrumentName)
+        {
             case "piano" -> channel.programChange(0);
             case "guitar" -> channel.programChange(24);
             case "violin" -> channel.programChange(40);
