@@ -106,7 +106,6 @@ public class PianoGui extends JFrame
     private int getBlackNoteForOctave(int octave, int blackIndex)
     {
         int base = PianoSound.blackNotes[blackIndex];
-
         if (base == -1)
         {
             return -1;
@@ -183,7 +182,6 @@ public class PianoGui extends JFrame
                 if (!BLACK_KEY_NAMES[i].isEmpty())
                 {
                     int note = getBlackNoteForOctave(octave, i);
-
                     if (note == -1)
                     {
                         continue;
