@@ -74,6 +74,12 @@ public class PianoGui extends JFrame
         JButton record = new JButton(new ImageIcon(getClass().getResource("/images/record.png")));
         JButton play = new JButton(new ImageIcon(getClass().getResource("/images/play.png")));
 
+        // restart button
+        restart.addActionListener(e ->
+        {
+            compositionView.setCurrentTime(0.0);
+        });
+
         buttonPanel.add(erase);
         buttonPanel.add(restart);
         buttonPanel.add(record);
