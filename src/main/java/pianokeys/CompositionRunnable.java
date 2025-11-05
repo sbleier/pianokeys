@@ -50,7 +50,7 @@ public class CompositionRunnable implements Runnable
         {
 
             synchronized (this) {
-                while(paused) {
+                while (paused) {
                     try {
                         wait();
                     } catch (InterruptedException e) {
