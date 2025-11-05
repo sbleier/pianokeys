@@ -237,20 +237,39 @@ public class CompositionView extends JComponent
     {
         // Calculate the time and note from the mouse coordinates
         double clickedTime = (double) p.x / SECOND_WIDTH;
-        int clickedNote = ((getHeight() - p.y) / NOTE_HEIGHT) + PianoSound.C4; // reverse calculation
 
-        ArrayList<Note> notes = composition.getNoteList();
+        List<Integer> uniqueKeys = getUniqueSortedKeys();
+        int totalNotes = uniqueKeys.size();
+        if (totalNotes == 0)
+        {
+            return;
+        }
+
+        int noteHeight = getHeight() / totalNotes;
+
+        // Flip Y to find which note row was clicked
+        int rowIndex = (getHeight() - p.y) / noteHeight;
+        if (rowIndex < 0 || rowIndex >= totalNotes)
+        {
+            return;
+        }
+
+        int clickedKey = uniqueKeys.get(rowIndex);
+
+        // Use iterator to make sure the note is safely removed
+        Iterator<Note> iterator = composition.getNoteList().iterator();
 
         // Find the note that was clicked
-        for (Note note : new ArrayList<>(notes))
+        while (iterator.hasNext())
         {
-            if (clickedNote == note.key()
-                    && clickedTime >= note.startTime()
-                    && clickedTime <= note.endTime())
+            Note note = iterator.next();
+            if (note.key() == clickedKey &&
+                    clickedTime >= note.startTime() &&
+                    clickedTime <= note.endTime())
             {
-                notes.remove(note);
+                iterator.remove();
                 repaint();
-                break;
+                return;
             }
         }
     }
