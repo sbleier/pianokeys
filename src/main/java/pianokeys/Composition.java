@@ -23,13 +23,18 @@ public class Composition
                             D4, E4, F4, E4, D4, C4, D4, G4,
                             E4, E4, F4, G4, G4, F4, E4, D4,
                             C4, C4, D4, E4, D4, C4, C4},
-                    TIME_STEP);
+                    TIME_STEP * 4);
 
     private final ArrayList<Note> noteList = new ArrayList<>();
 
     public Composition()
     {
 
+    }
+
+    public Composition getOdeToJoy()
+    {
+        return ODE_TO_JOY;
     }
 
     public ArrayList<Note> getNoteList()

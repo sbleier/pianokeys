@@ -48,11 +48,13 @@ public class CompositionView extends JComponent
      */
 
     // This will change over time.
-    private double currentTime = 1.25;
+    private double currentTime = 0;
     private Composition composition = new Composition();
 
     public CompositionView()
     {
+        this.composition = new Composition().getOdeToJoy();
+
         setFocusable(true);
         requestFocusInWindow();
 
@@ -180,6 +182,10 @@ public class CompositionView extends JComponent
         int rowIndex = uniqueKeys.indexOf(Integer.valueOf(note.key()));
         int x1 = (int) (note.startTime() * SECOND_WIDTH);
         int x2 = (int) (note.endTime() * SECOND_WIDTH);
+
+        // Only display the notes that are there
+        int totalNotes = uniqueKeys.size();
+        int NOTE_HEIGHT = getHeight() / totalNotes;
 
         // flips the Y axis so that the higher notes at the top and lower notes on the bottom
         int y1 = getHeight() - (rowIndex + 1) * NOTE_HEIGHT;
