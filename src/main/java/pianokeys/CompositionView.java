@@ -48,11 +48,13 @@ public class CompositionView extends JComponent
      */
 
     // This will change over time.
-    private double currentTime = 1.25;
+    private double currentTime = 0;
     private Composition composition = new Composition();
 
     public CompositionView()
     {
+        composition.addNotes(Composition.ODE_TO_JOY.getNoteList());
+
         setFocusable(true);
         requestFocusInWindow();
 
@@ -181,18 +183,22 @@ public class CompositionView extends JComponent
         int x1 = (int) (note.startTime() * SECOND_WIDTH);
         int x2 = (int) (note.endTime() * SECOND_WIDTH);
 
+        // Only display the notes that are there
+        int totalNotes = uniqueKeys.size();
+        int noteHeight = getHeight() / totalNotes;
+
         // flips the Y axis so that the higher notes at the top and lower notes on the bottom
-        int y1 = getHeight() - (rowIndex + 1) * NOTE_HEIGHT;
+        int y1 = getHeight() - (rowIndex + 1) * noteHeight;
 
         g.setColor(CYAN);
-        g.fillRect(x1, y1, x2 - x1, NOTE_HEIGHT);
+        g.fillRect(x1, y1, x2 - x1, noteHeight);
         g.setColor(BLACK);
-        g.drawRect(x1, y1, x2 - x1, NOTE_HEIGHT);
+        g.drawRect(x1, y1, x2 - x1, noteHeight);
 
         // Add the note name to the block as it is played
         g.setColor(BLACK);
         String noteLabel = note.getName();
-        g.drawString(noteLabel, x1 + 5, y1 + NOTE_HEIGHT / 2 + 5);
+        g.drawString(noteLabel, x1 + 5, y1 + noteHeight / 2 + 5);
     }
 
     private void displayCurrentTimeLine(Graphics g)
