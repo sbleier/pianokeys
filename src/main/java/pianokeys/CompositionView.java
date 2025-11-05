@@ -263,9 +263,9 @@ public class CompositionView extends JComponent
         while (iterator.hasNext())
         {
             Note note = iterator.next();
-            if (note.key() == clickedKey &&
-                    clickedTime >= note.startTime() &&
-                    clickedTime <= note.endTime())
+            if (note.key() == clickedKey
+                    && clickedTime >= note.startTime()
+                    && clickedTime <= note.endTime())
             {
                 iterator.remove();
                 repaint();
