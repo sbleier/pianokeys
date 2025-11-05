@@ -14,7 +14,7 @@ import static pianokeys.PianoSound.G4;
 public class Composition
 {
 
-    private static final Composition ODE_TO_JOY = new SimpleCompositionFactory()
+    public static final Composition ODE_TO_JOY = new SimpleCompositionFactory()
             .toComposition(new int[]{E4, E4, F4, G4, G4, F4, E4, D4,
                             C4, C4, D4, E4, E4, D4, D4,
                             E4, E4, F4, G4, G4, F4, E4, D4,
@@ -30,11 +30,6 @@ public class Composition
     public Composition()
     {
 
-    }
-
-    public Composition getOdeToJoy()
-    {
-        return ODE_TO_JOY;
     }
 
     public ArrayList<Note> getNoteList()
@@ -89,6 +84,10 @@ public class Composition
     public void addNotes(Note... notes)
     {
         noteList.addAll(Arrays.stream(notes).toList());
+    }
+
+    public void addNotes(List<Note> list) {
+        noteList.addAll(list);
     }
 
     // returns duration

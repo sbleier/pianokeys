@@ -53,7 +53,7 @@ public class CompositionView extends JComponent
 
     public CompositionView()
     {
-        this.composition = new Composition().getOdeToJoy();
+        composition.addNotes(Composition.ODE_TO_JOY.getNoteList());
 
         setFocusable(true);
         requestFocusInWindow();
