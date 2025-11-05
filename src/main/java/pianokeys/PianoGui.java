@@ -48,6 +48,8 @@ public class PianoGui extends JFrame
 
     public PianoGui()
     {
+        initMidi();
+        midiCleanup();
         setUpFrame();
         JPanel whiteKeysPanel = createWhiteKeysPanel();
         JPanel blackKeysPanel = createBlackKeysPanel();
