@@ -95,7 +95,7 @@ public class PianoGui extends JFrame
     {
         setTitle("Piano Keys");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 550);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
     }
