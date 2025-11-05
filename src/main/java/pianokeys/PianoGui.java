@@ -79,6 +79,7 @@ public class PianoGui extends JFrame
         {
             composition.getNoteList().clear();
             compositionView.repaint();
+            compositionView.setComposition(new Composition());
         });
 
         // restart button
@@ -100,9 +101,11 @@ public class PianoGui extends JFrame
         instrumentDropdown.setBorder(BorderFactory.createLineBorder(GRAY, 2));
 
         // Link the combo box to instrument change
-        instrumentDropdown.addActionListener(e -> {
+        instrumentDropdown.addActionListener(e ->
+        {
             String instrument = (String) instrumentDropdown.getSelectedItem();
-            if (instrument != null && sound != null) {
+            if (instrument != null && sound != null)
+            {
                 sound.setInstrument(instrument);
             }
         });
