@@ -256,21 +256,10 @@ public class CompositionView extends JComponent
 
         int clickedKey = uniqueKeys.get(rowIndex);
 
-        // Use iterator to make sure the note is safely removed
-        Iterator<Note> iterator = composition.getNoteList().iterator();
-
-        // Find the note that was clicked
-        while (iterator.hasNext())
+        // calling it from the method in Composition
+        if (composition.removeNote(clickedTime, clickedKey))
         {
-            Note note = iterator.next();
-            if (note.key() == clickedKey
-                    && clickedTime >= note.startTime()
-                    && clickedTime <= note.endTime())
-            {
-                iterator.remove();
-                repaint();
-                return;
-            }
+            repaint();
         }
     }
 
