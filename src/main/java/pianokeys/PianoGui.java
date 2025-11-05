@@ -7,10 +7,6 @@ import javax.sound.midi.Synthesizer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import static java.awt.Color.*;
 
@@ -36,8 +32,8 @@ public class PianoGui extends JFrame
     private static final Color C_BASE_COLOR = new Color(255, 245, 200);
     private static final Color C_HOVER_COLOR = new Color(255, 235, 180);
 
-    private JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * OCTAVES];
-    private JButton[] blackButtons = new JButton[5 * OCTAVES];
+    private final JButton[] whiteButtons = new JButton[WHITE_KEY_NAMES.length * OCTAVES];
+    private final JButton[] blackButtons = new JButton[5 * OCTAVES];
 
     //dropdown to change instrument
     private JComboBox<String> instrumentDropdown;
@@ -347,13 +343,28 @@ public class PianoGui extends JFrame
             @Override
             public void mouseEntered(MouseEvent evt)
             {
-                key.setBackground(hoverColor);
+                int modifiers = evt.getModifiersEx();
+                if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0)
+                {
+                    // left mouse button
+                    key.setBackground(DARK_GRAY);
+                    currentPressTime = startRecord(note);
+                } else
+                {
+                    key.setBackground(hoverColor);
+                }
             }
 
             @Override
             public void mouseExited(MouseEvent evt)
             {
                 key.setBackground(baseColor);
+                int modifiers = evt.getModifiersEx();
+                if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0)
+                {
+                    // left mouse button
+                    endRecord(note, currentPressTime);
+                }
             }
 
             @Override
@@ -406,13 +417,28 @@ public class PianoGui extends JFrame
             @Override
             public void mouseEntered(MouseEvent evt)
             {
-                key.setBackground(LIGHT_GRAY);
+                int modifiers = evt.getModifiersEx();
+                if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0)
+                {
+                    key.setBackground(DARK_GRAY);
+                    // left mouse button
+                    currentPressTime = startRecord(note);
+                } else
+                {
+                    key.setBackground(LIGHT_GRAY);
+                }
             }
 
             @Override
             public void mouseExited(MouseEvent evt)
             {
                 key.setBackground(BLACK);
+                int modifiers = evt.getModifiersEx();
+                if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0)
+                {
+                    // left mouse button
+                    endRecord(note, currentPressTime);
+                }
             }
 
             @Override
