@@ -50,7 +50,6 @@ public class PianoGui extends JFrame
     {
         initMidi();
         midiCleanup();
-
         setUpFrame();
         JPanel whiteKeysPanel = createWhiteKeysPanel();
         JPanel blackKeysPanel = createBlackKeysPanel();
@@ -80,6 +79,13 @@ public class PianoGui extends JFrame
         JButton record = new JButton(new ImageIcon(getClass().getResource("/images/record.png")));
         JButton play = new JButton(new ImageIcon(getClass().getResource("/images/play.png")));
         JButton chooseInstrument = new JButton(new ImageIcon(getClass().getResource("/images/instrument.png")));
+
+        // erase button
+        erase.addActionListener(e ->
+        {
+            composition.getNoteList().clear();
+            compositionView.repaint();
+        });
 
         // restart button
         restart.addActionListener(e ->

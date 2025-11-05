@@ -1,7 +1,5 @@
 package pianokeys;
 
-import javax.sound.midi.MidiChannel;
-import javax.sound.midi.Synthesizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
