@@ -7,6 +7,8 @@ public class CompositionRunnable implements Runnable
 
     private double sleepMs;
     private final PianoSound sound;
+    private boolean paused = true;
+    private boolean playing = false;
     private Composition composition;
 
 
@@ -17,13 +19,45 @@ public class CompositionRunnable implements Runnable
         this.sleepMs = sleepMs;
     }
 
+    public synchronized void pause() {
+        paused = true;
+        for (Note note : composition.getNoteList())
+        {
+            sound.stopNote(note.key());
+        }
+    }
+
+    public synchronized void play() {
+        paused = false;
+        notifyAll();
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public boolean isPlaying() {
+        return playing;
+    }
+
     @Override
     public void run()
     {
+        playing = true;
         double time = 0;
 
         while (time <= composition.duration())
         {
+
+            synchronized (this) {
+                while(paused) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
 
             //loop through noteList to play all notes
             for (Note note : composition.getNoteList())
@@ -36,7 +70,9 @@ public class CompositionRunnable implements Runnable
                 {
                     sound.playNote(note.key());
                 }
-
+                if (paused) {
+                    break;
+                }
             }
 
             try
@@ -50,6 +86,8 @@ public class CompositionRunnable implements Runnable
 
             time += STEP;
         }
+
+        playing = false;
 
     }
 }
