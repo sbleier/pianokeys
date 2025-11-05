@@ -41,7 +41,6 @@ public class PianoGui extends JFrame
 
     //dropdown to change instrument
     private JComboBox<String> instrumentDropdown;
-    //array of possible instruments
 
     // MIDI sound system
     private PianoSound sound;
@@ -78,17 +77,34 @@ public class PianoGui extends JFrame
         JButton restart = new JButton(new ImageIcon(getClass().getResource("/images/restart.png")));
         JButton record = new JButton(new ImageIcon(getClass().getResource("/images/record.png")));
         JButton play = new JButton(new ImageIcon(getClass().getResource("/images/play.png")));
-        JButton chooseInstrument = new JButton(new ImageIcon(getClass().getResource("/images/instrument.png")));
 
         buttonPanel.add(erase);
         buttonPanel.add(restart);
         buttonPanel.add(record);
         buttonPanel.add(play);
-        buttonPanel.add(chooseInstrument);
+
+        // Making the instrument dropdown look like a button
+        instrumentDropdown = new JComboBox<>(PianoSound.instruments);
+        instrumentDropdown.setFont(new Font("Arial", Font.BOLD, 16));
+        instrumentDropdown.setBackground(WHITE);
+        instrumentDropdown.setForeground(BLACK);
+        instrumentDropdown.setBorder(BorderFactory.createLineBorder(GRAY, 2));
+
+        // Link the combo box to instrument change
+        instrumentDropdown.addActionListener(e -> {
+            String instrument = (String) instrumentDropdown.getSelectedItem();
+            if (instrument != null && sound != null) {
+                sound.setInstrument(instrument);
+            }
+        });
+
+        // adding it to the button panel
+        buttonPanel.add(instrumentDropdown);
 
         add(buttonPanel, BorderLayout.NORTH);
 
         centerOnMiddleC(pianoScrollPane);
+
     }
 
     private void setUpFrame()
