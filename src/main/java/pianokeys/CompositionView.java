@@ -212,18 +212,22 @@ public class CompositionView extends JComponent
         int x1 = (int) (note.startTime() * SECOND_WIDTH);
         int x2 = (int) (note.endTime() * SECOND_WIDTH);
 
+        // Only display the notes that are there
+        int totalNotes = uniqueKeys.size();
+        int noteHeight = getHeight() / totalNotes;
+
         // flips the Y axis so that the higher notes at the top and lower notes on the bottom
-        int y1 = getHeight() - (rowIndex + 1) * NOTE_HEIGHT;
+        int y1 = getHeight() - (rowIndex + 1) * noteHeight;
 
         g.setColor(CYAN);
-        g.fillRect(x1, y1, x2 - x1, NOTE_HEIGHT);
+        g.fillRect(x1, y1, x2 - x1, noteHeight);
         g.setColor(BLACK);
-        g.drawRect(x1, y1, x2 - x1, NOTE_HEIGHT);
+        g.drawRect(x1, y1, x2 - x1, noteHeight);
 
         // Add the note name to the block as it is played
         g.setColor(BLACK);
         String noteLabel = note.getName();
-        g.drawString(noteLabel, x1 + 5, y1 + NOTE_HEIGHT / 2 + 5);
+        g.drawString(noteLabel, x1 + 5, y1 + noteHeight / 2 + 5);
     }
 
     private void displayCurrentTimeLine(Graphics g)
@@ -268,21 +272,29 @@ public class CompositionView extends JComponent
     {
         // Calculate the time and note from the mouse coordinates
         double clickedTime = (double) p.x / SECOND_WIDTH;
-        int clickedNote = ((getHeight() - p.y) / NOTE_HEIGHT) + PianoSound.C4; // reverse calculation
 
-        ArrayList<Note> notes = composition.getNoteList();
-
-        // Find the note that was clicked
-        for (Note note : new ArrayList<>(notes))
+        List<Integer> uniqueKeys = getUniqueSortedKeys();
+        int totalNotes = uniqueKeys.size();
+        if (totalNotes == 0)
         {
-            if (clickedNote == note.key()
-                    && clickedTime >= note.startTime()
-                    && clickedTime <= note.endTime())
-            {
-                notes.remove(note);
-                repaint();
-                break;
-            }
+            return;
+        }
+
+        int noteHeight = getHeight() / totalNotes;
+
+        // Flip Y to find which note row was clicked
+        int rowIndex = (getHeight() - p.y) / noteHeight;
+        if (rowIndex < 0 || rowIndex >= totalNotes)
+        {
+            return;
+        }
+
+        int clickedKey = uniqueKeys.get(rowIndex);
+
+        // calling it from the method in Composition
+        if (composition.removeNote(clickedTime, clickedKey))
+        {
+            repaint();
         }
     }
 

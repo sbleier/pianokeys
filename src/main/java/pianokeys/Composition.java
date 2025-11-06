@@ -2,6 +2,7 @@ package pianokeys;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import static pianokeys.Note.TIME_STEP;
@@ -14,7 +15,7 @@ import static pianokeys.PianoSound.G4;
 public class Composition
 {
 
-    private static final Composition ODE_TO_JOY = new SimpleCompositionFactory()
+    public static final Composition ODE_TO_JOY = new SimpleCompositionFactory()
             .toComposition(new int[]{E4, E4, F4, G4, G4, F4, E4, D4,
                             C4, C4, D4, E4, E4, D4, D4,
                             E4, E4, F4, G4, G4, F4, E4, D4,
@@ -23,7 +24,7 @@ public class Composition
                             D4, E4, F4, E4, D4, C4, D4, G4,
                             E4, E4, F4, G4, G4, F4, E4, D4,
                             C4, C4, D4, E4, D4, C4, C4},
-                    TIME_STEP);
+                    TIME_STEP * 4);
 
     private final ArrayList<Note> noteList = new ArrayList<>();
 
@@ -86,6 +87,30 @@ public class Composition
         noteList.addAll(Arrays.stream(notes).toList());
     }
 
+    public void addNotes(List<Note> list) {
+        noteList.addAll(list);
+    }
+
+    public boolean removeNote(double clickedTime, int clickedKey)
+    {
+        // Use iterator to make sure the note is safely removed
+        Iterator<Note> iterator = getNoteList().iterator();
+
+        // Find the note that was clicked
+        while (iterator.hasNext())
+        {
+            Note note = iterator.next();
+            if (note.key() == clickedKey
+                    && clickedTime >= note.startTime()
+                    && clickedTime <= note.endTime())
+            {
+                iterator.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
     // returns duration
     public double duration()
     {
@@ -99,8 +124,6 @@ public class Composition
         }
         return duration;
     }
-
-
 }
 
 
