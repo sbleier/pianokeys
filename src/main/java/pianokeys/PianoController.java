@@ -14,7 +14,7 @@ public class PianoController
 
     public void playNote(int note)
     {
-        if(sound != null){
+        if (sound != null) {
             sound.playNote(note);
         }
 
@@ -22,7 +22,7 @@ public class PianoController
 
     public void stopNote(int note)
     {
-        if(sound != null){
+        if (sound != null) {
             sound.stopNote(note);
         }
 
