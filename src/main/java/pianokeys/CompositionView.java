@@ -47,7 +47,7 @@ public class CompositionView extends JComponent
      * 2 octaves = 24 notes
      */
 
-    private double currentTime = 0.0;
+    private double currentTime = 0;
     private Composition composition = new Composition();
 
     // --- Size handling for playback vs normal state ---
@@ -75,6 +75,7 @@ public class CompositionView extends JComponent
     public CompositionView()
     {
         setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        composition.addNotes(Composition.ODE_TO_JOY.getNoteList());
         setFocusable(true);
         requestFocusInWindow();
 
