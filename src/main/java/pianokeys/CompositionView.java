@@ -47,6 +47,7 @@ public class CompositionView extends JComponent
      * 2 octaves = 24 notes
      */
 
+    // This will change over time.
     private double currentTime = 0;
     private Composition composition = new Composition();
 
