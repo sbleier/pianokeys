@@ -133,7 +133,9 @@ public class PianoGui extends JFrame
                     public void run() {
                         try {
                             playThread.join();
-                        } catch (InterruptedException ignored) {}
+                        } catch (InterruptedException ignored) {
+                            System.err.println("Playback thread interrupted");
+                        }
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
