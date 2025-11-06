@@ -1,63 +1,41 @@
 package pianokeys;
 
+import static pianokeys.Note.TIME_STEP;
+
 public class CompositionRunnable implements Runnable
 {
 
     public static final double STEP = 1 / 8.0;
 
-    private double sleepMs;
+    private final double sleepMs;
     private final PianoSound sound;
-    private boolean paused = true;
-    private boolean playing = false;
-    private Composition composition;
+    private final Composition composition;
+    private final CompositionView compView;
+    private boolean playing = true;
 
+    public CompositionRunnable(PianoSound sound, Composition composition, CompositionView compositionView) {
+        this(sound, composition, TIME_STEP, compositionView);
+    }
 
-    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs)
+    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs, CompositionView compView)
     {
         this.sound = sound;
         this.composition = composition;
         this.sleepMs = sleepMs;
+        this.compView = compView;
     }
 
-    public synchronized void pause() {
-        paused = true;
-        for (Note note : composition.getNoteList())
-        {
-            sound.stopNote(note.key());
-        }
-    }
-
-    public synchronized void play() {
-        paused = false;
-        notifyAll();
-    }
-
-    public boolean isPaused() {
-        return paused;
-    }
-
-    public boolean isPlaying() {
-        return playing;
+    public void stop() {
+        playing = false;
     }
 
     @Override
     public void run()
     {
-        playing = true;
-        double time = 0;
+        double time = compView.getCurrentTime();
 
-        while (time <= composition.duration())
+        while (playing && time <= composition.duration())
         {
-
-            synchronized (this) {
-                while (paused) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
 
             //loop through noteList to play all notes
             for (Note note : composition.getNoteList())
@@ -70,9 +48,6 @@ public class CompositionRunnable implements Runnable
                 {
                     sound.playNote(note.key());
                 }
-                if (paused) {
-                    break;
-                }
             }
 
             try
@@ -81,13 +56,18 @@ public class CompositionRunnable implements Runnable
             } catch (InterruptedException e)
             {
                 e.printStackTrace();
-
             }
 
             time += STEP;
+
+            compView.setCurrentTime(time);
         }
 
-        playing = false;
+        for (Note note : composition.getNoteList()) {
+            sound.stopNote(note.key());
+        }
+
+
 
     }
 }
