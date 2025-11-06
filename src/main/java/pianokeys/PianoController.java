@@ -30,11 +30,9 @@ public class PianoController
 
     public void playComposition()
     {
-
     }
 
     public void pauseComposition()
     {
-
     }
 }
