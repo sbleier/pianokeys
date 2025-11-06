@@ -16,6 +16,7 @@ import static java.awt.Color.*;
 
 public class PianoGui extends JFrame
 {
+    private CompositionView compositionView;
     private final Composition composition = new Composition();
     private long recordStartTime = -1;
     private long currentPressTime = -1;
@@ -59,8 +60,8 @@ public class PianoGui extends JFrame
 
         add(pianoScrollPane, BorderLayout.SOUTH);
 
-        CompositionView compositionView = new CompositionView();
-        compositionView.setPreferredSize(new Dimension(2000, 400));
+        compositionView = new CompositionView();
+        compositionView.setComposition(composition);
 
         // vertical and  horizontal scroll panes for CompositionView
         JScrollPane compositionScrollPane = new JScrollPane(
@@ -87,6 +88,39 @@ public class PianoGui extends JFrame
         buttonPanel.add(chooseInstrument);
 
         add(buttonPanel, BorderLayout.NORTH);
+
+        play.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                compositionView.setComposition(composition);
+
+                // expand ONLY for playback
+                compositionView.fitToSeconds(composition.duration());
+                compositionScrollPane.revalidate();
+
+                // play
+                final CompositionRunnable player = new CompositionRunnable(sound, composition, 0.125);
+                final Thread playThread = new Thread(player, "composition-play");
+                playThread.start();
+
+                // snap back after playback ends
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            playThread.join();
+                        } catch (InterruptedException ignored) {}
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                compositionView.resetToDefaultSize();
+                                compositionScrollPane.revalidate();
+                            }
+                        });
+                    }
+                }, "composition-resize-reset").start();
+            }
+        });
 
         centerOnMiddleC(pianoScrollPane);
     }
@@ -289,6 +323,7 @@ public class PianoGui extends JFrame
         System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
         System.out.println("Total notes recorded: " + composition.getNoteList().size());
 
+        compositionView.repaint();
 
         if (sound != null)
         {

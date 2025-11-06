@@ -47,12 +47,34 @@ public class CompositionView extends JComponent
      * 2 octaves = 24 notes
      */
 
-    // This will change over time.
-    private double currentTime = 1.25;
+    private double currentTime = 0.0;
     private Composition composition = new Composition();
+
+    // --- Size handling for playback vs normal state ---
+    private static final int DEFAULT_WIDTH  = 2400; // standard grid width
+    private static final int DEFAULT_HEIGHT = 400;
+
+    private boolean expandedForPlayback = false;
+
+    /** Temporarily expand to match composition length during playback */
+    public void fitToSeconds(double seconds) {
+        expandedForPlayback = true;
+        int width = (Math.max(1, (int) Math.ceil(seconds)) + 1) * SECOND_WIDTH;
+        setPreferredSize(new Dimension(width, DEFAULT_HEIGHT));
+        revalidate();
+        repaint();
+    }
+
+    public void resetToDefaultSize() {
+        expandedForPlayback = false;
+        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        revalidate();
+        repaint();
+    }
 
     public CompositionView()
     {
+        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
         setFocusable(true);
         requestFocusInWindow();
 
@@ -143,10 +165,17 @@ public class CompositionView extends JComponent
     private void drawTimeGrid(Graphics g)
     {
         Graphics2D g2d = (Graphics2D) g;
-        int maxTime = 20;   // shows 20 seconds
+        int visibleSeconds = Math.max(1, getWidth() / SECOND_WIDTH);
+
+        int maxTimeSeconds;
+        if (expandedForPlayback) {
+            maxTimeSeconds = Math.max(1, (int) Math.ceil(composition.duration()));
+        } else {
+            maxTimeSeconds = visibleSeconds;
+        }
         int viewHeight = getHeight();
 
-        for (int second = 0; second <= maxTime; second++)
+        for (int second = 0; second <= maxTimeSeconds; second++)
         {
             int x = second * SECOND_WIDTH;
 
@@ -224,6 +253,12 @@ public class CompositionView extends JComponent
     public void setComposition(Composition composition)
     {
         this.composition = composition;
+        revalidate();
+        repaint();
+    }
+
+    public void refreshLayout() {
+        revalidate();
         repaint();
     }
 
