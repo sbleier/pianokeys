@@ -79,7 +79,6 @@ public class PianoGui extends JFrame
         {
             composition.getNoteList().clear();
             compositionView.repaint();
-            compositionView.setComposition(new Composition());
         });
 
         // restart button
