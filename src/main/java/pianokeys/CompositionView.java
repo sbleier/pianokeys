@@ -48,7 +48,7 @@ public class CompositionView extends JComponent
      */
 
     // This will change over time.
-    private double currentTime = 1.25;
+    private double currentTime = 0;
     private Composition composition = new Composition();
 
     public CompositionView()

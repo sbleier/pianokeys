@@ -23,7 +23,6 @@ class CompositionRunnableTest
         PianoSound sound = new PianoSound(synthesizer, channel);
         Composition comp = new Composition();
         CompositionView view = new CompositionView();
-        view.setCurrentTime(0);
         comp.addNote(new Note(PianoSound.C4, 0.0, 0.25));
         comp.addNote(new Note(PianoSound.D4, 0.25, 0.5));
         CompositionRunnable runnable = new CompositionRunnable(sound, comp, 0.0, view);
