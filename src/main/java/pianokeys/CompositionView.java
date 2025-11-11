@@ -57,22 +57,6 @@ public class CompositionView extends JComponent
 
     private boolean expandedForPlayback = false;
 
-    /** Temporarily expand to match composition length during playback */
-    public void fitToSeconds(double seconds) {
-        expandedForPlayback = true;
-        int width = (Math.max(1, (int) Math.ceil(seconds)) + 1) * SECOND_WIDTH;
-        setPreferredSize(new Dimension(width, DEFAULT_HEIGHT));
-        revalidate();
-        repaint();
-    }
-
-    public void resetToDefaultSize() {
-        expandedForPlayback = false;
-        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-        revalidate();
-        repaint();
-    }
-
     public CompositionView()
     {
         setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
@@ -124,6 +108,20 @@ public class CompositionView extends JComponent
             }
 
         });
+    }
+
+    /** Temporarily expand to match composition length during playback */
+    public void fitToSeconds(double seconds) {
+        expandedForPlayback = true;
+        int width = (Math.max(1, (int) Math.ceil(seconds)) + 1) * SECOND_WIDTH;
+        setPreferredSize(new Dimension(width, DEFAULT_HEIGHT));
+        refreshLayout();
+    }
+
+    public void resetToDefaultSize() {
+        expandedForPlayback = false;
+        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        refreshLayout();
     }
 
     // Helper method to get the unique keys sorted
@@ -259,8 +257,7 @@ public class CompositionView extends JComponent
     public void setComposition(Composition composition)
     {
         this.composition = composition;
-        revalidate();
-        repaint();
+        refreshLayout();
     }
 
     public void refreshLayout() {

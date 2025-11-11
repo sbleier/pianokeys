@@ -122,7 +122,7 @@ public class PianoGui extends JFrame
                 compositionView.fitToSeconds(composition.duration());
                 compositionScrollPane.revalidate();
 
-                // play
+                //play
                 final CompositionRunnable player = new CompositionRunnable(sound, composition, 0.125);
                 final Thread playThread = new Thread(player, "composition-play");
                 playThread.start();
