@@ -101,9 +101,11 @@ public class PianoGui extends JFrame
         instrumentDropdown.setBorder(BorderFactory.createLineBorder(GRAY, 2));
 
         // Link the combo box to instrument change
-        instrumentDropdown.addActionListener(e -> {
+        instrumentDropdown.addActionListener(e ->
+        {
             String instrument = (String) instrumentDropdown.getSelectedItem();
-            if (instrument != null && sound != null) {
+            if (instrument != null && sound != null)
+            {
                 sound.setInstrument(instrument);
             }
         });
@@ -113,9 +115,11 @@ public class PianoGui extends JFrame
 
         add(buttonPanel, BorderLayout.NORTH);
 
-        play.addActionListener(new ActionListener() {
+        play.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 compositionView.setComposition(composition);
 
                 // expand ONLY for playback
@@ -123,12 +127,16 @@ public class PianoGui extends JFrame
                 compositionScrollPane.revalidate();
 
                 // snap back after playback ends
-                new Thread(new Runnable() {
+                new Thread(new Runnable()
+                {
                     @Override
-                    public void run() {
-                        SwingUtilities.invokeLater(new Runnable() {
+                    public void run()
+                    {
+                        SwingUtilities.invokeLater(new Runnable()
+                        {
                             @Override
-                            public void run() {
+                            public void run()
+                            {
                                 compositionView.resetToDefaultSize();
                                 compositionScrollPane.revalidate();
                             }
