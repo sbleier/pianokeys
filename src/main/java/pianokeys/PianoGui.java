@@ -33,6 +33,8 @@ public class PianoGui extends JFrame
     // MIDI sound system
     private PianoSound sound;
 
+    private CompositionRunnable runnable;
+
     public PianoGui()
     {
         initMidi();
@@ -74,6 +76,22 @@ public class PianoGui extends JFrame
         restart.addActionListener(e ->
         {
             compositionView.setCurrentTime(0.0);
+        });
+
+
+        play.addActionListener(e -> {
+            if (runnable == null) {
+                runnable = new CompositionRunnable(sound, Composition.ODE_TO_JOY, compositionView);
+                play.setIcon(new ImageIcon(getClass().getResource("/images/pause.jpeg")));
+                buttonPanel.repaint();
+                new Thread(runnable).start();
+            } else {
+                play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
+                buttonPanel.repaint();
+                runnable.stop();
+                runnable = null;
+            }
+
         });
 
         buttonPanel.add(erase);
