@@ -14,18 +14,12 @@ public class PianoController
 
     public void playNote(int note)
     {
-        if (sound != null) {
             sound.playNote(note);
-        }
-
     }
 
     public void stopNote(int note)
     {
-        if (sound != null) {
             sound.stopNote(note);
-        }
-
     }
 
     public void playComposition()
