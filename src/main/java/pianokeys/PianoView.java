@@ -3,8 +3,10 @@ package pianokeys;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashMap;
 
 import static java.awt.Color.*;
+import static pianokeys.PianoSound.C4;
 
 public class PianoView extends JLayeredPane
 {
@@ -33,6 +35,10 @@ public class PianoView extends JLayeredPane
     private final Composition composition = new Composition();
     private long recordStartTime = -1;
     private long currentPressTime = -1;
+
+    private HashMap<Integer, JButton> blackHashMap = new HashMap<>();
+    private HashMap<Integer, JButton> whiteHashMap = new HashMap<>();
+
 
     public PianoView(PianoSound sound)
     {
@@ -70,6 +76,7 @@ public class PianoView extends JLayeredPane
                 // calculating position across all the indexes not just the first loop
                 int keyIndex = octave * WHITE_KEY_NAMES.length + i;
                 whiteButtons[keyIndex] = button;
+                whiteHashMap.put(note, button);
 
                 button.setBounds(keyIndex * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
                 whiteKeysPanel.add(button);
@@ -106,6 +113,8 @@ public class PianoView extends JLayeredPane
                     int blackKeyX = (whiteKeyPosition * WHITE_KEY_WIDTH) + WHITE_KEY_WIDTH - (BLACK_KEY_WIDTH / 2);
                     button.setBounds(blackKeyX, 0, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
                     blackKeysPanel.add(button);
+
+                    blackHashMap.put(note, button);
 
                     blackKeyIndex++;
                 }
@@ -145,7 +154,7 @@ public class PianoView extends JLayeredPane
         final Color baseColor;
         final Color hoverColor;
 
-        if (note == PianoSound.C4)
+        if (note == C4)
         {
             baseColor = C_BASE_COLOR;
             hoverColor = C_HOVER_COLOR;
@@ -329,6 +338,29 @@ public class PianoView extends JLayeredPane
         if (sound != null)
         {
             sound.stopNote(note);
+        }
+    }
+
+    public void showKeyPlayed(int note, boolean pressed)
+    {
+        JButton button;
+        Color releasedColor;
+        if (whiteHashMap.containsKey(note))
+        {
+            button = whiteHashMap.get(note);
+            releasedColor = (note == C4) ? C_BASE_COLOR : WHITE;
+        } else
+        {
+            button = blackHashMap.get(note);
+            releasedColor = BLACK;
+        }
+
+        if (pressed)
+        {
+            button.setBackground(PINK);
+        } else
+        {
+            button.setBackground(releasedColor);
         }
     }
 
