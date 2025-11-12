@@ -35,6 +35,8 @@ public class PianoGui extends JFrame
 
     private CompositionRunnable runnable;
 
+    private Thread playThread;
+
     public PianoGui()
     {
         initMidi();
@@ -78,20 +80,58 @@ public class PianoGui extends JFrame
             compositionView.setCurrentTime(0.0);
         });
 
-
         play.addActionListener(e -> {
-            if (runnable == null) {
-                runnable = new CompositionRunnable(sound, Composition.ODE_TO_JOY, compositionView);
+            // If nothing is currently playing, START ODE_TO_JOY
+            if (playThread == null || !playThread.isAlive()) {
+                Composition score = Composition.ODE_TO_JOY;   // ← hardcoded piece
+
+                // Prep the view
+                compositionView.setComposition(score);
+                compositionView.refreshLayout();
+
+                // Expand to fit full piece
+                compositionView.fitToSeconds(score.duration());
+                compositionScrollPane.revalidate();
+
+                // Build & start the player
+                double stepValue = CompositionRunnable.STEP;
+                runnable   = new CompositionRunnable(sound, score, stepValue, compositionView);
+                playThread = new Thread(runnable, "composition-playback");
+                playThread.start();
+
+                // Toggle icon → pause
                 play.setIcon(new ImageIcon(getClass().getResource("/images/pause.jpeg")));
                 buttonPanel.repaint();
-                new Thread(runnable).start();
-            } else {
-                play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
-                buttonPanel.repaint();
-                runnable.stop();
-                runnable = null;
-            }
 
+                // Auto-shrink & reset after the song ends (+ small buffer)
+                int ms = (int)((score.duration() + Note.TIME_STEP) * 1000);
+                Thread started = playThread;  // guard against manual stop/restart
+                javax.swing.Timer t = new javax.swing.Timer(ms, ev -> {
+                    if (playThread == started) {         // still same run
+                        if (runnable != null) runnable.stop();
+                        runnable = null;
+                        playThread = null;
+
+                        compositionView.resetToDefaultSize();
+                        compositionScrollPane.revalidate();
+
+                        play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
+                        buttonPanel.repaint();
+                    }
+                });
+                t.setRepeats(false);
+                t.start();
+                return;
+            }
+            if (runnable != null) runnable.stop();
+            runnable   = null;
+            playThread = null;
+
+            compositionView.resetToDefaultSize();
+            compositionScrollPane.revalidate();
+
+            play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
+            buttonPanel.repaint();
         });
 
         buttonPanel.add(erase);
@@ -120,40 +160,6 @@ public class PianoGui extends JFrame
         buttonPanel.add(instrumentDropdown);
 
         add(buttonPanel, BorderLayout.NORTH);
-
-        play.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                compositionView.setComposition(composition);
-                compositionView.refreshLayout();
-
-                // 1) Expand to fit the full composition
-                compositionView.fitToSeconds(composition.duration());
-                compositionScrollPane.revalidate();
-
-                // 2) Start playback
-                double stepValue = CompositionRunnable.STEP;
-                CompositionRunnable player = new CompositionRunnable(
-                        sound,
-                        composition,
-                        compositionView,
-                        stepValue
-                );
-                new Thread(player, "composition-playback").start();
-
-                // 3) Bounce back after playback ends (duration + small buffer)
-                int ms = (int) ((composition.duration() + Note.TIME_STEP) * 1000);
-                javax.swing.Timer t = new javax.swing.Timer(ms, ev -> {
-                    compositionView.resetToDefaultSize();
-                    compositionScrollPane.revalidate();
-                });
-                t.setRepeats(false);
-                t.start();
-            }
-        });
-
         centerOnMiddleC(pianoScrollPane);
 
     }
