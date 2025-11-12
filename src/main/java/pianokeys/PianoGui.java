@@ -119,7 +119,7 @@ public class PianoGui extends JFrame
                 CompositionRunnable player = new CompositionRunnable(
                         sound,
                         composition,
-                        Note.TIME_STEP
+                        CompositionRunnable.STEP
                 );
                 new Thread(player, "composition-playback").start();
 

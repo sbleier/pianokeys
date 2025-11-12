@@ -29,8 +29,6 @@ public class PianoView extends JLayeredPane
     private static final Color C_HOVER_COLOR = new Color(255, 235, 180);
 
     private final PianoSound sound;
-
-//    private final Composition composition = new Composition();
     private final Composition composition;
     private final CompositionView compositionView;
     private long recordStartTime = -1;
@@ -328,7 +326,7 @@ public class PianoView extends JLayeredPane
         // Quantize to 1/8 notes and enforce a minimum duration of one step
         double start = Note.roundToNearestEight(startSec);
         double end = Note.roundToNearestEight(endSec);
-        if (end <= start) end = start + Note.TIME_STEP;
+        if (end <= start) { end = start + Note.TIME_STEP; }
 
         composition.addNote(new Note(note, start, end));
         System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
