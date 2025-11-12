@@ -14,11 +14,13 @@ public class CompositionRunnable implements Runnable
     private final PianoView pView;
     private boolean playing = true;
 
-    public CompositionRunnable(PianoSound sound, Composition composition, CompositionView compositionView, PianoView pView) {
+    public CompositionRunnable(PianoSound sound, Composition composition, CompositionView compositionView,
+                               PianoView pView) {
         this(sound, composition, TIME_STEP, compositionView, pView);
     }
 
-    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs, CompositionView compView, PianoView pView)
+    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs, CompositionView compView,
+                               PianoView pView)
     {
         this.sound = sound;
         this.composition = composition;
