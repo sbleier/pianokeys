@@ -166,7 +166,7 @@ public class CompositionView extends JComponent
             return new Dimension(MIN_SECONDS * SECOND_WIDTH, DEFAULT_HEIGHT);
         }
 
-        int secondsShown = Math.max(MIN_SECONDS, (int)Math.ceil(composition.duration()) + 1);
+        int secondsShown = Math.max(MIN_SECONDS, (int) Math.ceil(composition.duration()) + 1);
         return new Dimension(secondsShown * SECOND_WIDTH, DEFAULT_HEIGHT);
     }
 
