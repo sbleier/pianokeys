@@ -80,9 +80,11 @@ public class PianoGui extends JFrame
             compositionView.setCurrentTime(0.0);
         });
 
-        play.addActionListener(e -> {
+        play.addActionListener(e ->
+        {
             // If nothing is currently playing, START ODE_TO_JOY
-            if (playThread == null || !playThread.isAlive()) {
+            if (playThread == null || !playThread.isAlive())
+            {
                 Composition score = Composition.ODE_TO_JOY;   // ← hardcoded piece
 
                 // Prep the view
@@ -95,7 +97,7 @@ public class PianoGui extends JFrame
 
                 // Build & start the player
                 double stepValue = CompositionRunnable.STEP;
-                runnable   = new CompositionRunnable(sound, score, stepValue, compositionView);
+                runnable = new CompositionRunnable(sound, score, stepValue, compositionView);
                 playThread = new Thread(runnable, "composition-playback");
                 playThread.start();
 
@@ -106,9 +108,14 @@ public class PianoGui extends JFrame
                 // Auto-shrink & reset after the song ends (+ small buffer)
                 int ms = (int) ((score.duration() + Note.TIME_STEP) * 1000);
                 Thread started = playThread;  // guard against manual stop/restart
-                javax.swing.Timer t = new javax.swing.Timer(ms, ev -> {
-                    if (playThread == started) {         // still same run
-                        if (runnable != null) { runnable.stop(); }
+                javax.swing.Timer t = new javax.swing.Timer(ms, ev ->
+                {
+                    if (playThread == started)
+                    {         // still same run
+                        if (runnable != null)
+                        {
+                            runnable.stop();
+                        }
                         runnable = null;
                         playThread = null;
 
@@ -123,8 +130,11 @@ public class PianoGui extends JFrame
                 t.start();
                 return;
             }
-            if (runnable != null) { runnable.stop(); }
-            runnable   = null;
+            if (runnable != null)
+            {
+                runnable.stop();
+            }
+            runnable = null;
             playThread = null;
 
             compositionView.resetToDefaultSize();

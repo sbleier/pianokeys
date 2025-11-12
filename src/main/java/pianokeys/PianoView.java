@@ -321,19 +321,24 @@ public class PianoView extends JLayeredPane
         long releaseTime = System.currentTimeMillis() - recordStartTime; // time since first key pressed
 
         double startSec = pressTime / 1000.0;
-        double endSec   = releaseTime / 1000.0;
+        double endSec = releaseTime / 1000.0;
 
         // Quantize to 1/8 notes and enforce a minimum duration of one step
         double start = Note.roundToNearestEight(startSec);
         double end = Note.roundToNearestEight(endSec);
-        if (end <= start) { end = start + Note.TIME_STEP; }
+        if (end <= start)
+        {
+            end = start + Note.TIME_STEP;
+        }
 
         composition.addNote(new Note(note, start, end));
         System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
         System.out.println("Total notes recorded: " + composition.getNoteList().size());
 
-        if (compositionView != null) {
-            SwingUtilities.invokeLater(() -> {
+        if (compositionView != null)
+        {
+            SwingUtilities.invokeLater(() ->
+            {
                 compositionView.refreshLayout();
             });
         }

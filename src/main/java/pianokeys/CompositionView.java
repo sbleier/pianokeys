@@ -52,7 +52,7 @@ public class CompositionView extends JComponent
     private Composition composition = new Composition();
 
     private static final int DEFAULT_HEIGHT = 400;
-    private static final int MIN_SECONDS    = 4;
+    private static final int MIN_SECONDS = 4;
 
     private boolean autoWidth = true;
 
@@ -107,13 +107,15 @@ public class CompositionView extends JComponent
         });
     }
 
-    public void fitToSeconds(double seconds) {
+    public void fitToSeconds(double seconds)
+    {
         int width = (Math.max(MIN_SECONDS, (int) Math.ceil(seconds)) + 1) * SECOND_WIDTH;
         setPreferredSize(new Dimension(width, DEFAULT_HEIGHT));
         refreshLayout(); // revalidate + repaint
     }
 
-    public void resetToDefaultSize() {
+    public void resetToDefaultSize()
+    {
         setPreferredSize(null);     // ← hand control back to getPreferredSize()
         refreshLayout();
     }
@@ -155,19 +157,11 @@ public class CompositionView extends JComponent
         displayCurrentTimeLine(g);
     }
 
-    public void setAutoWidth(boolean on) {
-        autoWidth = on;
-        refreshLayout();
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        if (!autoWidth) {
-            return new Dimension(MIN_SECONDS * SECOND_WIDTH, DEFAULT_HEIGHT);
-        }
-
+    public Dimension getPreferredSize()
+    {
         int secondsShown = Math.max(MIN_SECONDS, (int) Math.ceil(composition.duration()) + 1);
-        return new Dimension(secondsShown * SECOND_WIDTH, DEFAULT_HEIGHT);
+        int width = secondsShown * SECOND_WIDTH;
+        return new Dimension(width, DEFAULT_HEIGHT);
     }
 
     // Making the grid so that you can see the time and the note at which point it is clicked
@@ -179,7 +173,8 @@ public class CompositionView extends JComponent
         int secondsShown = Math.max(MIN_SECONDS, (int) Math.ceil(composition.duration()) + 1);
         int viewHeight = getHeight();
 
-        for (int second = 0; second <= secondsShown; second++) {
+        for (int second = 0; second <= secondsShown; second++)
+        {
             int x = second * SECOND_WIDTH;
 
             // Draw the main lines
@@ -263,7 +258,8 @@ public class CompositionView extends JComponent
         refreshLayout();
     }
 
-    public void refreshLayout() {
+    public void refreshLayout()
+    {
         revalidate();
         repaint();
     }
