@@ -10,7 +10,8 @@ public class CompositionRunnable implements Runnable
     private Composition composition;
 
 
-    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs)
+    public CompositionRunnable(PianoSound sound, Composition composition, CompositionView compositionView,
+                               double sleepMs)
     {
         this.sound = sound;
         this.composition = composition;
