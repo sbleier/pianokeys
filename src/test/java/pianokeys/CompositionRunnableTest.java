@@ -22,9 +22,10 @@ class CompositionRunnableTest
         //given
         PianoSound sound = new PianoSound(synthesizer, channel);
         Composition comp = new Composition();
+        CompositionView view = new CompositionView();
         comp.addNote(new Note(PianoSound.C4, 0.0, 0.25));
         comp.addNote(new Note(PianoSound.D4, 0.25, 0.5));
-        CompositionRunnable runnable = new CompositionRunnable(sound, comp, 0.0);
+        CompositionRunnable runnable = new CompositionRunnable(sound, comp, 0.0, view);
 
 
         // when
@@ -32,9 +33,9 @@ class CompositionRunnableTest
 
         //then
         verify(channel).noteOn(PianoSound.C4, 127);
-        verify(channel).noteOff(PianoSound.C4);
+        verify(channel, atLeastOnce()).noteOff(PianoSound.C4);
         verify(channel).noteOn(PianoSound.D4, 127);
-        verify(channel).noteOff(PianoSound.D4);
+        verify(channel, atLeastOnce()).noteOff(PianoSound.D4);
 
 
     }

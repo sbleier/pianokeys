@@ -2,6 +2,7 @@ package pianokeys;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import static pianokeys.Note.TIME_STEP;
@@ -88,6 +89,26 @@ public class Composition
 
     public void addNotes(List<Note> list) {
         noteList.addAll(list);
+    }
+
+    public boolean removeNote(double clickedTime, int clickedKey)
+    {
+        // Use iterator to make sure the note is safely removed
+        Iterator<Note> iterator = getNoteList().iterator();
+
+        // Find the note that was clicked
+        while (iterator.hasNext())
+        {
+            Note note = iterator.next();
+            if (note.key() == clickedKey
+                    && clickedTime >= note.startTime()
+                    && clickedTime <= note.endTime())
+            {
+                iterator.remove();
+                return true;
+            }
+        }
+        return false;
     }
 
     // returns duration
