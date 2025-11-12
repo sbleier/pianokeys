@@ -11,18 +11,20 @@ public class CompositionRunnable implements Runnable
     private final PianoSound sound;
     private final Composition composition;
     private final CompositionView compView;
+    private final PianoView pView;
     private boolean playing = true;
 
-    public CompositionRunnable(PianoSound sound, Composition composition, CompositionView compositionView) {
-        this(sound, composition, TIME_STEP, compositionView);
+    public CompositionRunnable(PianoSound sound, Composition composition, CompositionView compositionView, PianoView pView) {
+        this(sound, composition, TIME_STEP, compositionView, pView);
     }
 
-    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs, CompositionView compView)
+    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs, CompositionView compView, PianoView pView)
     {
         this.sound = sound;
         this.composition = composition;
         this.sleepMs = sleepMs;
         this.compView = compView;
+        this.pView = pView;
     }
 
     public void stop() {
@@ -44,9 +46,12 @@ public class CompositionRunnable implements Runnable
                 if (note.endTime() == time)
                 {
                     sound.stopNote(note.key());
+                    pView.showKeyPlayed(note.key(), false);
+
                 } else if (note.startTime() == time)
                 {
                     sound.playNote(note.key());
+                    pView.showKeyPlayed(note.key(), true);
                 }
             }
 
