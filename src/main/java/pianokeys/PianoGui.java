@@ -116,10 +116,11 @@ public class PianoGui extends JFrame
                 compositionScrollPane.revalidate();
 
                 // 2) Start playback
+                double stepValue = CompositionRunnable.STEP;
                 CompositionRunnable player = new CompositionRunnable(
                         sound,
                         composition,
-                        CompositionRunnable.STEP
+                        stepValue
                 );
                 new Thread(player, "composition-playback").start();
 
