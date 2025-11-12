@@ -341,22 +341,25 @@ public class PianoView extends JLayeredPane
         }
     }
 
-    public void showKeyPlayed(int note, boolean pressed) {
+    public void showKeyPlayed(int note, boolean pressed)
+    {
         JButton button;
         Color releasedColor;
-        if (whiteHashMap.containsKey(note)) {
+        if (whiteHashMap.containsKey(note))
+        {
             button = whiteHashMap.get(note);
             releasedColor = (note == C4) ? C_BASE_COLOR : WHITE;
-        }
-        else {
+        } else
+        {
             button = blackHashMap.get(note);
             releasedColor = BLACK;
         }
 
-        if (pressed) {
+        if (pressed)
+        {
             button.setBackground(PINK);
-        }
-        else {
+        } else
+        {
             button.setBackground(releasedColor);
         }
     }
