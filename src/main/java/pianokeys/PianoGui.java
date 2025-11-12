@@ -83,7 +83,7 @@ public class PianoGui extends JFrame
         play.addActionListener(e ->
         {
             // If nothing is currently playing, START ODE_TO_JOY
-            if (playThread == null || !playThread.isAlive())
+            if (runnable == null)
             {
                 Composition score = Composition.ODE_TO_JOY;   // ← hardcoded piece
 
