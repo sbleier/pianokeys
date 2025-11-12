@@ -104,11 +104,11 @@ public class PianoGui extends JFrame
                 buttonPanel.repaint();
 
                 // Auto-shrink & reset after the song ends (+ small buffer)
-                int ms = (int)((score.duration() + Note.TIME_STEP) * 1000);
+                int ms = (int) ((score.duration() + Note.TIME_STEP) * 1000);
                 Thread started = playThread;  // guard against manual stop/restart
                 javax.swing.Timer t = new javax.swing.Timer(ms, ev -> {
                     if (playThread == started) {         // still same run
-                        if (runnable != null) runnable.stop();
+                        if (runnable != null) { runnable.stop(); }
                         runnable = null;
                         playThread = null;
 
@@ -123,7 +123,7 @@ public class PianoGui extends JFrame
                 t.start();
                 return;
             }
-            if (runnable != null) runnable.stop();
+            if (runnable != null) { runnable.stop(); }
             runnable   = null;
             playThread = null;
 
