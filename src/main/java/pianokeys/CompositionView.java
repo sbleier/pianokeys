@@ -51,16 +51,11 @@ public class CompositionView extends JComponent
     private double currentTime = 0;
     private Composition composition = new Composition();
 
-    // --- Size handling for playback vs normal state ---
-    private static final int DEFAULT_WIDTH  = 2400; // standard grid width
     private static final int DEFAULT_HEIGHT = 400;
-
-    private boolean expandedForPlayback = false;
+    private static final int MIN_SECONDS    = 4;
 
     public CompositionView()
     {
-        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-        composition.addNotes(Composition.ODE_TO_JOY.getNoteList());
         setFocusable(true);
         requestFocusInWindow();
 
@@ -110,17 +105,14 @@ public class CompositionView extends JComponent
         });
     }
 
-    /** Temporarily expand to match composition length during playback */
     public void fitToSeconds(double seconds) {
-        expandedForPlayback = true;
-        int width = (Math.max(1, (int) Math.ceil(seconds)) + 1) * SECOND_WIDTH;
+        int width = (Math.max(MIN_SECONDS, (int) Math.ceil(seconds)) + 1) * SECOND_WIDTH;
         setPreferredSize(new Dimension(width, DEFAULT_HEIGHT));
-        refreshLayout();
+        refreshLayout(); // revalidate + repaint
     }
 
     public void resetToDefaultSize() {
-        expandedForPlayback = false;
-        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        setPreferredSize(null);     // ← hand control back to getPreferredSize()
         refreshLayout();
     }
 
@@ -161,22 +153,23 @@ public class CompositionView extends JComponent
         displayCurrentTimeLine(g);
     }
 
+    @Override
+    public Dimension getPreferredSize() {
+        int secondsShown = Math.max(MIN_SECONDS, (int) Math.ceil(composition.duration()) + 1);
+        int width = secondsShown * SECOND_WIDTH;
+        return new Dimension(width, DEFAULT_HEIGHT);
+    }
+
     // Making the grid so that you can see the time and the note at which point it is clicked
     private void drawTimeGrid(Graphics g)
     {
         Graphics2D g2d = (Graphics2D) g;
         int visibleSeconds = Math.max(1, getWidth() / SECOND_WIDTH);
 
-        int maxTimeSeconds;
-        if (expandedForPlayback) {
-            maxTimeSeconds = Math.max(1, (int) Math.ceil(composition.duration()));
-        } else {
-            maxTimeSeconds = visibleSeconds;
-        }
+        int secondsShown = Math.max(MIN_SECONDS, (int) Math.ceil(composition.duration()) + 1);
         int viewHeight = getHeight();
 
-        for (int second = 0; second <= maxTimeSeconds; second++)
-        {
+        for (int second = 0; second <= secondsShown; second++) {
             int x = second * SECOND_WIDTH;
 
             // Draw the main lines
@@ -243,7 +236,7 @@ public class CompositionView extends JComponent
     public void setCurrentTime(double currentTime)
     {
         this.currentTime = Note.roundToNearestEight(currentTime);
-        repaint();
+        refreshLayout();
     }
 
     public void addTime(double delta)
