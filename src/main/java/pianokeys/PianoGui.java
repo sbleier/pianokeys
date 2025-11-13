@@ -8,14 +8,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 import static java.awt.Color.*;
 
 public class PianoGui extends JFrame
 {
-    private CompositionView compositionView;
     private final Composition composition = new Composition();
 
     // declared everything
@@ -35,19 +32,18 @@ public class PianoGui extends JFrame
 
     private CompositionRunnable runnable;
 
-    private Thread playThread;
-
     public PianoGui()
     {
         initMidi();
         midiCleanup();
         setUpFrame();
 
-        compositionView = new CompositionView();
-        compositionView.setComposition(composition);
+        CompositionView compositionView = new CompositionView();
+        compositionView.setPreferredSize(new Dimension(2000, 400));
 
-        JLayeredPane layeredPane = new PianoView(sound, composition, compositionView);
-        JScrollPane pianoScrollPane = createScrollPane(layeredPane);
+        PianoView pianoView = new PianoView(sound, composition, compositionView);
+        JScrollPane pianoScrollPane = createScrollPane(pianoView);
+
         add(pianoScrollPane, BorderLayout.SOUTH);
 
         // vertical and  horizontal scroll panes for CompositionView
@@ -80,68 +76,20 @@ public class PianoGui extends JFrame
             compositionView.setCurrentTime(0.0);
         });
 
-        play.addActionListener(e ->
-        {
-            // If nothing is currently playing, START ODE_TO_JOY
-            if (runnable == null)
-            {
-                Composition score = Composition.ODE_TO_JOY;   // ← hardcoded piece
 
-                // Prep the view
-                compositionView.setComposition(score);
-                compositionView.refreshLayout();
-
-                // Expand to fit full piece
-                compositionView.fitToSeconds(score.duration());
-                compositionScrollPane.revalidate();
-
-                // Build & start the player
-                double stepValue = CompositionRunnable.STEP;
-                runnable = new CompositionRunnable(sound, score, stepValue, compositionView);
-                playThread = new Thread(runnable, "composition-playback");
-                playThread.start();
-
-                // Toggle icon → pause
+        play.addActionListener(e -> {
+            if (runnable == null) {
+                runnable = new CompositionRunnable(sound, Composition.ODE_TO_JOY, compositionView, pianoView);
                 play.setIcon(new ImageIcon(getClass().getResource("/images/pause.jpeg")));
                 buttonPanel.repaint();
-
-                // Auto-shrink & reset after the song ends (+ small buffer)
-                int ms = (int) ((score.duration() + Note.TIME_STEP) * 1000);
-                Thread started = playThread;  // guard against manual stop/restart
-                javax.swing.Timer t = new javax.swing.Timer(ms, ev ->
-                {
-                    if (playThread == started)
-                    {         // still same run
-                        if (runnable != null)
-                        {
-                            runnable.stop();
-                        }
-                        runnable = null;
-                        playThread = null;
-
-                        compositionView.resetToDefaultSize();
-                        compositionScrollPane.revalidate();
-
-                        play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
-                        buttonPanel.repaint();
-                    }
-                });
-                t.setRepeats(false);
-                t.start();
-                return;
-            }
-            if (runnable != null)
-            {
+                new Thread(runnable).start();
+            } else {
+                play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
+                buttonPanel.repaint();
                 runnable.stop();
+                runnable = null;
             }
-            runnable = null;
-            playThread = null;
 
-            compositionView.resetToDefaultSize();
-            compositionScrollPane.revalidate();
-
-            play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
-            buttonPanel.repaint();
         });
 
         buttonPanel.add(erase);
@@ -170,6 +118,7 @@ public class PianoGui extends JFrame
         buttonPanel.add(instrumentDropdown);
 
         add(buttonPanel, BorderLayout.NORTH);
+
         centerOnMiddleC(pianoScrollPane);
 
     }
@@ -238,5 +187,5 @@ public class PianoGui extends JFrame
             scrollPane.getHorizontalScrollBar().setValue(middleCx);
         });
     }
-
+    
 }

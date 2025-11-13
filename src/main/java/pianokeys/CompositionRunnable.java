@@ -11,23 +11,25 @@ public class CompositionRunnable implements Runnable
     private final PianoSound sound;
     private final Composition composition;
     private final CompositionView compView;
+    private final PianoView pianoView;
     private boolean playing = true;
 
-    public CompositionRunnable(PianoSound sound, Composition composition, CompositionView compositionView)
-    {
-        this(sound, composition, TIME_STEP, compositionView);
+    public CompositionRunnable(PianoSound sound, Composition composition, CompositionView compositionView,
+                               PianoView pianoView) {
+        this(sound, composition, TIME_STEP, compositionView, pianoView);
     }
 
-    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs, CompositionView compView)
+    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs, CompositionView compView,
+                               PianoView pianoView)
     {
         this.sound = sound;
         this.composition = composition;
         this.sleepMs = sleepMs;
         this.compView = compView;
+        this.pianoView = pianoView;
     }
 
-    public void stop()
-    {
+    public void stop() {
         playing = false;
     }
 
@@ -46,9 +48,12 @@ public class CompositionRunnable implements Runnable
                 if (note.endTime() == time)
                 {
                     sound.stopNote(note.key());
+                    pianoView.showKeyPlayed(note.key(), false);
+
                 } else if (note.startTime() == time)
                 {
                     sound.playNote(note.key());
+                    pianoView.showKeyPlayed(note.key(), true);
                 }
 
             }
@@ -59,7 +64,6 @@ public class CompositionRunnable implements Runnable
             } catch (InterruptedException e)
             {
                 e.printStackTrace();
-
             }
 
             time += STEP;
@@ -67,10 +71,10 @@ public class CompositionRunnable implements Runnable
             compView.setCurrentTime(time);
         }
 
-        for (Note note : composition.getNoteList())
-        {
+        for (Note note : composition.getNoteList()) {
             sound.stopNote(note.key());
         }
+
 
 
     }
