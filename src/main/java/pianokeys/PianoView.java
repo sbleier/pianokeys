@@ -340,6 +340,7 @@ public class PianoView extends JLayeredPane
         }
 
         composition.addNote(new Note(note, start, end));
+        compositionView.setComposition(composition);
         System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
         System.out.println("Total notes recorded: " + composition.getNoteList().size());
 

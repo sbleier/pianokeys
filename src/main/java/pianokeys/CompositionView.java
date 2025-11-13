@@ -54,8 +54,6 @@ public class CompositionView extends JComponent
     private static final int DEFAULT_HEIGHT = 400;
     private static final int MIN_SECONDS = 4;
 
-    private boolean autoWidth = true;
-
     public CompositionView()
     {
         setFocusable(true);

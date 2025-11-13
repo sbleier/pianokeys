@@ -79,7 +79,7 @@ public class PianoGui extends JFrame
 
         play.addActionListener(e -> {
             if (runnable == null) {
-                runnable = new CompositionRunnable(sound, Composition.ODE_TO_JOY, compositionView, pianoView);
+                runnable = new CompositionRunnable(sound, composition, compositionView, pianoView);
                 play.setIcon(new ImageIcon(getClass().getResource("/images/pause.jpeg")));
                 buttonPanel.repaint();
                 new Thread(runnable).start();
