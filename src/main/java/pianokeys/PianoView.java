@@ -31,6 +31,7 @@ public class PianoView extends JLayeredPane
     private final PianoSound sound;
 
     private final Composition composition = new Composition();
+    private PianoController controller;
     private long recordStartTime = -1;
     private long currentPressTime = -1;
 
@@ -49,6 +50,9 @@ public class PianoView extends JLayeredPane
         // using different layers to add the panels
         this.add(whiteKeysPanel, Integer.valueOf(0));
         this.add(blackKeysPanel, Integer.valueOf(1));
+
+        //take from controller
+        this.controller = controller;
     }
 
 
@@ -330,6 +334,7 @@ public class PianoView extends JLayeredPane
         {
             sound.stopNote(note);
         }
+
     }
 
 }
