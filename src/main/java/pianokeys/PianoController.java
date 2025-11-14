@@ -22,7 +22,7 @@ public class PianoController
     /**
      * Play the note in PianoSound
      *
-     * @param note
+     * @param note the MIDI note value to play
      */
     public void playNote(int note)
     {
@@ -32,7 +32,7 @@ public class PianoController
     /**
      * Stops the note from being played
      *
-     * @param note
+     * @param note the MIDI note value to stop
      */
     public void stopNote(int note)
     {
