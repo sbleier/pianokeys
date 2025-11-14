@@ -43,11 +43,11 @@ public class PianoGui extends JFrame
         CompositionView compositionView = new CompositionView();
         compositionView.setPreferredSize(new Dimension(2000, 400));
 
-        JLayeredPane layeredPane = new PianoView(sound);
-        JScrollPane pianoScrollPane = createScrollPane(layeredPane);
+        PianoView pianoView = new PianoView(sound);
+        JScrollPane pianoScrollPane = createScrollPane(pianoView);
 
         // Adding the controller object
-        controller = new PianoController(compositionView, sound, composition, (PianoView) layeredPane);
+        controller = new PianoController(compositionView, sound, composition, pianoView );
 
         add(pianoScrollPane, BorderLayout.SOUTH);
 
