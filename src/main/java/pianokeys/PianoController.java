@@ -21,6 +21,7 @@ public class PianoController
 
     /**
      * Play the note in PianoSound
+     *
      * @param note
      */
     public void playNote(int note)
@@ -30,6 +31,7 @@ public class PianoController
 
     /**
      * Stops the note from being played
+     *
      * @param note
      */
     public void stopNote(int note)

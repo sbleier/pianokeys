@@ -47,7 +47,7 @@ public class PianoGui extends JFrame
         JScrollPane pianoScrollPane = createScrollPane(pianoView);
 
         // Adding the controller object
-        controller = new PianoController(compositionView, sound, composition, pianoView );
+        controller = new PianoController(compositionView, sound, composition, pianoView);
 
         add(pianoScrollPane, BorderLayout.SOUTH);
 
@@ -83,13 +83,12 @@ public class PianoGui extends JFrame
 
 
         play.addActionListener(e -> {
-            if (controller.playComposition()) {//playComposition
+            if (controller.playComposition()) { //playComposition
                 play.setIcon(new ImageIcon(getClass().getResource("/images/pause.jpeg")));
-            } else {//stopComposition
-                controller.playComposition();
+            } else { //stopComposition
+                controller.stopComposition();
                 play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
             }
-
         });
 
         buttonPanel.add(erase);
