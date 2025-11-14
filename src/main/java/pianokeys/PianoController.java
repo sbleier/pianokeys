@@ -43,8 +43,9 @@ public class PianoController
     {
         //going to be using compositionRunnable
         if (runnable == null) {
-            runnable = new CompositionRunnable(sound, Composition.ODE_TO_JOY, compositionView);
+            runnable = new CompositionRunnable(sound, Composition.ODE_TO_JOY, compositionView, pianoView);
             new Thread(runnable).start();
+            return true;
         }
         return false;
     }
