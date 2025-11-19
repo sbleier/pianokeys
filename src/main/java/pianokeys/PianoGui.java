@@ -30,8 +30,6 @@ public class PianoGui extends JFrame
     // MIDI sound system
     private PianoSound sound;
 
-    private CompositionRunnable runnable;
-
     private PianoController controller;
 
     public PianoGui()
@@ -68,17 +66,16 @@ public class PianoGui extends JFrame
         JButton record = new JButton(new ImageIcon(getClass().getResource("/images/record.png")));
         JButton play = new JButton(new ImageIcon(getClass().getResource("/images/play.png")));
 
-        // erase button
+        // erase button - calling controller
         erase.addActionListener(e ->
         {
-            composition.getNoteList().clear();
-            compositionView.repaint();
+            controller.eraseComposition();
         });
 
         // restart button
         restart.addActionListener(e ->
         {
-            compositionView.setCurrentTime(0.0);
+            controller.restartComposition();
         });
 
 
@@ -107,10 +104,7 @@ public class PianoGui extends JFrame
         instrumentDropdown.addActionListener(e ->
         {
             String instrument = (String) instrumentDropdown.getSelectedItem();
-            if (instrument != null && sound != null)
-            {
-                sound.setInstrument(instrument);
-            }
+            controller.changeInstrument(instrument);
         });
 
         // adding it to the button panel

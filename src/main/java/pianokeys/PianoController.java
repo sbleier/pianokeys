@@ -57,4 +57,22 @@ public class PianoController
             runnable = null;
         }
     }
+
+    //clears all notes from the composition
+    public void eraseComposition() {
+        composition.getNoteList().clear();
+        compositionView.repaint();
+    }
+
+    //resets the composition playback to the beginning
+    public void restartComposition() {
+        compositionView.setCurrentTime(0.0);
+    }
+
+    //changes the current instrument sound
+    public void changeInstrument(String instrument) {
+        if (instrument != null && sound != null) {
+            sound.setInstrument(instrument);
+        }
+    }
 }
