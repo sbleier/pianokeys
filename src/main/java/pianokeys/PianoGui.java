@@ -38,13 +38,13 @@ public class PianoGui extends JFrame
         midiCleanup();
         setUpFrame();
 
-        PianoView pianoView = new PianoView(sound);
+        CompositionView compositionView = new CompositionView();
+        compositionView.setPreferredSize(new Dimension(2000, 400));
+
+        PianoView pianoView = new PianoView(sound, composition, compositionView);
         JScrollPane pianoScrollPane = createScrollPane(pianoView);
 
         add(pianoScrollPane, BorderLayout.SOUTH);
-
-        CompositionView compositionView = new CompositionView();
-        compositionView.setPreferredSize(new Dimension(2000, 400));
 
         // vertical and  horizontal scroll panes for CompositionView
         JScrollPane compositionScrollPane = new JScrollPane(
@@ -79,7 +79,7 @@ public class PianoGui extends JFrame
 
         play.addActionListener(e -> {
             if (runnable == null) {
-                runnable = new CompositionRunnable(sound, Composition.ODE_TO_JOY, compositionView, pianoView);
+                runnable = new CompositionRunnable(sound, composition, compositionView, pianoView);
                 play.setIcon(new ImageIcon(getClass().getResource("/images/pause.jpeg")));
                 buttonPanel.repaint();
                 new Thread(runnable).start();

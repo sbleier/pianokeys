@@ -55,6 +55,7 @@ public class CompositionRunnable implements Runnable
                     sound.playNote(note.key());
                     pianoView.showKeyPlayed(note.key(), true);
                 }
+
             }
 
             try

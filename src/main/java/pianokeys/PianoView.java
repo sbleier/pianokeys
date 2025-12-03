@@ -31,18 +31,19 @@ public class PianoView extends JLayeredPane
     private static final Color C_HOVER_COLOR = new Color(255, 235, 180);
 
     private final PianoSound sound;
-
-    private final Composition composition = new Composition();
+    private final Composition composition;
+    private final CompositionView compositionView;
     private long recordStartTime = -1;
     private long currentPressTime = -1;
 
     private HashMap<Integer, JButton> blackHashMap = new HashMap<>();
     private HashMap<Integer, JButton> whiteHashMap = new HashMap<>();
 
-
-    public PianoView(PianoSound sound)
+    public PianoView(PianoSound sound, Composition composition, CompositionView compositionView)
     {
         this.sound = sound;
+        this.composition = composition;
+        this.compositionView = compositionView;
         JPanel whiteKeysPanel = createWhiteKeysPanel();
         JPanel blackKeysPanel = createBlackKeysPanel();
 
@@ -326,13 +327,30 @@ public class PianoView extends JLayeredPane
     private void endRecord(int note, long pressTime)
     {
         long releaseTime = System.currentTimeMillis() - recordStartTime; // time since first key pressed
+
         double startSec = pressTime / 1000.0;
         double endSec = releaseTime / 1000.0;
 
-        // create and store the note in the composition
-        composition.addNote(new Note(note, startSec, endSec));
+        // Quantize to 1/8 notes and enforce a minimum duration of one step
+        double start = Note.roundToNearestEight(startSec);
+        double end = Note.roundToNearestEight(endSec);
+        if (end <= start)
+        {
+            end = start + Note.TIME_STEP;
+        }
+
+        composition.addNote(new Note(note, start, end));
+        compositionView.setComposition(composition);
         System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
         System.out.println("Total notes recorded: " + composition.getNoteList().size());
+
+        if (compositionView != null)
+        {
+            SwingUtilities.invokeLater(() ->
+            {
+                compositionView.refreshLayout();
+            });
+        }
 
 
         if (sound != null)
