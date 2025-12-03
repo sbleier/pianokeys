@@ -51,10 +51,11 @@ public class CompositionView extends JComponent
     private double currentTime = 0;
     private Composition composition = new Composition();
 
+    private static final int DEFAULT_HEIGHT = 400;
+    private static final int MIN_SECONDS = 4;
+
     public CompositionView()
     {
-        composition.addNotes(Composition.ODE_TO_JOY.getNoteList());
-
         setFocusable(true);
         requestFocusInWindow();
 
@@ -104,6 +105,19 @@ public class CompositionView extends JComponent
         });
     }
 
+    public void fitToSeconds(double seconds)
+    {
+        int width = (Math.max(MIN_SECONDS, (int) Math.ceil(seconds)) + 1) * SECOND_WIDTH;
+        setPreferredSize(new Dimension(width, DEFAULT_HEIGHT));
+        refreshLayout(); // revalidate + repaint
+    }
+
+    public void resetToDefaultSize()
+    {
+        setPreferredSize(null);     // ← hand control back to getPreferredSize()
+        refreshLayout();
+    }
+
     // Helper method to get the unique keys sorted
     private List<Integer> getUniqueSortedKeys()
     {
@@ -141,14 +155,23 @@ public class CompositionView extends JComponent
         displayCurrentTimeLine(g);
     }
 
+    public Dimension getPreferredSize()
+    {
+        int secondsShown = Math.max(MIN_SECONDS, (int) Math.ceil(composition.duration()) + 1);
+        int width = secondsShown * SECOND_WIDTH;
+        return new Dimension(width, DEFAULT_HEIGHT);
+    }
+
     // Making the grid so that you can see the time and the note at which point it is clicked
     private void drawTimeGrid(Graphics g)
     {
         Graphics2D g2d = (Graphics2D) g;
-        int maxTime = 20;   // shows 20 seconds
+        int visibleSeconds = Math.max(1, getWidth() / SECOND_WIDTH);
+
+        int secondsShown = Math.max(MIN_SECONDS, (int) Math.ceil(composition.duration()) + 1);
         int viewHeight = getHeight();
 
-        for (int second = 0; second <= maxTime; second++)
+        for (int second = 0; second <= secondsShown; second++)
         {
             int x = second * SECOND_WIDTH;
 
@@ -216,7 +239,7 @@ public class CompositionView extends JComponent
     public void setCurrentTime(double currentTime)
     {
         this.currentTime = Note.roundToNearestEight(currentTime);
-        repaint();
+        refreshLayout();
     }
 
     public void addTime(double delta)
@@ -230,6 +253,12 @@ public class CompositionView extends JComponent
     public void setComposition(Composition composition)
     {
         this.composition = composition;
+        refreshLayout();
+    }
+
+    public void refreshLayout()
+    {
+        revalidate();
         repaint();
     }
 

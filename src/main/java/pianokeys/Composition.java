@@ -87,7 +87,8 @@ public class Composition
         noteList.addAll(Arrays.stream(notes).toList());
     }
 
-    public void addNotes(List<Note> list) {
+    public void addNotes(List<Note> list)
+    {
         noteList.addAll(list);
     }
 

@@ -2,17 +2,18 @@ package pianokeys;
 
 public class PianoController
 {
-    private CompositionView compositionView;
-    private PianoSound sound;
-    private Composition composition;
-    private PianoView pianoView;
-    private long recordStartTime = -1;
+    private final CompositionView compositionView;
+    private final PianoSound sound;
+    private final Composition composition;
+    private final PianoView pianoView;
+    private final long recordStartTime = -1;
     private CompositionRunnable runnable;
 
     public PianoController(CompositionView compositionView,
                            PianoSound sound,
                            Composition composition,
-                           PianoView pianoView) {
+                           PianoView pianoView)
+    {
         this.compositionView = compositionView;
         this.sound = sound;
         this.composition = composition;
@@ -42,8 +43,9 @@ public class PianoController
     public boolean playComposition()
     {
         //going to be using compositionRunnable
-        if (runnable == null) {
-            runnable = new CompositionRunnable(sound, Composition.ODE_TO_JOY, compositionView, pianoView);
+        if (runnable == null)
+        {
+            runnable = new CompositionRunnable(sound, composition, compositionView, pianoView);
             new Thread(runnable).start();
             return true;
         }
@@ -52,26 +54,31 @@ public class PianoController
 
     public void stopComposition()
     {
-        if (runnable != null) {
+        if (runnable != null)
+        {
             runnable.stop();
             runnable = null;
         }
     }
 
     //clears all notes from the composition
-    public void eraseComposition() {
+    public void eraseComposition()
+    {
         composition.getNoteList().clear();
         compositionView.repaint();
     }
 
     //resets the composition playback to the beginning
-    public void restartComposition() {
+    public void restartComposition()
+    {
         compositionView.setCurrentTime(0.0);
     }
 
     //changes the current instrument sound
-    public void changeInstrument(String instrument) {
-        if (instrument != null && sound != null) {
+    public void changeInstrument(String instrument)
+    {
+        if (instrument != null && sound != null)
+        {
             sound.setInstrument(instrument);
         }
     }

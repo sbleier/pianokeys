@@ -30,7 +30,7 @@ public class PianoGui extends JFrame
     // MIDI sound system
     private PianoSound sound;
 
-    private PianoController controller;
+    private final PianoController controller;
 
     public PianoGui()
     {
@@ -41,14 +41,13 @@ public class PianoGui extends JFrame
         CompositionView compositionView = new CompositionView();
         compositionView.setPreferredSize(new Dimension(2000, 400));
 
-        PianoView pianoView = new PianoView(sound);
+        PianoView pianoView = new PianoView(sound, composition, compositionView);
         JScrollPane pianoScrollPane = createScrollPane(pianoView);
 
         // Adding the controller object
         controller = new PianoController(compositionView, sound, composition, pianoView);
 
         add(pianoScrollPane, BorderLayout.SOUTH);
-
         // vertical and  horizontal scroll panes for CompositionView
         JScrollPane compositionScrollPane = new JScrollPane(
                 compositionView,
@@ -79,10 +78,13 @@ public class PianoGui extends JFrame
         });
 
 
-        play.addActionListener(e -> {
-            if (controller.playComposition()) { //playComposition
+        play.addActionListener(e ->
+        {
+            if (controller.playComposition())
+            { //playComposition
                 play.setIcon(new ImageIcon(getClass().getResource("/images/pause.jpeg")));
-            } else { //stopComposition
+            } else
+            { //stopComposition
                 controller.stopComposition();
                 play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
             }
@@ -180,5 +182,5 @@ public class PianoGui extends JFrame
             scrollPane.getHorizontalScrollBar().setValue(middleCx);
         });
     }
-    
+
 }
