@@ -134,7 +134,6 @@ public class PianoController
         for (int note : notes)
         {
             composition.addNote(new Note(note, currentTime,currentTime + duration));
-
         }
 
         compositionView.refreshLayout();
