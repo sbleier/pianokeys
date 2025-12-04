@@ -17,7 +17,7 @@ class RecorderTest
         Recorder recorder = new Recorder(composition);
 
         // when
-        recorder.startNote(C4);
+        recorder.startNote(C4, 0.0);
 
         // then
         assertEquals(0, composition.getNoteList().size());
@@ -31,7 +31,7 @@ class RecorderTest
         Recorder recorder = new Recorder(composition);
 
         // when
-        recorder.startNote(C4);
+        recorder.startNote(C4, 0.0);
         recorder.stopNote(C4);
 
         // then
@@ -45,12 +45,12 @@ class RecorderTest
         // given
         Composition composition = new Composition();
         Recorder recorder = new Recorder(composition);
-        recorder.startNote(C4);
+        recorder.startNote(C4, 0.0);
         recorder.stopNote(C4);
 
         // when
         recorder.reset();
-        recorder.startNote(D4);
+        recorder.startNote(D4, 0.0);
         recorder.stopNote(D4);
 
         // then
