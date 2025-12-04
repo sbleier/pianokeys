@@ -6,8 +6,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import javax.swing.JComponent;
 import java.util.*;
 import java.util.List;
 
@@ -49,13 +47,14 @@ public class CompositionView extends JComponent
 
     // This will change over time.
     private double currentTime = 0;
-    private Composition composition = new Composition();
+    private final Composition composition;
 
     private static final int DEFAULT_HEIGHT = 400;
     private static final int MIN_SECONDS = 4;
 
-    public CompositionView()
+    public CompositionView(Composition composition)
     {
+        this.composition = composition;
         setFocusable(true);
         requestFocusInWindow();
 
@@ -202,7 +201,7 @@ public class CompositionView extends JComponent
 
     private void displayNote(Graphics g, Note note, List<Integer> uniqueKeys)
     {
-        int rowIndex = uniqueKeys.indexOf(Integer.valueOf(note.key()));
+        int rowIndex = uniqueKeys.indexOf(note.key());
         int x1 = (int) (note.startTime() * SECOND_WIDTH);
         int x2 = (int) (note.endTime() * SECOND_WIDTH);
 
@@ -238,22 +237,13 @@ public class CompositionView extends JComponent
 
     public void setCurrentTime(double currentTime)
     {
-        this.currentTime = Note.roundToNearestEight(currentTime);
+        this.currentTime = Note.roundToNearestEighth(currentTime);
         refreshLayout();
     }
 
     public void addTime(double delta)
     {
         setCurrentTime(this.getCurrentTime() + delta);
-    }
-
-    /**
-     * Sets the notes displayed in this CompositionView
-     */
-    public void setComposition(Composition composition)
-    {
-        this.composition = composition;
-        refreshLayout();
     }
 
     public void refreshLayout()

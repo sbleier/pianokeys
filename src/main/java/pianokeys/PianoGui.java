@@ -8,12 +8,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.function.Supplier;
 
 import static java.awt.Color.*;
 
 public class PianoGui extends JFrame
 {
-    private final Composition composition = new Composition();
 
     // declared everything
     private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
@@ -30,7 +30,7 @@ public class PianoGui extends JFrame
     // MIDI sound system
     private PianoSound sound;
 
-    private CompositionRunnable runnable;
+    private PianoController controller;
 
     public PianoGui()
     {
@@ -38,14 +38,22 @@ public class PianoGui extends JFrame
         midiCleanup();
         setUpFrame();
 
-        CompositionView compositionView = new CompositionView();
+        Composition composition = new Composition();
+        CompositionView compositionView = new CompositionView(composition);
         compositionView.setPreferredSize(new Dimension(2000, 400));
 
-        PianoView pianoView = new PianoView(sound, composition, compositionView);
+        // Because PianoController needs to access PianoView and PianoView needs PianoController
+        // this creates a circular dependency. One way to fix this is to create a Supplier that is passed
+        // to PianoView which will return the PianoController after it's created after PianoView is instantiated.
+        Supplier<PianoController> controllerSupplier = () -> controller;
+
+        PianoView pianoView = new PianoView(controllerSupplier);
         JScrollPane pianoScrollPane = createScrollPane(pianoView);
 
-        add(pianoScrollPane, BorderLayout.SOUTH);
+        // Adding the controller object
+        controller = new PianoController(compositionView, sound, composition, pianoView);
 
+        add(pianoScrollPane, BorderLayout.SOUTH);
         // vertical and  horizontal scroll panes for CompositionView
         JScrollPane compositionScrollPane = new JScrollPane(
                 compositionView,
@@ -63,33 +71,29 @@ public class PianoGui extends JFrame
         JButton record = new JButton(new ImageIcon(getClass().getResource("/images/record.png")));
         JButton play = new JButton(new ImageIcon(getClass().getResource("/images/play.png")));
 
-        // erase button
+        // erase button - calling controller
         erase.addActionListener(e ->
         {
-            composition.getNoteList().clear();
-            compositionView.repaint();
+            controller.eraseComposition();
         });
 
         // restart button
         restart.addActionListener(e ->
         {
-            compositionView.setCurrentTime(0.0);
+            controller.restartComposition();
         });
 
 
-        play.addActionListener(e -> {
-            if (runnable == null) {
-                runnable = new CompositionRunnable(sound, composition, compositionView, pianoView);
+        play.addActionListener(e ->
+        {
+            if (controller.playComposition())
+            {
                 play.setIcon(new ImageIcon(getClass().getResource("/images/pause.jpeg")));
-                buttonPanel.repaint();
-                new Thread(runnable).start();
-            } else {
+            } else
+            {
+                controller.stopComposition();
                 play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
-                buttonPanel.repaint();
-                runnable.stop();
-                runnable = null;
             }
-
         });
 
         buttonPanel.add(erase);
@@ -108,10 +112,7 @@ public class PianoGui extends JFrame
         instrumentDropdown.addActionListener(e ->
         {
             String instrument = (String) instrumentDropdown.getSelectedItem();
-            if (instrument != null && sound != null)
-            {
-                sound.setInstrument(instrument);
-            }
+            controller.changeInstrument(instrument);
         });
 
         // adding it to the button panel
@@ -187,5 +188,5 @@ public class PianoGui extends JFrame
             scrollPane.getHorizontalScrollBar().setValue(middleCx);
         });
     }
-    
+
 }
