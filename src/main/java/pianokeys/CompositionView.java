@@ -304,4 +304,20 @@ public class CompositionView extends JComponent
 
         setCurrentTime(newTime);
     }
+
+    // Adds a note at the current timeline position with the given key
+    public void addNoteAtCurrentTime(int key, double duration)
+    {
+        double start = getCurrentTime();
+        double end = start + duration;
+
+        composition.addNote(new Note(key, start, end));
+        refreshLayout();
+    }
+
+    // Adds a note at the current timeline position
+    public void addNoteAtCurrentTime(int key)
+    {
+        addNoteAtCurrentTime(key, Note.TIME_STEP * 2);  // 1/4 second default
+    }
 }

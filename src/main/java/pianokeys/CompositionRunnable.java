@@ -36,27 +36,35 @@ public class CompositionRunnable implements Runnable
     @Override
     public void run()
     {
-        double time = compView.getCurrentTime();
+        double startTime = compView.getCurrentTime();
+        long startMillis = System.currentTimeMillis();
 
-        while (playing && time <= composition.duration())
+        while (playing && startTime <= composition.duration())
         {
+            // calculate the time based only on the actual elapsed milliseconds from the beginning
+            long elapsedMillis = System.currentTimeMillis() - startMillis;
+            double time = startTime + (elapsedMillis / 1000.0);
+
+            // Round to the nearest step for note matching
+            double roundedTime = Note.roundToNearestEight(time);
 
             //loop through noteList to play all notes
             for (Note note : composition.getNoteList())
             {
-
-                if (note.endTime() == time)
+                if (note.endTime() == roundedTime)
                 {
                     sound.stopNote(note.key());
                     pianoView.showKeyPlayed(note.key(), false);
 
-                } else if (note.startTime() == time)
+                } else if (note.startTime() == roundedTime)
                 {
                     sound.playNote(note.key());
                     pianoView.showKeyPlayed(note.key(), true);
                 }
-
             }
+
+            // Update the visual timeline with the actual time
+            compView.setCurrentTime(time);
 
             try
             {
@@ -65,17 +73,12 @@ public class CompositionRunnable implements Runnable
             {
                 e.printStackTrace();
             }
-
-            time += STEP;
-
-            compView.setCurrentTime(time);
         }
 
-        for (Note note : composition.getNoteList()) {
+        for (Note note : composition.getNoteList())
+        {
             sound.stopNote(note.key());
         }
-
-
-
+        
     }
 }
