@@ -48,6 +48,7 @@ public class CompositionView extends JComponent
     // This will change over time.
     private double currentTime = 0;
     private final Composition composition;
+    private PianoController controller;
 
     private static final int DEFAULT_HEIGHT = 400;
     private static final int MIN_SECONDS = 4;
@@ -94,6 +95,28 @@ public class CompositionView extends JComponent
                         break;
                     case KeyEvent.VK_RIGHT:
                         addTime(Note.TIME_STEP); //move forward 1/8 second
+                        break;
+                    case KeyEvent.VK_S:
+                        if (controller != null)
+                        {
+                            controller.switchToSelectionMode();
+                            String mode = controller.isSelectionMode() ? "SELECTION MODE" : "RECORDING MODE";
+                            System.out.println(mode);
+                        }
+                        break;
+                    case KeyEvent.VK_SPACE:
+                    case KeyEvent.VK_ENTER:
+                        // insert the currently held notes at the timeline positiom
+                        if (controller != null && controller.isSelectionMode())
+                        {
+                            List<Integer> selected = controller.getSelectedNotes();
+                            if (!selected.isEmpty())
+                            {
+                                int[] notesToInsert = selected.stream().mapToInt(Integer::intValue).toArray();
+                                controller.insertActiveNotesAtTimeline(Note.TIME_STEP);
+                                System.out.println("Inserted " + selected.size() + " notes at timeline");
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -293,5 +316,10 @@ public class CompositionView extends JComponent
         }
 
         setCurrentTime(newTime);
+    }
+
+    public void setController(PianoController controller)
+    {
+        this.controller = controller;
     }
 }

@@ -14,6 +14,8 @@ public class PianoController
 
     private boolean recording = true;
     private final List<Integer> activeNotes = new ArrayList<>();
+    private final List<Integer> selectedNotes = new ArrayList<>();
+    private boolean selectionMode = false;
 
     public PianoController(CompositionView compositionView,
                            PianoSound sound,
@@ -36,9 +38,19 @@ public class PianoController
     {
         sound.playNote(note);
         pianoView.showKeyPlayed(note, true);
-        if (recording)
+        if (selectionMode)
         {
-            // add to active notes for chord tracking
+            // in selection mode: toggle note selection
+            if (selectedNotes.contains(note))
+            {
+                selectedNotes.remove(Integer.valueOf(note));
+            } else
+            {
+                selectedNotes.add(note);
+            }
+        } else if (recording)
+        {
+            // in recording mode: record the note
             if (!activeNotes.contains(note))
             {
                 activeNotes.add(note);
@@ -56,6 +68,12 @@ public class PianoController
     {
         sound.stopNote(note);
         pianoView.showKeyPlayed(note, false);
+
+        if (selectionMode)
+        {
+            // dont record anything in selection mode
+            return;
+        }
 
         if (recording)
         {
@@ -147,6 +165,33 @@ public class PianoController
             int[] notesToInsert = activeNotes.stream().mapToInt(Integer::intValue).toArray();
             insertNoteAtTimeline(notesToInsert, duration);
         }
+    }
+
+    // go back and forth between recording mode and the selection mode
+    public void switchToSelectionMode()
+    {
+        selectionMode = !selectionMode;
+        if (selectionMode)
+        {
+            // entering selection mode
+            selectedNotes.clear();
+            recording = false;
+        } else
+        {
+            // exiting selection mode and going back to recording
+            selectedNotes.clear();
+            recording = true;
+        }
+    }
+
+    public boolean isSelectionMode()
+    {
+        return selectionMode;
+    }
+
+    public List<Integer> getSelectedNotes()
+    {
+        return new ArrayList<>(selectedNotes);
     }
 
 }
