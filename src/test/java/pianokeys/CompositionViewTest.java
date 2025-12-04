@@ -14,8 +14,8 @@ public class CompositionViewTest
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1600, 400); // Set size large enough for clear view
 
-            final CompositionView compView = new CompositionView();
             Composition composition = new Composition();
+            final CompositionView compView = new CompositionView(composition);
 
             // First few notes of Fur Elise
             composition.addNote(new Note(Note.E5, 0.0, 0.5));
@@ -27,8 +27,6 @@ public class CompositionViewTest
             composition.addNote(new Note(Note.D5, 2.0, 2.5));
             composition.addNote(new Note(Note.C5, 2.5, 3.0));
             composition.addNote(new Note(Note.B4, 3.0, 4.0));
-
-            compView.setComposition(composition);
 
             // Adding the components to the frame
             frame.add(compView);

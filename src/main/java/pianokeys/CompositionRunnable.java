@@ -4,39 +4,33 @@ import static pianokeys.Note.TIME_STEP;
 
 public class CompositionRunnable implements Runnable
 {
-
-    public static final double STEP = 1 / 8.0;
-
     private final double sleepMs;
-    private final PianoSound sound;
+    private final PianoController controller;
     private final Composition composition;
-    private final CompositionView compView;
-    private final PianoView pianoView;
     private boolean playing = true;
 
-    public CompositionRunnable(PianoSound sound, Composition composition, CompositionView compositionView,
-                               PianoView pianoView) {
-        this(sound, composition, TIME_STEP, compositionView, pianoView);
+    public CompositionRunnable(PianoController controller, Composition composition)
+    {
+        this(controller, composition, TIME_STEP);
     }
 
-    public CompositionRunnable(PianoSound sound, Composition composition, double sleepMs, CompositionView compView,
-                               PianoView pianoView)
+    public CompositionRunnable(PianoController controller, Composition composition, double sleepMs)
     {
-        this.sound = sound;
+        this.controller = controller;
         this.composition = composition;
         this.sleepMs = sleepMs;
-        this.compView = compView;
-        this.pianoView = pianoView;
     }
 
-    public void stop() {
+    public void stop()
+    {
         playing = false;
     }
 
     @Override
     public void run()
     {
-        double time = compView.getCurrentTime();
+        controller.setRecording(false);
+        double time = 0;
 
         while (playing && time <= composition.duration())
         {
@@ -47,13 +41,11 @@ public class CompositionRunnable implements Runnable
 
                 if (note.endTime() == time)
                 {
-                    sound.stopNote(note.key());
-                    pianoView.showKeyPlayed(note.key(), false);
+                    controller.stopNote(note.key());
 
                 } else if (note.startTime() == time)
                 {
-                    sound.playNote(note.key());
-                    pianoView.showKeyPlayed(note.key(), true);
+                    controller.playNote(note.key());
                 }
 
             }
@@ -66,16 +58,15 @@ public class CompositionRunnable implements Runnable
                 e.printStackTrace();
             }
 
-            time += STEP;
-
-            compView.setCurrentTime(time);
+            time += TIME_STEP;
         }
 
-        for (Note note : composition.getNoteList()) {
-            sound.stopNote(note.key());
+        for (Note note : composition.getNoteList())
+        {
+            controller.stopNote(note.key());
         }
 
-
+        controller.setRecording(true);
 
     }
 }

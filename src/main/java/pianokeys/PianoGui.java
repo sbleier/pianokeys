@@ -8,12 +8,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.function.Supplier;
 
 import static java.awt.Color.*;
 
 public class PianoGui extends JFrame
 {
-    private final Composition composition = new Composition();
 
     // declared everything
     private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
@@ -30,7 +30,7 @@ public class PianoGui extends JFrame
     // MIDI sound system
     private PianoSound sound;
 
-    private final PianoController controller;
+    private PianoController controller;
 
     public PianoGui()
     {
@@ -38,10 +38,16 @@ public class PianoGui extends JFrame
         midiCleanup();
         setUpFrame();
 
-        CompositionView compositionView = new CompositionView();
+        Composition composition = new Composition();
+        CompositionView compositionView = new CompositionView(composition);
         compositionView.setPreferredSize(new Dimension(2000, 400));
 
-        PianoView pianoView = new PianoView(sound, composition, compositionView);
+        // Because PianoController needs to access PianoView and PianoView needs PianoController
+        // this creates a circular dependency. One way to fix this is to create a Supplier that is passed
+        // to PianoView which will return the PianoController after it's created after PianoView is instantiated.
+        Supplier<PianoController> controllerSupplier = () -> controller;
+
+        PianoView pianoView = new PianoView(controllerSupplier);
         JScrollPane pianoScrollPane = createScrollPane(pianoView);
 
         // Adding the controller object
@@ -81,10 +87,10 @@ public class PianoGui extends JFrame
         play.addActionListener(e ->
         {
             if (controller.playComposition())
-            { //playComposition
+            {
                 play.setIcon(new ImageIcon(getClass().getResource("/images/pause.jpeg")));
             } else
-            { //stopComposition
+            {
                 controller.stopComposition();
                 play.setIcon(new ImageIcon(getClass().getResource("/images/play.png")));
             }
