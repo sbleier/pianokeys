@@ -1,4 +1,4 @@
-package pianokeys;
+package pianokeys.aws;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
