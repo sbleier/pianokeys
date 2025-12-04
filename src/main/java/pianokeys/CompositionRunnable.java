@@ -30,10 +30,12 @@ public class CompositionRunnable implements Runnable
     public void run()
     {
         controller.setRecording(false);
-        double time = 0;
+        double time = controller.getCurrentTime();
 
         while (playing && time <= composition.duration())
         {
+            // update the timeline view
+            controller.updateTimeline(time);
 
             //loop through noteList to play all notes
             for (Note note : composition.getNoteList())

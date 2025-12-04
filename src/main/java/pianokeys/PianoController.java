@@ -1,5 +1,8 @@
 package pianokeys;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PianoController
 {
     private final CompositionView compositionView;
@@ -10,6 +13,7 @@ public class PianoController
     private CompositionRunnable runnable;
 
     private boolean recording = true;
+    private final List<Integer> activeNotes = new ArrayList<>();
 
     public PianoController(CompositionView compositionView,
                            PianoSound sound,
@@ -34,7 +38,12 @@ public class PianoController
         pianoView.showKeyPlayed(note, true);
         if (recording)
         {
-            recorder.startNote(note);
+            // add to active notes for chord tracking
+            if (!activeNotes.contains(note))
+            {
+                activeNotes.add(note);
+            }
+            recorder.startNote(note, compositionView.getCurrentTime());
         }
     }
 
@@ -47,9 +56,11 @@ public class PianoController
     {
         sound.stopNote(note);
         pianoView.showKeyPlayed(note, false);
+
         if (recording)
         {
-            recorder.stopNote();
+            activeNotes.remove(Integer.valueOf(note));
+            recorder.stopNote(note);    // pass the note number
             compositionView.refreshLayout();
         }
     }
@@ -102,4 +113,41 @@ public class PianoController
     {
         this.recording = recording;
     }
+
+    // updates the timeline position during the playback
+    public void updateTimeline(double time)
+    {
+        compositionView.setCurrentTime(time);
+    }
+
+    // get the current timeline position
+    public double getCurrentTime()
+    {
+        return compositionView.getCurrentTime();
+    }
+
+    // Insert a note or chord at the current timeline position
+    public void insertNoteAtTimeline(int[] notes, double duration)
+    {
+        double currentTime = compositionView.getCurrentTime();
+
+        for (int note : notes)
+        {
+            composition.addNote(new Note(note, currentTime,currentTime + duration));
+
+        }
+
+        compositionView.refreshLayout();
+    }
+
+    // insert currently active notes as a chord at the timeline
+    public void insertActiveNotesAtTimeline(double duration)
+    {
+        if (!activeNotes.isEmpty())
+        {
+            int[] notesToInsert = activeNotes.stream().mapToInt(Integer::intValue).toArray();
+            insertNoteAtTimeline(notesToInsert, duration);
+        }
+    }
+
 }
