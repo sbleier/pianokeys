@@ -47,7 +47,7 @@ class RecorderTest
         Recorder recorder = new Recorder(composition);
         recorder.startNote(C4);
         recorder.stopNote();
-        double firstNoteEnd = composition.getNoteList().get(0).endTime();
+        final double firstNoteEnd = composition.getNoteList().get(0).endTime();
 
         // when
         recorder.reset();
