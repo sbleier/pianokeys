@@ -12,7 +12,7 @@ public interface PianoService
 
     // get
     @GET("/")
-    Single<PianoResponse> getComposition();;
+    Single<PianoResponse> getComposition();
 
     // put
     @PUT("/")
