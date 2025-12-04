@@ -80,8 +80,8 @@ public class PianoController
     public void eraseComposition()
     {
         composition.getNoteList().clear();
-        compositionView.repaint();
         compositionView.setCurrentTime(0);
+        compositionView.repaint();
         recorder.reset();
     }
 
@@ -110,7 +110,7 @@ public class PianoController
         return compositionView.getCurrentTime();
     }
 
-    public void updateCurrentTime(double time)
+    public void setCurrentTime(double time)
     {
         compositionView.setCurrentTime(time);
     }

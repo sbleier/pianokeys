@@ -35,7 +35,7 @@ public class CompositionRunnable implements Runnable
         if (time >= composition.duration())
         {
             time = 0;
-            controller.updateCurrentTime(0);
+            controller.setCurrentTime(0);
         }
 
         while (playing && time <= composition.duration())
@@ -45,7 +45,7 @@ public class CompositionRunnable implements Runnable
             for (Note note : composition.getNoteList())
             {
                 // Updates the visual yellow line to current play position
-                controller.updateCurrentTime(time);
+                controller.setCurrentTime(time);
 
                 if (note.endTime() == time)
                 {
