@@ -3,7 +3,6 @@ package pianokeys;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pianokeys.Note.roundToNearestEight;
 
 class NoteTest
 {
@@ -12,12 +11,12 @@ class NoteTest
     public void roundToNearestEighth()
     {
         // then
-        assertEquals(0, roundToNearestEight(0));
-        assertEquals(.125, roundToNearestEight(.12));
-        assertEquals(.125, roundToNearestEight(.13));
-        assertEquals(.125, roundToNearestEight(.18));
-        assertEquals(.25, roundToNearestEight(.20));
-        assertEquals(1.0, roundToNearestEight(.99));
+        assertEquals(0, Note.roundToNearestEighth(0));
+        assertEquals(.125, Note.roundToNearestEighth(.12));
+        assertEquals(.125, Note.roundToNearestEighth(.13));
+        assertEquals(.125, Note.roundToNearestEighth(.18));
+        assertEquals(.25, Note.roundToNearestEighth(.20));
+        assertEquals(1.0, Note.roundToNearestEighth(.99));
     }
 
     @Test
