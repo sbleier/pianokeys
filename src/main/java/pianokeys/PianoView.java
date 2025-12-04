@@ -2,8 +2,11 @@ package pianokeys;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 import static java.awt.Color.*;
 import static pianokeys.PianoSound.C4;
@@ -30,21 +33,14 @@ public class PianoView extends JLayeredPane
     private static final Color C_BASE_COLOR = new Color(255, 245, 200);
     private static final Color C_HOVER_COLOR = new Color(255, 235, 180);
 
-    private final PianoSound sound;
-    private final Composition composition;
-    private PianoController controller;
-    private final CompositionView compositionView;
-    private long recordStartTime = -1;
-    private long currentPressTime = -1;
+    private final Supplier<PianoController> controller;
 
     private final HashMap<Integer, JButton> blackHashMap = new HashMap<>();
     private final HashMap<Integer, JButton> whiteHashMap = new HashMap<>();
 
-    public PianoView(PianoSound sound, Composition composition, CompositionView compositionView)
+    public PianoView(Supplier<PianoController> controller)
     {
-        this.sound = sound;
-        this.composition = composition;
-        this.compositionView = compositionView;
+        this.controller = controller;
         JPanel whiteKeysPanel = createWhiteKeysPanel();
         JPanel blackKeysPanel = createBlackKeysPanel();
 
@@ -57,9 +53,6 @@ public class PianoView extends JLayeredPane
         // using different layers to add the panels
         this.add(whiteKeysPanel, Integer.valueOf(0));
         this.add(blackKeysPanel, Integer.valueOf(1));
-
-        //take from controller
-        this.controller = controller;
     }
 
 
@@ -184,7 +177,7 @@ public class PianoView extends JLayeredPane
                 {
                     // left mouse button
                     key.setBackground(DARK_GRAY);
-                    currentPressTime = startRecord(note);
+                    controller.get().playNote(note);
                 } else
                 {
                     key.setBackground(hoverColor);
@@ -199,7 +192,7 @@ public class PianoView extends JLayeredPane
                 if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0)
                 {
                     // left mouse button
-                    endRecord(note, currentPressTime);
+                    controller.get().stopNote(note);
                 }
             }
 
@@ -207,13 +200,13 @@ public class PianoView extends JLayeredPane
             public void mousePressed(MouseEvent evt)
             {
                 key.setBackground(DARK_GRAY);
-                currentPressTime = startRecord(note);
+                controller.get().playNote(note);
             }
 
             @Override
             public void mouseReleased(MouseEvent evt)
             {
-                endRecord(note, currentPressTime);
+                controller.get().stopNote(note);
                 if (key.contains(evt.getPoint()))
                 {
                     key.setBackground(hoverColor);
@@ -225,14 +218,6 @@ public class PianoView extends JLayeredPane
 
         });
 
-        key.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                System.out.println("Key pressed: " + whiteKeyName);
-            }
-        });
         return key;
     }
 
@@ -258,7 +243,7 @@ public class PianoView extends JLayeredPane
                 {
                     key.setBackground(DARK_GRAY);
                     // left mouse button
-                    currentPressTime = startRecord(note);
+                    controller.get().playNote(note);
                 } else
                 {
                     key.setBackground(LIGHT_GRAY);
@@ -273,7 +258,7 @@ public class PianoView extends JLayeredPane
                 if ((modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0)
                 {
                     // left mouse button
-                    endRecord(note, currentPressTime);
+                    controller.get().stopNote(note);
                 }
             }
 
@@ -281,13 +266,13 @@ public class PianoView extends JLayeredPane
             public void mousePressed(MouseEvent evt)
             {
                 key.setBackground(DARK_GRAY);
-                currentPressTime = startRecord(note);
+                controller.get().playNote(note);
             }
 
             @Override
             public void mouseReleased(MouseEvent evt)
             {
-                endRecord(note, currentPressTime);
+                controller.get().stopNote(note);
                 // Check if mouse is still over the component
                 if (key.contains(evt.getPoint()))
                 {
@@ -299,69 +284,7 @@ public class PianoView extends JLayeredPane
             }
         });
 
-        key.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                System.out.println("Key pressed: " + blackKeyName);
-            }
-        });
-
         return key;
-    }
-
-    private long startRecord(int note)
-    {
-        long currentTime = System.currentTimeMillis();
-
-        if (recordStartTime == -1)
-        {
-            recordStartTime = currentTime; // when it started
-        }
-        long pressTime = currentTime - recordStartTime; // makes it 0 for the first key - how long since start
-
-        if (sound != null)
-        {
-            sound.playNote(note);
-        }
-        return pressTime;
-    }
-
-    private void endRecord(int note, long pressTime)
-    {
-        long releaseTime = System.currentTimeMillis() - recordStartTime; // time since first key pressed
-
-        double startSec = pressTime / 1000.0;
-        double endSec = releaseTime / 1000.0;
-
-        // Quantize to 1/8 notes and enforce a minimum duration of one step
-        double start = Note.roundToNearestEight(startSec);
-        double end = Note.roundToNearestEight(endSec);
-        if (end <= start)
-        {
-            end = start + Note.TIME_STEP;
-        }
-
-        composition.addNote(new Note(note, start, end));
-        compositionView.setComposition(composition);
-        System.out.println("Recorded note: " + note + " from " + startSec + "s to " + endSec + "s");
-        System.out.println("Total notes recorded: " + composition.getNoteList().size());
-
-        if (compositionView != null)
-        {
-            SwingUtilities.invokeLater(() ->
-            {
-                compositionView.refreshLayout();
-            });
-        }
-
-
-        if (sound != null)
-        {
-            sound.stopNote(note);
-        }
-
     }
 
     public void showKeyPlayed(int note, boolean pressed)

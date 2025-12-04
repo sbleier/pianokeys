@@ -6,8 +6,10 @@ public class PianoController
     private final PianoSound sound;
     private final Composition composition;
     private final PianoView pianoView;
-    private final long recordStartTime = -1;
+    private final Recorder recorder;
     private CompositionRunnable runnable;
+
+    private boolean recording = true;
 
     public PianoController(CompositionView compositionView,
                            PianoSound sound,
@@ -18,6 +20,7 @@ public class PianoController
         this.sound = sound;
         this.composition = composition;
         this.pianoView = pianoView;
+        this.recorder = new Recorder(composition);
     }
 
     /**
@@ -28,6 +31,11 @@ public class PianoController
     public void playNote(int note)
     {
         sound.playNote(note);
+        pianoView.showKeyPlayed(note, true);
+        if (recording)
+        {
+            recorder.startNote(note);
+        }
     }
 
     /**
@@ -38,6 +46,12 @@ public class PianoController
     public void stopNote(int note)
     {
         sound.stopNote(note);
+        pianoView.showKeyPlayed(note, false);
+        if (recording)
+        {
+            recorder.stopNote();
+            compositionView.refreshLayout();
+        }
     }
 
     public boolean playComposition()
@@ -45,7 +59,7 @@ public class PianoController
         //going to be using compositionRunnable
         if (runnable == null)
         {
-            runnable = new CompositionRunnable(sound, composition, compositionView, pianoView);
+            runnable = new CompositionRunnable(this, composition);
             new Thread(runnable).start();
             return true;
         }
@@ -66,12 +80,13 @@ public class PianoController
     {
         composition.getNoteList().clear();
         compositionView.repaint();
+        recorder.reset();
     }
 
     //resets the composition playback to the beginning
     public void restartComposition()
     {
-        compositionView.setCurrentTime(0.0);
+        compositionView.setCurrentTime(0);
     }
 
     //changes the current instrument sound
@@ -81,5 +96,10 @@ public class PianoController
         {
             sound.setInstrument(instrument);
         }
+    }
+
+    public void setRecording(boolean recording)
+    {
+        this.recording = recording;
     }
 }
