@@ -1,9 +1,6 @@
 package pianokeys;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static pianokeys.Note.TIME_STEP;
 import static pianokeys.PianoSound.C4;
@@ -31,13 +28,13 @@ public class Composition
     private final ArrayList<Note> noteList = new ArrayList<>();
 
     public Composition() {
-        id = (int) (Math.random() * 100000);
+        id = new Random().nextInt();
     }
 
     public Composition(String name)
     {
         this.name = name;
-        id = (int) (Math.random() * 100000);
+        id = new Random().nextInt();
     }
 
     public void setName(String name) {
