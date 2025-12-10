@@ -11,7 +11,7 @@ public class PianoResponse
         this.playlist = playlist;
     }
 
-    public Playlist getComposition()
+    public Playlist getPlaylist()
     {
         return playlist;
     }
