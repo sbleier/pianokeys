@@ -14,6 +14,8 @@ import static pianokeys.PianoSound.G4;
 
 public class Composition
 {
+    private String name;
+    private int Id;
 
     public static final Composition ODE_TO_JOY = new SimpleCompositionFactory()
             .toComposition(new int[]{E4, E4, F4, G4, G4, F4, E4, D4,
@@ -28,9 +30,10 @@ public class Composition
 
     private final ArrayList<Note> noteList = new ArrayList<>();
 
-    public Composition()
+    public Composition(String name)
     {
-
+        this.name = name;
+        Id = (int) (Math.random() * 100000);
     }
 
     public ArrayList<Note> getNoteList()
