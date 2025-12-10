@@ -1,6 +1,8 @@
 package pianokeys;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 
 public class PianoController
@@ -13,8 +15,8 @@ public class PianoController
     private CompositionRunnable runnable;
 
     private boolean recording = true;
-    private final List<Integer> activeNotes = new ArrayList<>();
-    private final List<Integer> selectedNotes = new ArrayList<>();
+    private final Set<Integer> activeNotes = new HashSet<>();
+    private final Set<Integer> selectedNotes = new HashSet<>();
     private boolean selectionMode = false;
 
     public PianoController(CompositionView compositionView,
@@ -50,11 +52,7 @@ public class PianoController
             }
         } else if (recording)
         {
-            // in recording mode: record the note
-            if (!activeNotes.contains(note))
-            {
-                activeNotes.add(note);
-            }
+            activeNotes.add(note);
             recorder.startNote(note, compositionView.getCurrentTime());
         }
     }

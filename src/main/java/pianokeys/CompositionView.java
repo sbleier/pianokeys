@@ -8,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static java.awt.Color.*;
 
@@ -48,14 +49,16 @@ public class CompositionView extends JComponent
     // This will change over time.
     private double currentTime = 0;
     private final Composition composition;
-    private PianoController controller;
+    private final <Supplier>PianoController controllerSupplier;
 
     private static final int DEFAULT_HEIGHT = 400;
     private static final int MIN_SECONDS = 4;
 
-    public CompositionView(Composition composition)
+    public CompositionView(Composition composition, Supplier<PianoController> controllerSupplier)
     {
         this.composition = composition;
+        this.controllerSupplier = controllerSupplier;
+
         setFocusable(true);
         requestFocusInWindow();
 
@@ -88,6 +91,8 @@ public class CompositionView extends JComponent
             @Override
             public void keyPressed(KeyEvent e)
             {
+                PianoController controller = controllerSupplier.get();
+
                 switch (e.getKeyCode())
                 {
                     case KeyEvent.VK_LEFT:
@@ -316,10 +321,5 @@ public class CompositionView extends JComponent
         }
 
         setCurrentTime(newTime);
-    }
-
-    public void setController(PianoController controller)
-    {
-        this.controller = controller;
     }
 }
