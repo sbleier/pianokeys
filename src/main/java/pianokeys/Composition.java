@@ -1,9 +1,6 @@
 package pianokeys;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static pianokeys.Note.TIME_STEP;
 import static pianokeys.PianoSound.C4;
@@ -14,6 +11,8 @@ import static pianokeys.PianoSound.G4;
 
 public class Composition
 {
+    private String name;
+    private int id;
 
     public static final Composition ODE_TO_JOY = new SimpleCompositionFactory()
             .toComposition(new int[]{E4, E4, F4, G4, G4, F4, E4, D4,
@@ -28,9 +27,22 @@ public class Composition
 
     private final ArrayList<Note> noteList = new ArrayList<>();
 
-    public Composition()
-    {
+    public Composition() {
+        id = new Random().nextInt();
+    }
 
+    public Composition(String name)
+    {
+        this.name = name;
+        id = new Random().nextInt();
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public ArrayList<Note> getNoteList()
