@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.google.gson.Gson;
+import pianokeys.Playlist;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -23,7 +24,7 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
         try
         {
             // methods: get, post, put, delete - then i figure out what request object i need to get and what i will do with it - the things that he said need to happen
-            String method = event.getHttpMethod()
+            String method = event.getHttpMethod();
             // Retrieve the body and change json into an object
             String body = event.getBody();
             // CompositionRequest request = gson.fromJson(body, CompositionRequest.class);

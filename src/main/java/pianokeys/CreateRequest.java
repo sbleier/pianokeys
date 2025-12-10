@@ -2,5 +2,15 @@ package pianokeys;
 
 public class CreateRequest
 {
-    Composition composition;
+    private final Composition composition;
+
+    public CreateRequest(Composition composition)
+    {
+        this.composition = composition;
+    }
+
+    public Composition getComposition()
+    {
+        return composition;
+    }
 }
