@@ -5,6 +5,11 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.google.gson.Gson;
+import pianokeys.CreateRequest;
+import pianokeys.DeleteRequest;
+import pianokeys.PlaylistResponse;
+import pianokeys.UpdateRequest;
+import pianokeys.Playlist;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -20,22 +25,75 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent event, Context context)
     {
+//        try
+//        {
+//            // methods: get, post, put, delete - then i figure out what request object i need to get and what i will do with it - the things that he said need to happen
+//            String method = event.getHttpMethod();
+//            // Retrieve the body and change json into an object
+//            String body = event.getBody();
+//            // CompositionRequest request = gson.fromJson(body, CompositionRequest.class);
+//
+//            // Do something with the request and create a CompositionResponse
+//            // CompositionResponse response = new CompositionResponse("Received composition request");
+//
+//            // Create the HTTP response with the CompositionResponse
+//            // String responseJson = gson.toJson(response);
+//            APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+//            apiResponse.setStatusCode(200);
+//            // apiResponse.setBody(responseJson);
+//            return apiResponse;
+
         try
         {
-            // methods: get, post, put, delete - then i figure out what request object i need to get and what i will do with it - the things that he said need to happen
-            String method = event.getHttpMethod()
-            // Retrieve the body and change json into an object
+            String method = event.getHttpMethod();
             String body = event.getBody();
-            // CompositionRequest request = gson.fromJson(body, CompositionRequest.class);
 
-            // Do something with the request and create a CompositionResponse
-            // CompositionResponse response = new CompositionResponse("Received composition request");
-
-            // Create the HTTP response with the CompositionResponse
-            // String responseJson = gson.toJson(response);
             APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
             apiResponse.setStatusCode(200);
-            // apiResponse.setBody(responseJson);
+
+            if ("POST".equals(method))
+            {
+                CreateRequest request = gson.fromJson(body, CreateRequest.class);
+                playlist.add(request.composition);
+                apiResponse.setBody(gson.toJson(request.composition));
+
+            } else if ("PUT".equals(method))
+            {
+                UpdateRequest request = gson.fromJson(body, UpdateRequest.class);
+
+                for (int i = 0; i < playlist.size(); i++)
+                {
+                    if (playlist.get(i).getId() == request.composition.getId())
+                    {
+                        playlist.set(i, request.composition);
+                        break;
+                    }
+                }
+
+                apiResponse.setBody(gson.toJson(request.composition));
+
+            } else if ("DELETE".equals(method))
+            {
+                DeleteRequest request = gson.fromJson(body, DeleteRequest.class);
+
+                for (int i = 0; i < playlist.size(); i++)
+                {
+                    if (playlist.get(i).getId() == request.id)
+                    {
+                        playlist.remove(i);
+                        break;
+                    }
+                }
+                apiResponse.setBody("{\"message\": \"Deleted\"}");
+
+            } else if ("GET".equals(method))
+            {
+                PlaylistResponse response = new PlaylistResponse();
+                response.playlist = playlist;
+
+                apiResponse.setBody(gson.toJson(response));
+            }
+
             return apiResponse;
         } catch (Exception e)
         {
