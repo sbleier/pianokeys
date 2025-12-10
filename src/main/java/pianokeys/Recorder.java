@@ -38,4 +38,9 @@ public class Recorder
     {
         compositionTimeSeconds = 0;
     }
+
+    public double getCompositionTimeSeconds()
+    {
+        return compositionTimeSeconds;
+    }
 }

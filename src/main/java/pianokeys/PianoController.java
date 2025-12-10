@@ -50,6 +50,7 @@ public class PianoController
         if (recording)
         {
             recorder.stopNote();
+            compositionView.setCurrentTime(recorder.getCompositionTimeSeconds());
             compositionView.refreshLayout();
         }
     }
@@ -79,6 +80,7 @@ public class PianoController
     public void eraseComposition()
     {
         composition.getNoteList().clear();
+        compositionView.setCurrentTime(0);
         compositionView.repaint();
         recorder.reset();
     }
@@ -101,5 +103,15 @@ public class PianoController
     public void setRecording(boolean recording)
     {
         this.recording = recording;
+    }
+
+    public double getCurrentTime()
+    {
+        return compositionView.getCurrentTime();
+    }
+
+    public void setCurrentTime(double time)
+    {
+        compositionView.setCurrentTime(time);
     }
 }
