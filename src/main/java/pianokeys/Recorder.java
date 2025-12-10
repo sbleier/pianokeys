@@ -59,4 +59,9 @@ public class Recorder
         activeNotes.clear();
         noteStartTimes.clear();
     }
+
+    public double getCompositionTimeSeconds()
+    {
+        return compositionTimeSeconds;
+    }
 }

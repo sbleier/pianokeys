@@ -77,6 +77,7 @@ public class PianoController
         {
             activeNotes.remove(Integer.valueOf(note));
             recorder.stopNote(note);    // pass the note number
+            compositionView.setCurrentTime(recorder.getCompositionTimeSeconds());
             compositionView.refreshLayout();
         }
     }
@@ -106,6 +107,7 @@ public class PianoController
     public void eraseComposition()
     {
         composition.getNoteList().clear();
+        compositionView.setCurrentTime(0);
         compositionView.repaint();
         recorder.reset();
     }
@@ -192,4 +194,8 @@ public class PianoController
         return new ArrayList<>(selectedNotes);
     }
 
+    public void setCurrentTime(double time)
+    {
+        compositionView.setCurrentTime(time);
+    }
 }
