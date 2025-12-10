@@ -1,16 +1,18 @@
 package pianokeys;
 
+import java.util.ArrayList;
+
 public class PianoResponse
 {
-    Composition composition;
+    Playlist playlist;
 
-    public PianoResponse(Composition composition)
+    public PianoResponse(Playlist playlist)
     {
-        this.composition = composition;
+        this.playlist = playlist;
     }
 
-    public Composition getComposition()
+    public Playlist getComposition()
     {
-        return composition;
+        return playlist;
     }
 }

@@ -6,19 +6,15 @@ import retrofit2.http.*;
 
 public interface PianoService
 {
-    // post
-    @POST("/")
+    @POST("/compositions")
     Single<PianoResponse> createComposition(@Body PianoRequest request);
 
-    // get
-    @GET("/")
+    @GET("/compositions")
     Single<PianoResponse> getComposition();
 
-    // put
-    @PUT("/")
+    @PUT("/compositions")
     Single<PianoResponse> updateComposition(@Body PianoRequest request);
 
-    // delete
     @DELETE("/")
     Completable deleteComposition();
 }
