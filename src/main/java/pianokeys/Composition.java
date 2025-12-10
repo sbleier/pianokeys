@@ -30,7 +30,7 @@ public class Composition
 
     private final ArrayList<Note> noteList = new ArrayList<>();
 
-    public Composition(){
+    public Composition() {
         id = (int) (Math.random() * 100000);
     }
 
