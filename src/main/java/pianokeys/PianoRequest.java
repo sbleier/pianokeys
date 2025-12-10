@@ -2,7 +2,7 @@ package pianokeys;
 
 public class PianoRequest
 {
-    Composition composition;
+    private Composition composition;
 
     public PianoRequest(Composition composition)
     {
