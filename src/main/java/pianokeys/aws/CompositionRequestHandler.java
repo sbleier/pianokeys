@@ -15,11 +15,15 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
 
     private final Gson gson = new Gson();
 
+    private final Playlist playlist = new Playlist(); // this is where the playlist will be saved to
+
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent event, Context context)
     {
         try
         {
+            // methods: get, post, put, delete - then i figure out what request object i need to get and what i will do with it - the things that he said need to happen
+            String method = event.getHttpMethod()
             // Retrieve the body and change json into an object
             String body = event.getBody();
             // CompositionRequest request = gson.fromJson(body, CompositionRequest.class);
