@@ -49,7 +49,7 @@ public class CompositionView extends JComponent
     // This will change over time.
     private double currentTime = 0;
     private final Composition composition;
-    private final <Supplier>PianoController controllerSupplier;
+    private final Supplier<PianoController> controllerSupplier;
 
     private static final int DEFAULT_HEIGHT = 400;
     private static final int MIN_SECONDS = 4;

@@ -1,6 +1,7 @@
 package pianokeys;
 
 import javax.swing.*;
+import java.util.function.Supplier;
 
 
 public class CompositionViewTest
@@ -15,7 +16,10 @@ public class CompositionViewTest
             frame.setSize(1600, 400); // Set size large enough for clear view
 
             Composition composition = new Composition();
-            final CompositionView compView = new CompositionView(composition);
+
+            Supplier<PianoController> controllerSupplier = () -> null;
+
+            final CompositionView compView = new CompositionView(composition, controllerSupplier);
 
             // First few notes of Fur Elise
             composition.addNote(new Note(Note.E5, 0.0, 0.5));
