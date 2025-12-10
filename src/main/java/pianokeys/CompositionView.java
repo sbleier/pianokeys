@@ -101,28 +101,6 @@ public class CompositionView extends JComponent
                     case KeyEvent.VK_RIGHT:
                         addTime(Note.TIME_STEP); //move forward 1/8 second
                         break;
-                    case KeyEvent.VK_S:
-                        if (controller != null)
-                        {
-                            controller.switchToSelectionMode();
-                            String mode = controller.isSelectionMode() ? "SELECTION MODE" : "RECORDING MODE";
-                            System.out.println(mode);
-                        }
-                        break;
-                    case KeyEvent.VK_SPACE:
-                    case KeyEvent.VK_ENTER:
-                        // insert the currently held notes at the timeline positiom
-                        if (controller != null && controller.isSelectionMode())
-                        {
-                            List<Integer> selected = controller.getSelectedNotes();
-                            if (!selected.isEmpty())
-                            {
-                                int[] notesToInsert = selected.stream().mapToInt(Integer::intValue).toArray();
-                                controller.insertActiveNotesAtTimeline(Note.TIME_STEP);
-                                System.out.println("Inserted " + selected.size() + " notes at timeline");
-                            }
-                        }
-                        break;
                     default:
                         break;
                 }
