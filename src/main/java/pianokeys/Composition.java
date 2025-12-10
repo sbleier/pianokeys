@@ -41,6 +41,10 @@ public class Composition
         this.name = name;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public ArrayList<Note> getNoteList()
     {
         return noteList;
