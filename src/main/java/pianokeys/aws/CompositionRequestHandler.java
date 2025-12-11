@@ -25,27 +25,11 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent event, Context context)
     {
-//        try
-//        {
-//            // methods: get, post, put, delete - then i figure out what request object i need to get and what i will do with it - the things that he said need to happen
-//            String method = event.getHttpMethod();
-//            // Retrieve the body and change json into an object
-//            String body = event.getBody();
-//            // CompositionRequest request = gson.fromJson(body, CompositionRequest.class);
-//
-//            // Do something with the request and create a CompositionResponse
-//            // CompositionResponse response = new CompositionResponse("Received composition request");
-//
-//            // Create the HTTP response with the CompositionResponse
-//            // String responseJson = gson.toJson(response);
-//            APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
-//            apiResponse.setStatusCode(200);
-//            // apiResponse.setBody(responseJson);
-//            return apiResponse;
-
         try
         {
-            String method = event.getHttpMethod();
+            // methods: get, post, put, delete - then i figure out what request object i need to get and what i will do with it - the things that he said need to happen
+            String method = event.getHttpMethod()
+            // Retrieve the body and change json into an object
             String body = event.getBody();
 
             APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
