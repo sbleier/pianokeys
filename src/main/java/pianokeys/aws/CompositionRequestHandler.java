@@ -28,7 +28,7 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
         try
         {
             // methods: get, post, put, delete - then i figure out what request object i need to get and what i will do with it - the things that he said need to happen
-            String method = event.getHttpMethod()
+            String method = event.getHttpMethod();
             // Retrieve the body and change json into an object
             String body = event.getBody();
 
@@ -38,8 +38,8 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
             if ("POST".equals(method))
             {
                 CreateRequest request = gson.fromJson(body, CreateRequest.class);
-                playlist.add(request.composition);
-                apiResponse.setBody(gson.toJson(request.composition));
+                playlist.add(request.getComposition());
+                apiResponse.setBody(gson.toJson(request.getComposition()));
 
             } else if ("PUT".equals(method))
             {
@@ -47,14 +47,14 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
 
                 for (int i = 0; i < playlist.size(); i++)
                 {
-                    if (playlist.get(i).getId() == request.composition.getId())
+                    if (playlist.get(i).getId() == request.getComposition().getId())
                     {
-                        playlist.set(i, request.composition);
+                        playlist.set(i, request.getComposition());
                         break;
                     }
                 }
 
-                apiResponse.setBody(gson.toJson(request.composition));
+                apiResponse.setBody(gson.toJson(request.getComposition()));
 
             } else if ("DELETE".equals(method))
             {
@@ -62,7 +62,7 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
 
                 for (int i = 0; i < playlist.size(); i++)
                 {
-                    if (playlist.get(i).getId() == request.id)
+                    if (playlist.get(i).getId() == request.getId())
                     {
                         playlist.remove(i);
                         break;
@@ -72,9 +72,7 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
 
             } else if ("GET".equals(method))
             {
-                PlaylistResponse response = new PlaylistResponse();
-                response.playlist = playlist;
-
+                PlaylistResponse response = new PlaylistResponse(playlist);
                 apiResponse.setBody(gson.toJson(response));
             }
 
