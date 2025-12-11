@@ -27,7 +27,8 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
     {
         try
         {
-            // methods: get, post, put, delete - then i figure out what request object i need to get and what i will do with it - the things that he said need to happen
+            // methods: get, post, put, delete - then i figure out what request object i need to get and
+            // what i will do with it - the things that he said need to happen
             String method = event.getHttpMethod();
             // Retrieve the body and change json into an object
             String body = event.getBody();
