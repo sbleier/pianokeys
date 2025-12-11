@@ -82,7 +82,6 @@ public class PianoGui extends JFrame
             controller.restartComposition();
         });
 
-
         play.addActionListener(e ->
         {
             if (controller.playComposition())

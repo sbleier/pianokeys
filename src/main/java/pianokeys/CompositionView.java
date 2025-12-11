@@ -157,6 +157,9 @@ public class CompositionView extends JComponent
             displayNote(g, note, uniqueKeys);
         }
 
+        // draw the notes currently being held
+        drawHeldNote(g, uniqueKeys);
+
         displayCurrentTimeLine(g);
     }
 
@@ -171,8 +174,6 @@ public class CompositionView extends JComponent
     private void drawTimeGrid(Graphics g)
     {
         Graphics2D g2d = (Graphics2D) g;
-        int visibleSeconds = Math.max(1, getWidth() / SECOND_WIDTH);
-
         int secondsShown = Math.max(MIN_SECONDS, (int) Math.ceil(composition.duration()) + 1);
         int viewHeight = getHeight();
 
@@ -212,7 +213,7 @@ public class CompositionView extends JComponent
         int x2 = (int) (note.endTime() * SECOND_WIDTH);
 
         // Only display the notes that are there
-        int totalNotes = uniqueKeys.size();
+        int totalNotes = Math.max(uniqueKeys.size(), 4);
         int noteHeight = getHeight() / totalNotes;
 
         // flips the Y axis so that the higher notes at the top and lower notes on the bottom
@@ -227,6 +228,61 @@ public class CompositionView extends JComponent
         g.setColor(BLACK);
         String noteLabel = note.getName();
         g.drawString(noteLabel, x1 + 5, y1 + noteHeight / 2 + 5);
+    }
+
+    private void drawHeldNote(Graphics g, List<Integer> uniqueKeys)
+    {
+        if (controllerSupplier == null || controllerSupplier.get() == null)
+        {
+            return;
+        }
+
+        PianoController controller = controllerSupplier.get();
+        Map<Integer, Double> heldStarts = controller.getHeldNoteStartTimes();
+        Map<Integer, Double> heldDurations = controller.getHeldNoteDuration();
+
+        if (heldStarts.isEmpty())
+        {
+            return;
+        }
+
+        // Add held notes to uniqueKeys if they are not already there
+        Set<Integer> allKeys = new HashSet<>(uniqueKeys);
+        allKeys.addAll(heldStarts.keySet());
+        List<Integer> sortedAllKeys = new ArrayList<>(allKeys);
+        Collections.sort(sortedAllKeys);
+
+        int totalNotes = Math.max(sortedAllKeys.size(), 4);
+        if (totalNotes == 0)
+        {
+            return;
+        }
+
+        int noteHeight = getHeight() / totalNotes;
+
+        for (Map.Entry<Integer, Double> entry : heldStarts.entrySet())
+        {
+            int noteKey = entry.getKey();
+            double startTime = entry.getValue();
+            double duration = heldDurations.get(noteKey);
+
+            int rowIndex = sortedAllKeys.indexOf(noteKey);
+            int x1 = (int) (startTime * SECOND_WIDTH);
+            int x2 = (int) ((startTime + duration))* SECOND_WIDTH;
+
+            // Making sure the note has some minimum width
+            if (x2 <= x1)
+            {
+                x2 = x1 + 5;
+            }
+
+            int y1 = getHeight() - (rowIndex + 1) * noteHeight;
+
+            g.setColor(CYAN);
+            g.fillRect(x1, y1, x2 - x1, noteHeight);
+            g.setColor(BLUE);
+            g.drawRect(x1, y1, x2 - x1, noteHeight);
+        }
     }
 
     private void displayCurrentTimeLine(Graphics g)

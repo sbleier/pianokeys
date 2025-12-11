@@ -5,7 +5,6 @@ import java.util.Map;
 
 public class Recorder
 {
-
     private final Composition composition;
     private double compositionTimeSeconds;
 
@@ -22,7 +21,7 @@ public class Recorder
     {
         double startTimeMs = System.currentTimeMillis();
         activeNotes.put(note, startTimeMs);
-        noteStartTimes.put(note, compositionTimeSeconds);
+        noteStartTimes.put(note, timelinePosition);
     }
 
     public void stopNote(int note)
@@ -63,5 +62,10 @@ public class Recorder
     public double getCompositionTimeSeconds()
     {
         return compositionTimeSeconds;
+    }
+
+    public void setCompositionTimeSeconds(double time)
+    {
+        this.compositionTimeSeconds = time;
     }
 }

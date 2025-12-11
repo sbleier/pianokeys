@@ -1,9 +1,7 @@
 package pianokeys;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.List;
+import javax.swing.Timer;
+import java.util.*;
 
 public class PianoController
 {
@@ -17,6 +15,11 @@ public class PianoController
     private boolean recording = true;
     private final Set<Integer> activeNotes = new HashSet<>();
 
+    private final Map<Integer, Double> heldNoteStartTimes = new HashMap<>();
+    private final Map<Integer, Long> heldNoteStartTimestamps = new HashMap<>();
+
+    private Timer repaintTimer;
+
     public PianoController(CompositionView compositionView,
                            PianoSound sound,
                            Composition composition,
@@ -27,6 +30,14 @@ public class PianoController
         this.composition = composition;
         this.pianoView = pianoView;
         this.recorder = new Recorder(composition);
+
+        repaintTimer = new Timer(50, e ->
+        {
+            if (!heldNoteStartTimes.isEmpty())
+            {
+               compositionView.repaint();
+           }
+       });
     }
 
     /**
@@ -41,7 +52,18 @@ public class PianoController
         if (recording)
         {
             activeNotes.add(note);
-            recorder.startNote(note, compositionView.getCurrentTime());
+            double startTime = compositionView.getCurrentTime();
+            recorder.startNote(note, startTime);
+
+            heldNoteStartTimes.put(note, startTime);
+            heldNoteStartTimestamps.put(note, System.currentTimeMillis());
+
+            if (!repaintTimer.isRunning())
+            {
+                repaintTimer.start();
+            }
+
+            compositionView.repaint();
         }
     }
 
@@ -59,8 +81,15 @@ public class PianoController
         {
             activeNotes.remove(Integer.valueOf(note));
             recorder.stopNote(note);    // pass the note number
+            heldNoteStartTimes.remove(note);
+            heldNoteStartTimestamps.remove(note);
             compositionView.setCurrentTime(recorder.getCompositionTimeSeconds());
             compositionView.refreshLayout();
+
+            if (heldNoteStartTimes.isEmpty() && repaintTimer.isRunning())
+            {
+                repaintTimer.stop();
+            }
         }
     }
 
@@ -89,9 +118,17 @@ public class PianoController
     public void eraseComposition()
     {
         composition.getNoteList().clear();
+        recorder.reset();
+        heldNoteStartTimes.clear();
+        heldNoteStartTimestamps.clear();
+
+        if (repaintTimer.isRunning())
+        {
+            repaintTimer.stop();
+        }
+
         compositionView.setCurrentTime(0);
         compositionView.repaint();
-        recorder.reset();
     }
 
     //resets the composition playback to the beginning
@@ -126,21 +163,31 @@ public class PianoController
         return compositionView.getCurrentTime();
     }
 
-    // Insert a note or chord at the current timeline position
-    public void insertNoteAtTimeline(int[] notes, double duration)
-    {
-        double currentTime = compositionView.getCurrentTime();
-
-        for (int note : notes)
-        {
-            composition.addNote(new Note(note, currentTime, currentTime + duration));
-        }
-
-        compositionView.refreshLayout();
-    }
-
     public void setCurrentTime(double time)
     {
         compositionView.setCurrentTime(time);
+        recorder.setCompositionTimeSeconds(time);
     }
+
+    public Map<Integer, Double> getHeldNoteStartTimes()
+    {
+        return heldNoteStartTimes;
+    }
+
+    public Map<Integer, Double> getHeldNoteDuration()
+    {
+        Map<Integer, Double> result = new HashMap<>();
+        long now = System.currentTimeMillis();
+
+        for (Map.Entry<Integer, Long> entry : heldNoteStartTimestamps.entrySet())
+        {
+            int noteKey = entry.getKey();
+            long startMs = entry.getValue();
+            double elapsedSeconds = (now - startMs) / 1000.0;
+            result.put(noteKey, elapsedSeconds);
+        }
+
+        return result;
+    }
+
 }
