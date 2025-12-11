@@ -268,7 +268,7 @@ public class CompositionView extends JComponent
 
             int rowIndex = sortedAllKeys.indexOf(noteKey);
             int x1 = (int) (startTime * SECOND_WIDTH);
-            int x2 = (int) ((startTime + duration))* SECOND_WIDTH;
+            int x2 = (int) ((startTime + duration)) * SECOND_WIDTH;
 
             // Making sure the note has some minimum width
             if (x2 <= x1)
