@@ -30,26 +30,14 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
             String method = event.getHttpMethod();
             String body = event.getBody();
 
-            APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
-
-            if ("POST".equals(method))
+            return switch (method)
             {
-                return handlePost(body);
-
-            } else if ("PUT".equals(method))
-            {
-                return handlePut(body);
-
-            } else if ("DELETE".equals(method))
-            {
-                return handleDelete(body);
-
-            } else if ("GET".equals(method))
-            {
-                return handleGet();
-            }
-
-            return apiResponse;
+                case "POST" -> handlePost(body);
+                case "PUT" -> handlePut(body);
+                case "DELETE" -> handleDelete(body);
+                case "GET" -> handleGet();
+                default -> throw new RuntimeException(method + " was not handled");
+            };
         } catch (Exception e)
         {
             // This prints the stack trace to the AWS log file
