@@ -27,54 +27,26 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
     {
         try
         {
-            // methods: get, post, put, delete - then i figure out what request object i need to get and
-            // what i will do with it - the things that he said need to happen
             String method = event.getHttpMethod();
-            // Retrieve the body and change json into an object
             String body = event.getBody();
 
             APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
-            apiResponse.setStatusCode(200);
 
             if ("POST".equals(method))
             {
-                CreateRequest request = gson.fromJson(body, CreateRequest.class);
-                playlist.add(request.getComposition());
-                apiResponse.setBody(gson.toJson(request.getComposition()));
+                return handlePost(body);
 
             } else if ("PUT".equals(method))
             {
-                UpdateRequest request = gson.fromJson(body, UpdateRequest.class);
-
-                for (int i = 0; i < playlist.size(); i++)
-                {
-                    if (playlist.get(i).getId() == request.getComposition().getId())
-                    {
-                        playlist.set(i, request.getComposition());
-                        break;
-                    }
-                }
-
-                apiResponse.setBody(gson.toJson(request.getComposition()));
+                return handlePut(body);
 
             } else if ("DELETE".equals(method))
             {
-                DeleteRequest request = gson.fromJson(body, DeleteRequest.class);
-
-                for (int i = 0; i < playlist.size(); i++)
-                {
-                    if (playlist.get(i).getId() == request.getId())
-                    {
-                        playlist.remove(i);
-                        break;
-                    }
-                }
-                apiResponse.setBody("{\"message\": \"Deleted\"}");
+                return handleDelete(body);
 
             } else if ("GET".equals(method))
             {
-                PlaylistResponse response = new PlaylistResponse(playlist);
-                apiResponse.setBody(gson.toJson(response));
+                return handleGet();
             }
 
             return apiResponse;
@@ -85,6 +57,62 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
             // This outputs the stack trace to the client
             return toResponseEvent(e);
         }
+    }
+
+    private APIGatewayProxyResponseEvent handlePost(String body)
+    {
+        CreateRequest request = gson.fromJson(body, CreateRequest.class);
+        playlist.add(request.getComposition());
+
+        APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+        apiResponse.setStatusCode(201);
+        return apiResponse;
+    }
+
+    private APIGatewayProxyResponseEvent handlePut(String body)
+    {
+        UpdateRequest request = gson.fromJson(body, UpdateRequest.class);
+
+        for (int i = 0; i < playlist.size(); i++)
+        {
+            if (playlist.get(i).getId() == request.getComposition().getId())
+            {
+                playlist.set(i, request.getComposition());
+                break;
+            }
+        }
+
+        APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+        apiResponse.setStatusCode(200);
+        return apiResponse;
+    }
+
+    private APIGatewayProxyResponseEvent handleDelete(String body)
+    {
+        DeleteRequest request = gson.fromJson(body, DeleteRequest.class);
+
+        for (int i = 0; i < playlist.size(); i++)
+        {
+            if (playlist.get(i).getId() == request.getId())
+            {
+                playlist.remove(i);
+                break;
+            }
+        }
+
+        APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+        apiResponse.setStatusCode(200);
+        return apiResponse;
+    }
+
+    private APIGatewayProxyResponseEvent handleGet()
+    {
+        PlaylistResponse response = new PlaylistResponse(playlist);
+
+        APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+        apiResponse.setStatusCode(200);
+        apiResponse.setBody(gson.toJson(response));
+        return apiResponse;
     }
 
     private APIGatewayProxyResponseEvent toResponseEvent(Exception e)
