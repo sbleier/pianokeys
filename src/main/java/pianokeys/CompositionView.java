@@ -232,12 +232,12 @@ public class CompositionView extends JComponent
 
     private void drawHeldNote(Graphics g, List<Integer> uniqueKeys)
     {
-        if (controllerSupplier == null || controllerSupplier.get() == null)
+        PianoController controller = controllerSupplier.get();
+        if (controller == null)
         {
             return;
         }
 
-        PianoController controller = controllerSupplier.get();
         Map<Integer, Double> heldStarts = controller.getHeldNoteStartTimes();
         Map<Integer, Double> heldDurations = controller.getHeldNoteDuration();
 
