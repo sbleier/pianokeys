@@ -15,8 +15,9 @@ public class PianoController
     private boolean recording = true;
     private final Set<Integer> activeNotes = new HashSet<>();
 
-    private final Map<Integer, Double> heldNoteStartTimes = new HashMap<>();
-    private final Map<Integer, Long> heldNoteStartTimestamps = new HashMap<>();
+    private Integer currentHeldNote = null;
+    private double heldNoteTimelinePosition = 0; // timeline position where it started
+    private long heldNoteStartTimeMs = 0; // system time when it is started
 
     private Timer repaintTimer;
 
@@ -33,7 +34,7 @@ public class PianoController
 
         repaintTimer = new Timer(50, e ->
         {
-            if (!heldNoteStartTimes.isEmpty())
+            if (currentHeldNote != null)
             {
                compositionView.repaint();
            }
@@ -55,15 +56,14 @@ public class PianoController
             double startTime = compositionView.getCurrentTime();
             recorder.startNote(note, startTime);
 
-            heldNoteStartTimes.put(note, startTime);
-            heldNoteStartTimestamps.put(note, System.currentTimeMillis());
+            currentHeldNote = note;
+            heldNoteTimelinePosition = startTime;
+            heldNoteStartTimeMs = System.currentTimeMillis();
 
             if (!repaintTimer.isRunning())
             {
                 repaintTimer.start();
             }
-
-            compositionView.repaint();
         }
     }
 
@@ -81,12 +81,14 @@ public class PianoController
         {
             activeNotes.remove(Integer.valueOf(note));
             recorder.stopNote(note);    // pass the note number
-            heldNoteStartTimes.remove(note);
-            heldNoteStartTimestamps.remove(note);
+
+            // clear the held note
+            currentHeldNote = null;
+
             compositionView.setCurrentTime(recorder.getCompositionTimeSeconds());
             compositionView.refreshLayout();
 
-            if (heldNoteStartTimes.isEmpty() && repaintTimer.isRunning())
+            if (repaintTimer.isRunning())
             {
                 repaintTimer.stop();
             }
@@ -119,8 +121,7 @@ public class PianoController
     {
         composition.getNoteList().clear();
         recorder.reset();
-        heldNoteStartTimes.clear();
-        heldNoteStartTimestamps.clear();
+        currentHeldNote = null;
 
         if (repaintTimer.isRunning())
         {
@@ -169,25 +170,24 @@ public class PianoController
         recorder.setCompositionTimeSeconds(time);
     }
 
-    public Map<Integer, Double> getHeldNoteStartTimes()
+    public Integer getCurrentHeldNote()
     {
-        return heldNoteStartTimes;
+        return currentHeldNote;
     }
 
-    public Map<Integer, Double> getHeldNoteDuration()
+    public double getHeldNoteTimelinePosition()
     {
-        Map<Integer, Double> result = new HashMap<>();
-        long now = System.currentTimeMillis();
+        return heldNoteTimelinePosition;
+    }
 
-        for (Map.Entry<Integer, Long> entry : heldNoteStartTimestamps.entrySet())
+    public double getHeldNoteDuration()
+    {
+        if (currentHeldNote == null)
         {
-            int noteKey = entry.getKey();
-            long startMs = entry.getValue();
-            double elapsedSeconds = (now - startMs) / 1000.0;
-            result.put(noteKey, elapsedSeconds);
+            return 0;
         }
-
-        return result;
+        long now = System.currentTimeMillis();
+        return (now - heldNoteStartTimeMs) / 1000.0;
     }
 
 }

@@ -152,6 +152,19 @@ public class CompositionView extends JComponent
          */
         List<Integer> uniqueKeys = getUniqueSortedKeys();
 
+        PianoController controller = controllerSupplier.get();
+        if (controller != null && controller.getCurrentHeldNote() != null)
+        {
+            Integer heldNote = controller.getCurrentHeldNote();
+            if (!uniqueKeys.contains(heldNote))
+            {
+                List<Integer> extendedKeys = new ArrayList<>(uniqueKeys);
+                extendedKeys.add(heldNote);
+                Collections.sort(extendedKeys);
+                uniqueKeys = extendedKeys;
+            }
+        }
+
         for (Note note : composition.getNoteList())
         {
             displayNote(g, note, uniqueKeys);
@@ -238,50 +251,29 @@ public class CompositionView extends JComponent
             return;
         }
 
-        Map<Integer, Double> heldStarts = controller.getHeldNoteStartTimes();
-        Map<Integer, Double> heldDurations = controller.getHeldNoteDuration();
-
-        if (heldStarts.isEmpty())
+        Integer heldNote = controller.getCurrentHeldNote();
+        if (heldNote == null)
         {
             return;
         }
 
-        // Add held notes to uniqueKeys if they are not already there
-        Set<Integer> allKeys = new HashSet<>(uniqueKeys);
-        allKeys.addAll(heldStarts.keySet());
-        List<Integer> sortedAllKeys = new ArrayList<>(allKeys);
-        Collections.sort(sortedAllKeys);
+        double startTime = controller.getHeldNoteTimelinePosition();
+        double duration = controller.getHeldNoteDuration();
+        double endTime = startTime + duration;
 
-        int totalNotes = Math.max(sortedAllKeys.size(), 4);
-        if (totalNotes == 0)
+        // Creating a temporary Note object to use displayNote to draw it
+        Note tempNote = new Note(heldNote, startTime, endTime);
+
+        // Add the held note to the uniqueKeys
+        if (!uniqueKeys.contains(heldNote))
         {
-            return;
-        }
-
-        int noteHeight = getHeight() / totalNotes;
-
-        for (Map.Entry<Integer, Double> entry : heldStarts.entrySet())
+            List<Integer> extendedKeys = new ArrayList<>(uniqueKeys);
+            extendedKeys.add(heldNote);
+            Collections.sort(extendedKeys);
+            displayNote(g, tempNote, extendedKeys);
+        } else
         {
-            int noteKey = entry.getKey();
-            double startTime = entry.getValue();
-            double duration = heldDurations.get(noteKey);
-
-            int rowIndex = sortedAllKeys.indexOf(noteKey);
-            int x1 = (int) (startTime * SECOND_WIDTH);
-            int x2 = (int) ((startTime + duration)) * SECOND_WIDTH;
-
-            // Making sure the note has some minimum width
-            if (x2 <= x1)
-            {
-                x2 = x1 + 5;
-            }
-
-            int y1 = getHeight() - (rowIndex + 1) * noteHeight;
-
-            g.setColor(CYAN);
-            g.fillRect(x1, y1, x2 - x1, noteHeight);
-            g.setColor(BLUE);
-            g.drawRect(x1, y1, x2 - x1, noteHeight);
+            displayNote(g, tempNote, uniqueKeys);
         }
     }
 

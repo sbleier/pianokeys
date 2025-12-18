@@ -2,6 +2,8 @@ package pianokeys;
 
 import javax.swing.*;
 import java.util.function.Supplier;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class CompositionViewTest
@@ -17,7 +19,13 @@ public class CompositionViewTest
 
             Composition composition = new Composition();
 
-            Supplier<PianoController> controllerSupplier = () -> null;
+            PianoController controller = mock(PianoController.class);
+
+            when(controller.getCurrentHeldNote()).thenReturn(null);
+            when(controller.getHeldNoteTimelinePosition()).thenReturn(0.0);
+            when(controller.getHeldNoteDuration()).thenReturn(0.0);
+
+            Supplier<PianoController> controllerSupplier = () -> controller;
 
             final CompositionView compView = new CompositionView(composition, controllerSupplier);
 

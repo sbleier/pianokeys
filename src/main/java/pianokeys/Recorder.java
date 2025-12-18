@@ -9,8 +9,8 @@ public class Recorder
     private double compositionTimeSeconds;
 
     // track multiple notes with their start times for chord support
-    private final Map<Integer, Double> activeNotes = new HashMap<>();
-    private final Map<Integer, Double> noteStartTimes = new HashMap<>();
+    private final Map<Integer, Long> noteStartMs = new HashMap<>();
+    private final Map<Integer, Double> noteStartPosition = new HashMap<>();
 
     public Recorder(Composition composition)
     {
@@ -19,21 +19,21 @@ public class Recorder
 
     public void startNote(int note, double timelinePosition)
     {
-        double startTimeMs = System.currentTimeMillis();
-        activeNotes.put(note, startTimeMs);
-        noteStartTimes.put(note, timelinePosition);
+        long startTimeMs = System.currentTimeMillis();
+        noteStartMs.put(note, startTimeMs);
+        noteStartPosition.put(note, timelinePosition);
     }
 
     public void stopNote(int note)
     {
-        if (!activeNotes.containsKey(note))
+        if (!noteStartMs.containsKey(note))
         {
             return;
         }
 
-        double startTimeMs = activeNotes.remove(note);
-        double noteCompositionStart = noteStartTimes.remove(note);
-        double endTimeMs = System.currentTimeMillis();
+        long startTimeMs = noteStartMs.remove(note);
+        double noteCompositionStart = noteStartPosition.remove(note);
+        long endTimeMs = System.currentTimeMillis();
         double deltaTimeSeconds = Note.roundToNearestEighth((endTimeMs - startTimeMs) / 1000.0);
 
         if (deltaTimeSeconds == 0)
@@ -46,7 +46,7 @@ public class Recorder
                 noteCompositionStart + deltaTimeSeconds));
 
         // only advance time if no other notes are active (this allows for chords)
-        if (activeNotes.isEmpty())
+        if (noteStartMs.isEmpty())
         {
             compositionTimeSeconds = noteCompositionStart + deltaTimeSeconds;
         }
@@ -55,8 +55,8 @@ public class Recorder
     public void reset()
     {
         compositionTimeSeconds = 0;
-        activeNotes.clear();
-        noteStartTimes.clear();
+        noteStartMs.clear();
+        noteStartPosition.clear();
     }
 
     public double getCompositionTimeSeconds()
