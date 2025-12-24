@@ -1,4 +1,4 @@
-package pianokeys;
+package pianokeys.net;
 
 import org.junit.jupiter.api.Test;
 

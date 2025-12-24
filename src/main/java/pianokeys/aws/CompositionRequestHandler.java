@@ -2,20 +2,19 @@ package pianokeys.aws;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
+import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.google.gson.Gson;
-import pianokeys.CreateRequest;
-import pianokeys.DeleteRequest;
-import pianokeys.PlaylistResponse;
-import pianokeys.UpdateRequest;
 import pianokeys.Playlist;
+import pianokeys.net.CreateRequest;
+import pianokeys.net.DeleteRequest;
+import pianokeys.net.PlaylistResponse;
+import pianokeys.net.UpdateRequest;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class CompositionRequestHandler implements RequestHandler<APIGatewayProxyRequestEvent,
-        APIGatewayProxyResponseEvent>
+public class CompositionRequestHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse>
 {
 
     private final Gson gson = new Gson();
@@ -23,11 +22,11 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
     private final Playlist playlist = new Playlist(); // this is where the playlist will be saved to
 
     @Override
-    public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent event, Context context)
+    public APIGatewayV2HTTPResponse handleRequest(APIGatewayV2HTTPEvent event, Context context)
     {
         try
         {
-            String method = event.getHttpMethod();
+            String method = event.getRequestContext().getHttp().getMethod();
             String body = event.getBody();
 
             return switch (method)
@@ -47,17 +46,17 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
         }
     }
 
-    private APIGatewayProxyResponseEvent handlePost(String body)
+    private APIGatewayV2HTTPResponse handlePost(String body)
     {
         CreateRequest request = gson.fromJson(body, CreateRequest.class);
-        playlist.add(request.getComposition());
+        playlist.add(request.composition());
 
-        APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+        APIGatewayV2HTTPResponse apiResponse = new APIGatewayV2HTTPResponse();
         apiResponse.setStatusCode(201);
         return apiResponse;
     }
 
-    private APIGatewayProxyResponseEvent handlePut(String body)
+    private APIGatewayV2HTTPResponse handlePut(String body)
     {
         UpdateRequest request = gson.fromJson(body, UpdateRequest.class);
 
@@ -70,12 +69,12 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
             }
         }
 
-        APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+        APIGatewayV2HTTPResponse apiResponse = new APIGatewayV2HTTPResponse();
         apiResponse.setStatusCode(200);
         return apiResponse;
     }
 
-    private APIGatewayProxyResponseEvent handleDelete(String body)
+    private APIGatewayV2HTTPResponse handleDelete(String body)
     {
         DeleteRequest request = gson.fromJson(body, DeleteRequest.class);
 
@@ -88,24 +87,24 @@ public class CompositionRequestHandler implements RequestHandler<APIGatewayProxy
             }
         }
 
-        APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+        APIGatewayV2HTTPResponse apiResponse = new APIGatewayV2HTTPResponse();
         apiResponse.setStatusCode(200);
         return apiResponse;
     }
 
-    private APIGatewayProxyResponseEvent handleGet()
+    private APIGatewayV2HTTPResponse handleGet()
     {
         PlaylistResponse response = new PlaylistResponse(playlist);
 
-        APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+        APIGatewayV2HTTPResponse apiResponse = new APIGatewayV2HTTPResponse();
         apiResponse.setStatusCode(200);
         apiResponse.setBody(gson.toJson(response));
         return apiResponse;
     }
 
-    private APIGatewayProxyResponseEvent toResponseEvent(Exception e)
+    private APIGatewayV2HTTPResponse toResponseEvent(Exception e)
     {
-        APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent();
+        APIGatewayV2HTTPResponse apiResponse = new APIGatewayV2HTTPResponse();
         apiResponse.setStatusCode(500);
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
