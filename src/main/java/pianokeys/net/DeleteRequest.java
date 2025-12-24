@@ -1,16 +1,18 @@
-package pianokeys;
+package pianokeys.net;
 
 public class DeleteRequest
 {
     int id;
 
     // Constructor
-    public DeleteRequest(int id) {
+    public DeleteRequest(int id)
+    {
         this.id = id;
     }
 
     // Getter
-    public int getId() {
+    public int getId()
+    {
         return id;
     }
 }
