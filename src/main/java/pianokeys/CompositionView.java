@@ -8,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static java.awt.Color.*;
 
@@ -48,13 +49,16 @@ public class CompositionView extends JComponent
     // This will change over time.
     private double currentTime = 0;
     private final Composition composition;
+    private final Supplier<PianoController> controllerSupplier;
 
     private static final int DEFAULT_HEIGHT = 400;
     private static final int MIN_SECONDS = 4;
 
-    public CompositionView(Composition composition)
+    public CompositionView(Composition composition, Supplier<PianoController> controllerSupplier)
     {
         this.composition = composition;
+        this.controllerSupplier = controllerSupplier;
+
         setFocusable(true);
         requestFocusInWindow();
 
@@ -87,6 +91,8 @@ public class CompositionView extends JComponent
             @Override
             public void keyPressed(KeyEvent e)
             {
+                PianoController controller = controllerSupplier.get();
+
                 switch (e.getKeyCode())
                 {
                     case KeyEvent.VK_LEFT:
@@ -146,10 +152,26 @@ public class CompositionView extends JComponent
          */
         List<Integer> uniqueKeys = getUniqueSortedKeys();
 
+        PianoController controller = controllerSupplier.get();
+        if (controller != null && controller.getCurrentHeldNote() != null)
+        {
+            Integer heldNote = controller.getCurrentHeldNote();
+            if (!uniqueKeys.contains(heldNote))
+            {
+                List<Integer> extendedKeys = new ArrayList<>(uniqueKeys);
+                extendedKeys.add(heldNote);
+                Collections.sort(extendedKeys);
+                uniqueKeys = extendedKeys;
+            }
+        }
+
         for (Note note : composition.getNoteList())
         {
             displayNote(g, note, uniqueKeys);
         }
+
+        // draw the notes currently being held
+        drawHeldNote(g, uniqueKeys);
 
         displayCurrentTimeLine(g);
     }
@@ -165,8 +187,6 @@ public class CompositionView extends JComponent
     private void drawTimeGrid(Graphics g)
     {
         Graphics2D g2d = (Graphics2D) g;
-        int visibleSeconds = Math.max(1, getWidth() / SECOND_WIDTH);
-
         int secondsShown = Math.max(MIN_SECONDS, (int) Math.ceil(composition.duration()) + 1);
         int viewHeight = getHeight();
 
@@ -206,7 +226,7 @@ public class CompositionView extends JComponent
         int x2 = (int) (note.endTime() * SECOND_WIDTH);
 
         // Only display the notes that are there
-        int totalNotes = uniqueKeys.size();
+        int totalNotes = Math.max(uniqueKeys.size(), 4);
         int noteHeight = getHeight() / totalNotes;
 
         // flips the Y axis so that the higher notes at the top and lower notes on the bottom
@@ -221,6 +241,40 @@ public class CompositionView extends JComponent
         g.setColor(BLACK);
         String noteLabel = note.getName();
         g.drawString(noteLabel, x1 + 5, y1 + noteHeight / 2 + 5);
+    }
+
+    private void drawHeldNote(Graphics g, List<Integer> uniqueKeys)
+    {
+        PianoController controller = controllerSupplier.get();
+        if (controller == null)
+        {
+            return;
+        }
+
+        Integer heldNote = controller.getCurrentHeldNote();
+        if (heldNote == null)
+        {
+            return;
+        }
+
+        double startTime = controller.getHeldNoteTimelinePosition();
+        double duration = controller.getHeldNoteDuration();
+        double endTime = startTime + duration;
+
+        // Creating a temporary Note object to use displayNote to draw it
+        Note tempNote = new Note(heldNote, startTime, endTime);
+
+        // Add the held note to the uniqueKeys
+        if (!uniqueKeys.contains(heldNote))
+        {
+            List<Integer> extendedKeys = new ArrayList<>(uniqueKeys);
+            extendedKeys.add(heldNote);
+            Collections.sort(extendedKeys);
+            displayNote(g, tempNote, extendedKeys);
+        } else
+        {
+            displayNote(g, tempNote, uniqueKeys);
+        }
     }
 
     private void displayCurrentTimeLine(Graphics g)

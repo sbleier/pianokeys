@@ -1,5 +1,8 @@
 package pianokeys;
 
+import javax.swing.Timer;
+import java.util.*;
+
 public class PianoController
 {
     private final CompositionView compositionView;
@@ -10,6 +13,13 @@ public class PianoController
     private CompositionRunnable runnable;
 
     private boolean recording = true;
+    private final Set<Integer> activeNotes = new HashSet<>();
+
+    private Integer currentHeldNote = null;
+    private double heldNoteTimelinePosition = 0; // timeline position where it started
+    private long heldNoteStartTimeMs = 0; // system time when it is started
+
+    private Timer repaintTimer;
 
     public PianoController(CompositionView compositionView,
                            PianoSound sound,
@@ -21,6 +31,14 @@ public class PianoController
         this.composition = composition;
         this.pianoView = pianoView;
         this.recorder = new Recorder(composition);
+
+        repaintTimer = new Timer(50, e ->
+        {
+            if (currentHeldNote != null)
+            {
+               compositionView.repaint();
+           }
+       });
     }
 
     /**
@@ -34,7 +52,18 @@ public class PianoController
         pianoView.showKeyPlayed(note, true);
         if (recording)
         {
-            recorder.startNote(note);
+            activeNotes.add(note);
+            double startTime = compositionView.getCurrentTime();
+            recorder.startNote(note, startTime);
+
+            currentHeldNote = note;
+            heldNoteTimelinePosition = startTime;
+            heldNoteStartTimeMs = System.currentTimeMillis();
+
+            if (!repaintTimer.isRunning())
+            {
+                repaintTimer.start();
+            }
         }
     }
 
@@ -47,11 +76,22 @@ public class PianoController
     {
         sound.stopNote(note);
         pianoView.showKeyPlayed(note, false);
+
         if (recording)
         {
-            recorder.stopNote();
+            activeNotes.remove(Integer.valueOf(note));
+            recorder.stopNote(note);    // pass the note number
+
+            // clear the held note
+            currentHeldNote = null;
+
             compositionView.setCurrentTime(recorder.getCompositionTimeSeconds());
             compositionView.refreshLayout();
+
+            if (repaintTimer.isRunning())
+            {
+                repaintTimer.stop();
+            }
         }
     }
 
@@ -80,9 +120,16 @@ public class PianoController
     public void eraseComposition()
     {
         composition.getNoteList().clear();
+        recorder.reset();
+        currentHeldNote = null;
+
+        if (repaintTimer.isRunning())
+        {
+            repaintTimer.stop();
+        }
+
         compositionView.setCurrentTime(0);
         compositionView.repaint();
-        recorder.reset();
     }
 
     //resets the composition playback to the beginning
@@ -105,6 +152,13 @@ public class PianoController
         this.recording = recording;
     }
 
+    // updates the timeline position during the playback
+    public void updateTimeline(double time)
+    {
+        compositionView.setCurrentTime(time);
+    }
+
+    // get the current timeline position
     public double getCurrentTime()
     {
         return compositionView.getCurrentTime();
@@ -113,5 +167,27 @@ public class PianoController
     public void setCurrentTime(double time)
     {
         compositionView.setCurrentTime(time);
+        recorder.setCompositionTimeSeconds(time);
     }
+
+    public Integer getCurrentHeldNote()
+    {
+        return currentHeldNote;
+    }
+
+    public double getHeldNoteTimelinePosition()
+    {
+        return heldNoteTimelinePosition;
+    }
+
+    public double getHeldNoteDuration()
+    {
+        if (currentHeldNote == null)
+        {
+            return 0;
+        }
+        long now = System.currentTimeMillis();
+        return (now - heldNoteStartTimeMs) / 1000.0;
+    }
+
 }

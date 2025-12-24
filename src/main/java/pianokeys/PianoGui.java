@@ -39,13 +39,12 @@ public class PianoGui extends JFrame
         setUpFrame();
 
         Composition composition = new Composition();
-        CompositionView compositionView = new CompositionView(composition);
-        compositionView.setPreferredSize(new Dimension(2000, 400));
-
         // Because PianoController needs to access PianoView and PianoView needs PianoController
         // this creates a circular dependency. One way to fix this is to create a Supplier that is passed
         // to PianoView which will return the PianoController after it's created after PianoView is instantiated.
         Supplier<PianoController> controllerSupplier = () -> controller;
+        CompositionView compositionView = new CompositionView(composition, controllerSupplier);
+        compositionView.setPreferredSize(new Dimension(2000, 400));
 
         PianoView pianoView = new PianoView(controllerSupplier);
         JScrollPane pianoScrollPane = createScrollPane(pianoView);
@@ -82,7 +81,6 @@ public class PianoGui extends JFrame
         {
             controller.restartComposition();
         });
-
 
         play.addActionListener(e ->
         {

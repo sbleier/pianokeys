@@ -1,6 +1,9 @@
 package pianokeys;
 
 import javax.swing.*;
+import java.util.function.Supplier;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class CompositionViewTest
@@ -15,7 +18,16 @@ public class CompositionViewTest
             frame.setSize(1600, 400); // Set size large enough for clear view
 
             Composition composition = new Composition();
-            final CompositionView compView = new CompositionView(composition);
+
+            PianoController controller = mock(PianoController.class);
+
+            when(controller.getCurrentHeldNote()).thenReturn(null);
+            when(controller.getHeldNoteTimelinePosition()).thenReturn(0.0);
+            when(controller.getHeldNoteDuration()).thenReturn(0.0);
+
+            Supplier<PianoController> controllerSupplier = () -> controller;
+
+            final CompositionView compView = new CompositionView(composition, controllerSupplier);
 
             // First few notes of Fur Elise
             composition.addNote(new Note(Note.E5, 0.0, 0.5));
