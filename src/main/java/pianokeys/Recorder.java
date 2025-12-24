@@ -1,16 +1,13 @@
 package pianokeys;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Recorder
 {
     private final Composition composition;
     private double compositionTimeSeconds;
 
     // track multiple notes with their start times for chord support
-    private final Map<Integer, Long> noteStartMs = new HashMap<>();
-    private final Map<Integer, Double> noteStartPosition = new HashMap<>();
+    private Long noteStartMs = null;
+    private Double noteStartPosition = null;
 
     public Recorder(Composition composition)
     {
@@ -19,20 +16,19 @@ public class Recorder
 
     public void startNote(int note, double timelinePosition)
     {
-        long startTimeMs = System.currentTimeMillis();
-        noteStartMs.put(note, startTimeMs);
-        noteStartPosition.put(note, timelinePosition);
+        noteStartMs = System.currentTimeMillis();
+        noteStartPosition = timelinePosition;
     }
 
     public void stopNote(int note)
     {
-        if (!noteStartMs.containsKey(note))
+        if (noteStartMs == null)
         {
             return;
         }
 
-        long startTimeMs = noteStartMs.remove(note);
-        double noteCompositionStart = noteStartPosition.remove(note);
+        long startTimeMs = noteStartMs;
+        double noteCompositionStart = noteStartPosition;
         long endTimeMs = System.currentTimeMillis();
         double deltaTimeSeconds = Note.roundToNearestEighth((endTimeMs - startTimeMs) / 1000.0);
 
@@ -45,18 +41,19 @@ public class Recorder
                 noteCompositionStart,
                 noteCompositionStart + deltaTimeSeconds));
 
-        // only advance time if no other notes are active (this allows for chords)
-        if (noteStartMs.isEmpty())
-        {
-            compositionTimeSeconds = noteCompositionStart + deltaTimeSeconds;
-        }
+        compositionTimeSeconds = noteCompositionStart + deltaTimeSeconds;
+
+        // Clear the tracking variables
+        noteStartMs = null;
+        noteStartPosition = null;
+
     }
 
     public void reset()
     {
         compositionTimeSeconds = 0;
-        noteStartMs.clear();
-        noteStartPosition.clear();
+        noteStartMs = null;
+        noteStartPosition = null;
     }
 
     public double getCompositionTimeSeconds()
