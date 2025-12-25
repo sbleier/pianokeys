@@ -1,0 +1,89 @@
+{
+  "composition":
+  {
+    "id": 1,
+    "name": "The Star-Spangled Banner",
+    "noteList": [
+      {
+        "key": 65,
+        "startTime": 0.0,
+        "endTime": 1.0
+      },
+      {
+        "key": 70,
+        "startTime": 1.0,
+        "endTime": 2.0
+      },
+      {
+        "key": 72,
+        "startTime": 2.0,
+        "endTime": 3.0
+      },
+      {
+        "key": 74,
+        "startTime": 3.0,
+        "endTime": 4.5
+      },
+      {
+        "key": 72,
+        "startTime": 4.5,
+        "endTime": 5.5
+      },
+      {
+        "key": 70,
+        "startTime": 5.5,
+        "endTime": 6.5
+      },
+      {
+        "key": 65,
+        "startTime": 6.5,
+        "endTime": 8.0
+      },
+      {
+        "key": 67,
+        "startTime": 8.0,
+        "endTime": 9.0
+      },
+      {
+        "key": 69,
+        "startTime": 9.0,
+        "endTime": 10.0
+      },
+      {
+        "key": 70,
+        "startTime": 10.0,
+        "endTime": 11.5
+      },
+      {
+        "key": 72,
+        "startTime": 11.5,
+        "endTime": 13.0
+      },
+      {
+        "key": 74,
+        "startTime": 13.0,
+        "endTime": 14.5
+      },
+      {
+        "key": 77,
+        "startTime": 14.5,
+        "endTime": 16.5
+      },
+      {
+        "key": 74,
+        "startTime": 16.5,
+        "endTime": 18.0
+      },
+      {
+        "key": 72,
+        "startTime": 18.0,
+        "endTime": 19.5
+      },
+      {
+        "key": 70,
+        "startTime": 19.5,
+        "endTime": 22.0
+      }
+    ]
+  }
+}
