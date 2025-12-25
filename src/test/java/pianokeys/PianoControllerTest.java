@@ -1,6 +1,7 @@
 package pianokeys;
 
 import org.junit.jupiter.api.Test;
+import pianokeys.net.PianoService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -12,12 +13,13 @@ class PianoControllerTest
     PianoSound sound = mock();
     PianoView pianoView = mock();
     Composition composition = new Composition();
+    PianoService pianoService = mock(PianoService.class);
 
     @Test
     void playNote()
     {
         // given
-        PianoController controller = new PianoController(compositionView, sound, composition, pianoView);
+        PianoController controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
 
         // when
         controller.playNote(C4);
@@ -31,7 +33,7 @@ class PianoControllerTest
     void stopNote()
     {
         // given
-        PianoController controller = new PianoController(compositionView, sound, composition, pianoView);
+        PianoController controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
 
         // when
         controller.stopNote(C4);
@@ -46,7 +48,7 @@ class PianoControllerTest
     void playComposition()
     {
         // given
-        PianoController controller = new PianoController(compositionView, sound, composition, pianoView);
+        PianoController controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
 
         // when
         boolean result = controller.playComposition();
@@ -59,7 +61,7 @@ class PianoControllerTest
     void playCompositionWhenAlreadyPlaying()
     {
         // given
-        PianoController controller = new PianoController(compositionView, sound, composition, pianoView);
+        PianoController controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
         controller.playComposition();
 
         // when
@@ -73,7 +75,7 @@ class PianoControllerTest
     void stopComposition()
     {
         // given
-        PianoController controller = new PianoController(compositionView, sound, composition, pianoView);
+        PianoController controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
         controller.playComposition();
 
         // when
@@ -87,7 +89,7 @@ class PianoControllerTest
     void eraseComposition()
     {
         // given
-        PianoController controller = new PianoController(compositionView, sound, composition, pianoView);
+        PianoController controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
         composition.addNote(new Note(C4, 0, 0.125));
 
         // when
@@ -102,7 +104,7 @@ class PianoControllerTest
     void restartComposition()
     {
         // given
-        PianoController controller = new PianoController(compositionView, sound, composition, pianoView);
+        PianoController controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
 
         // when
         controller.restartComposition();
@@ -115,7 +117,7 @@ class PianoControllerTest
     void changeInstrument()
     {
         // given
-        PianoController controller = new PianoController(compositionView, sound, composition, pianoView);
+        PianoController controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
 
         // when
         controller.changeInstrument("Piano");
@@ -128,7 +130,7 @@ class PianoControllerTest
     void changeInstrumentWithNull()
     {
         // given
-        PianoController controller = new PianoController(compositionView, sound, composition, pianoView);
+        PianoController controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
 
         // when
         controller.changeInstrument(null);
@@ -141,7 +143,7 @@ class PianoControllerTest
     void setRecording()
     {
         // given
-        PianoController controller = new PianoController(compositionView, sound, composition, pianoView);
+        PianoController controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
 
         // when
         controller.setRecording(false);
