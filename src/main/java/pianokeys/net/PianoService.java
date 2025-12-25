@@ -15,6 +15,6 @@ public interface PianoService
     @PUT("/")
     Completable updateComposition(@Body UpdateRequest request);
 
-    @DELETE("/")
+    @HTTP(method = "DELETE", path = "/", hasBody = true)
     Completable deleteComposition(@Body DeleteRequest request);
 }

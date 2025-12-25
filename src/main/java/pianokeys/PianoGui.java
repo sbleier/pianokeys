@@ -1,5 +1,8 @@
 package pianokeys;
 
+import pianokeys.net.PianoService;
+import pianokeys.net.PianoServiceFactory;
+
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
@@ -42,6 +45,9 @@ public class PianoGui extends JFrame
         CompositionView compositionView = new CompositionView(composition);
         compositionView.setPreferredSize(new Dimension(2000, 400));
 
+        PianoServiceFactory factory = new PianoServiceFactory("https://mdobqzbfygbcqyu7hvcjbpgdn40zxasf.lambda-url.us-east-2.on.aws/");
+        PianoService pianoService = factory.create();
+
         // Because PianoController needs to access PianoView and PianoView needs PianoController
         // this creates a circular dependency. One way to fix this is to create a Supplier that is passed
         // to PianoView which will return the PianoController after it's created after PianoView is instantiated.
@@ -51,7 +57,7 @@ public class PianoGui extends JFrame
         JScrollPane pianoScrollPane = createScrollPane(pianoView);
 
         // Adding the controller object
-        controller = new PianoController(compositionView, sound, composition, pianoView);
+        controller = new PianoController(compositionView, sound, composition, pianoView, pianoService);
 
         add(pianoScrollPane, BorderLayout.SOUTH);
         // vertical and  horizontal scroll panes for CompositionView
@@ -122,6 +128,14 @@ public class PianoGui extends JFrame
 
         centerOnMiddleC(pianoScrollPane);
 
+        buttonPanel.add(Box.createHorizontalStrut(20));
+
+        //adding library button
+        JButton library = new JButton(new ImageIcon(getClass().getResource("/images/complibrary.png")));
+        library.addActionListener(e -> {
+            controller.openCompositionLibrary(this);
+        });
+        buttonPanel.add(library);
     }
 
     private void setUpFrame()

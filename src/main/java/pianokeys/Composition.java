@@ -41,6 +41,11 @@ public class Composition
         this.name = name;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
     public int getId() {
         return id;
     }
