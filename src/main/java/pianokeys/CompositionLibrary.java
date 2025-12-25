@@ -28,11 +28,11 @@ public class CompositionLibrary extends JDialog
         compositionList = new JList<>(compositionListModel);
         add(new JScrollPane(compositionList), BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel();
-        JButton refreshButton = new JButton("Refresh");
-        JButton uploadButton = new JButton("Upload Current");
-        JButton deleteButton = new JButton("Delete");
-        JButton loadButton = new JButton("Load");
+        final JPanel buttonPanel = new JPanel();
+        final JButton refreshButton = new JButton("Refresh");
+        final JButton uploadButton = new JButton("Upload Current");
+        final JButton deleteButton = new JButton("Delete");
+        final JButton loadButton = new JButton("Load");
 
         refreshButton.addActionListener(e -> controller.refreshLibrary(this));
         uploadButton.addActionListener(e -> controller.uploadComposition(this));
