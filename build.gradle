@@ -16,16 +16,21 @@ repositories {
     mavenCentral()
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.11.0'
+    implementation 'org.jsoup:jsoup:1.18.3'
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'org.mockito:mockito-core:5.20.0'
-
-
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.2'
     implementation 'com.amazonaws:aws-lambda-java-events:3.11.1'
 
@@ -36,4 +41,16 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+// Fat JAR (GUI app):
+//   Build (Linux/macOS): ./gradlew shadowJar
+//   Build (Windows):     .\gradlew.bat shadowJar
+//   Run: java -jar build/libs/pianokeys.jar
+// Requires Java 18+.
+shadowJar {
+    archiveFileName = 'pianokeys.jar'
+    manifest {
+        attributes 'Main-Class': 'pianokeys.Main'
+    }
 }

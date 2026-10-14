@@ -6,7 +6,9 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
+import javax.swing.border.Border;
 
 import static java.awt.Color.*;
 import static pianokeys.PianoSound.C4;
@@ -32,11 +34,24 @@ public class PianoView extends JLayeredPane
 
     private static final Color C_BASE_COLOR = new Color(255, 245, 200);
     private static final Color C_HOVER_COLOR = new Color(255, 235, 180);
+    private static final Font KEY_FONT = new Font("Arial", Font.BOLD, 16);
+    private static final Border WHITE_KEY_BORDER = BorderFactory.createLineBorder(BLACK, 2);
+    private static final Border MIDDLE_C_BORDER = BorderFactory.createLineBorder(RED, 3);
+    private static final Border BLACK_KEY_BORDER = BorderFactory.createLineBorder(GRAY, 1);
 
     private final Supplier<PianoController> controller;
 
-    private final HashMap<Integer, JButton> blackHashMap = new HashMap<>();
-    private final HashMap<Integer, JButton> whiteHashMap = new HashMap<>();
+    private final HashMap<Integer, JButton> buttonsByNote = new HashMap<>();
+
+    // which notes currently show a keyboard-shortcut badge, so they can be cleared when the octave shifts
+    private final Map<Integer, JLabel> keyboardLabelsByNote = new HashMap<>();
+
+    private static final int KEYBOARD_LABEL_WIDTH = 16;
+    private static final int KEYBOARD_LABEL_HEIGHT = 12;
+    private static final int KEYBOARD_LABEL_BOTTOM_MARGIN = 2;
+    // on white keys, sit just below where the black keys end, rather than at the very
+    // bottom of the (much taller) white key, so the badge stays visible on shorter screens
+    private static final int WHITE_KEY_LABEL_TOP_MARGIN = 4;
 
     public PianoView(Supplier<PianoController> controller)
     {
@@ -74,7 +89,7 @@ public class PianoView extends JLayeredPane
                 // calculating position across all the indexes not just the first loop
                 int keyIndex = octave * WHITE_KEY_NAMES.length + i;
                 whiteButtons[keyIndex] = button;
-                whiteHashMap.put(note, button);
+                buttonsByNote.put(note, button);
 
                 button.setBounds(keyIndex * WHITE_KEY_WIDTH, 0, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT);
                 whiteKeysPanel.add(button);
@@ -112,13 +127,26 @@ public class PianoView extends JLayeredPane
                     button.setBounds(blackKeyX, 0, BLACK_KEY_WIDTH, BLACK_KEY_HEIGHT);
                     blackKeysPanel.add(button);
 
-                    blackHashMap.put(note, button);
+                    buttonsByNote.put(note, button);
 
                     blackKeyIndex++;
                 }
             }
         }
         return blackKeysPanel;
+    }
+
+    /**
+     * @return the pixel X position where the given octave's first (leftmost) white key starts
+     */
+    public int getOctaveStartX(int octaveIndex)
+    {
+        return octaveIndex * WHITE_KEY_NAMES.length * WHITE_KEY_WIDTH;
+    }
+
+    public int getWhiteKeyWidth()
+    {
+        return WHITE_KEY_WIDTH;
     }
 
     private int getWhiteNoteForOctave(int octave, int whiteIndex)
@@ -143,9 +171,9 @@ public class PianoView extends JLayeredPane
 
         // make it look like a piano key
         key.setForeground(BLACK);
-        key.setFont(new Font("Arial", Font.BOLD, 16));
+        key.setFont(KEY_FONT);
         key.setFocusPainted(false);
-        key.setBorder(BorderFactory.createLineBorder(BLACK, 2));
+        key.setBorder(WHITE_KEY_BORDER);
         key.setOpaque(true);
         key.setContentAreaFilled(true);
 
@@ -156,7 +184,7 @@ public class PianoView extends JLayeredPane
         {
             baseColor = C_BASE_COLOR;
             hoverColor = C_HOVER_COLOR;
-            key.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+            key.setBorder(MIDDLE_C_BORDER);
             key.setToolTipText("Middle C (C4)");
         } else
         {
@@ -226,9 +254,9 @@ public class PianoView extends JLayeredPane
         JButton key = new JButton(blackKeyName);
         key.setBackground(BLACK);
         key.setForeground(WHITE);
-        key.setFont(new Font("Arial", Font.BOLD, 16));
+        key.setFont(KEY_FONT);
         key.setFocusPainted(false);
-        key.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+        key.setBorder(BLACK_KEY_BORDER);
         key.setOpaque(true);
         key.setContentAreaFilled(true);
 
@@ -289,16 +317,14 @@ public class PianoView extends JLayeredPane
 
     public void showKeyPlayed(int note, boolean pressed)
     {
-        JButton button;
+        JButton button = buttonsByNote.get(note);
         Color releasedColor;
-        if (whiteHashMap.containsKey(note))
+        if (isBlackNote(note))
         {
-            button = whiteHashMap.get(note);
-            releasedColor = (note == C4) ? C_BASE_COLOR : WHITE;
+            releasedColor = BLACK;
         } else
         {
-            button = blackHashMap.get(note);
-            releasedColor = BLACK;
+            releasedColor = (note == C4) ? C_BASE_COLOR : WHITE;
         }
 
         if (pressed)
@@ -308,6 +334,89 @@ public class PianoView extends JLayeredPane
         {
             button.setBackground(releasedColor);
         }
+    }
+
+    /**
+     * MIDI notes repeat every 12 semitones. Remainder 1, 3, 6, 8, and 10 are the black keys
+     * (C#, D#, F#, G#, A#); the rest are white keys.
+     */
+    private boolean isBlackNote(int note)
+    {
+        int pitchClass = Math.floorMod(note, 12);
+        return pitchClass == 1 || pitchClass == 3 || pitchClass == 6 || pitchClass == 8 || pitchClass == 10;
+    }
+
+
+    /**
+     * Shows a small keyboard-shortcut badge at the bottom of each note's key, replacing
+     * whichever badges were shown before. Called once at startup and again every time the
+     * keyboard octave shifts, so the badges always show what each key currently plays.
+     *
+     * Bottom placement (rather than a top corner) keeps the badge clear of the area where
+     * black keys visually sit on top of white keys, since black keys don't extend all the
+     * way down to the bottom of the white keys beneath them.
+     */
+    public void setKeyboardLabels(Map<Integer, String> noteToKeyLabel)
+    {
+        for (Map.Entry<Integer, JLabel> entry : keyboardLabelsByNote.entrySet())
+        {
+            JButton button = buttonsByNote.get(entry.getKey());
+            if (button != null)
+            {
+                button.remove(entry.getValue());
+                button.revalidate();
+                button.repaint();
+            }
+        }
+        keyboardLabelsByNote.clear();
+
+        for (Map.Entry<Integer, String> entry : noteToKeyLabel.entrySet())
+        {
+            int note = entry.getKey();
+            JButton button = buttonsByNote.get(note);
+            if (button == null)
+            {
+                continue;
+            }
+
+            boolean isBlack = isBlackNote(note);
+            int keyWidth = isBlack ? BLACK_KEY_WIDTH : WHITE_KEY_WIDTH;
+            int labelY = isBlack
+                    ? BLACK_KEY_HEIGHT - KEYBOARD_LABEL_HEIGHT - KEYBOARD_LABEL_BOTTOM_MARGIN
+                    : BLACK_KEY_HEIGHT + WHITE_KEY_LABEL_TOP_MARGIN;
+
+            JLabel label = createKeyboardLabel(entry.getValue());
+            button.setLayout(null);
+            button.add(label);
+            label.setBounds(
+                    (keyWidth - KEYBOARD_LABEL_WIDTH) / 2,
+                    labelY,
+                    KEYBOARD_LABEL_WIDTH,
+                    KEYBOARD_LABEL_HEIGHT);
+
+            keyboardLabelsByNote.put(note, label);
+        }
+    }
+
+    private JLabel createKeyboardLabel(String text)
+    {
+        // overridden contains() lets clicks pass through to the button underneath,
+        // so the badge is purely visual and doesn't interfere with playing the key
+        JLabel label = new JLabel(text)
+        {
+            @Override
+            public boolean contains(int x, int y)
+            {
+                return false;
+            }
+        };
+        label.setFont(new Font("Arial", Font.BOLD, 9));
+        label.setForeground(BLACK);
+        label.setOpaque(true);
+        label.setBackground(new Color(255, 255, 255, 220));
+        label.setBorder(BorderFactory.createLineBorder(GRAY, 1));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        return label;
     }
 
 }

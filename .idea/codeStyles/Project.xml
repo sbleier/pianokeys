@@ -1,10 +1,53 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <!-- LineLength: max 120 characters -->
+    <option name="RIGHT_MARGIN" value="120" />
     <codeStyleSettings language="JAVA">
+      <!-- braces on their own line, like the rest of the project -->
       <option name="BRACE_STYLE" value="2" />
       <option name="CLASS_BRACE_STYLE" value="2" />
       <option name="METHOD_BRACE_STYLE" value="2" />
       <option name="LAMBDA_BRACE_STYLE" value="2" />
+
+      <!-- RightCurly: "} else", "} catch", "} finally" and "} while" stay on one line -->
+      <option name="ELSE_ON_NEW_LINE" value="false" />
+      <option name="CATCH_ON_NEW_LINE" value="false" />
+      <option name="FINALLY_ON_NEW_LINE" value="false" />
+      <option name="WHILE_ON_NEW_LINE" value="false" />
+
+      <!-- NeedBraces: if, else, for, while and do always get braces -->
+      <option name="IF_BRACE_FORCE" value="3" />
+      <option name="FOR_BRACE_FORCE" value="3" />
+      <option name="WHILE_BRACE_FORCE" value="3" />
+      <option name="DOWHILE_BRACE_FORCE" value="3" />
+
+      <!-- OperatorWrap: a wrapped line starts with the operator (+, &&, ? and :) -->
+      <option name="BINARY_OPERATION_SIGN_ON_NEXT_LINE" value="true" />
+      <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
+
+      <!-- LineLength: wrap long lines instead of going past 120 -->
+      <option name="WRAP_LONG_LINES" value="true" />
+
+      <!-- OneStatementPerLine -->
+      <option name="KEEP_MULTIPLE_EXPRESSIONS_IN_ONE_LINE" value="false" />
+
+      <!-- EmptyLineSeparator: one blank line between methods, classes, package and imports -->
+      <option name="BLANK_LINES_AROUND_METHOD" value="1" />
+      <option name="BLANK_LINES_AROUND_CLASS" value="1" />
+      <option name="BLANK_LINES_AFTER_PACKAGE" value="1" />
+      <option name="BLANK_LINES_BEFORE_IMPORTS" value="1" />
+      <option name="BLANK_LINES_AFTER_IMPORTS" value="1" />
+
+      <!-- CommentsIndentation: comments line up with the code around them -->
+      <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
+
+      <!-- FileTabCharacter: indent with 4 spaces, never tabs -->
+      <indentOptions>
+        <option name="INDENT_SIZE" value="4" />
+        <option name="CONTINUATION_INDENT_SIZE" value="8" />
+        <option name="TAB_SIZE" value="4" />
+        <option name="USE_TAB_CHARACTER" value="false" />
+      </indentOptions>
     </codeStyleSettings>
   </code_scheme>
 </component>

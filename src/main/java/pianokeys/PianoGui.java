@@ -15,14 +15,8 @@ import static java.awt.Color.*;
 public class PianoGui extends JFrame
 {
 
-    // declared everything
-    private static final String[] WHITE_KEY_NAMES = {"C", "D", "E", "F", "G", "A", "B"};
-
-    // White keys
-    private static final int WHITE_KEY_WIDTH = 50;
-    private static final int WHITE_KEY_HEIGHT = 250;
-
-    private static final int OCTAVES = 7;
+    // index of the keyboard-shortcut home octave, matching KeyboardInputHandler's un-shifted mapping
+    private static final int HOME_OCTAVE_INDEX = 3;
 
     //dropdown to change instrument
     private final JComboBox<String> instrumentDropdown;
@@ -31,6 +25,9 @@ public class PianoGui extends JFrame
     private PianoSound sound;
 
     private PianoController controller;
+
+    // window for searching BitMidi, created the first time it is opened
+    private BitMidiSearchGui bitMidiSearchGui;
 
     public PianoGui()
     {
@@ -52,6 +49,10 @@ public class PianoGui extends JFrame
 
         // Adding the controller object
         controller = new PianoController(compositionView, sound, composition, pianoView);
+
+        new KeyboardInputHandler(controllerSupplier, pianoView,
+                octaveIndex -> centerOnOctave(pianoScrollPane, pianoView, octaveIndex))
+                .registerOn(getRootPane());
 
         add(pianoScrollPane, BorderLayout.SOUTH);
         // vertical and  horizontal scroll panes for CompositionView
@@ -118,9 +119,14 @@ public class PianoGui extends JFrame
         // adding it to the button panel
         buttonPanel.add(instrumentDropdown);
 
+        // opens a window to search BitMidi for songs
+        JButton bitMidiSearch = new JButton("Search BitMidi");
+        bitMidiSearch.addActionListener(e -> openBitMidiSearch());
+        buttonPanel.add(bitMidiSearch);
+
         add(buttonPanel, BorderLayout.NORTH);
 
-        centerOnMiddleC(pianoScrollPane);
+        centerOnOctave(pianoScrollPane, pianoView, HOME_OCTAVE_INDEX);
 
     }
 
@@ -172,21 +178,31 @@ public class PianoGui extends JFrame
         );
     }
 
-    private void centerOnMiddleC(JScrollPane scrollPane)
+    private void centerOnOctave(JScrollPane scrollPane, PianoView pianoView, int octaveIndex)
     {
-        // Centering the scroll pane to open on middle C - in octave 4 (0-based, so 3 is the 4th octave)
+        // Centers the scroll pane's viewport on the given octave's first white key.
         SwingUtilities.invokeLater(() ->
         {
-            int middleCoctave = 3;
-            int middleCindex = middleCoctave * WHITE_KEY_NAMES.length;
+            int octaveStartX = pianoView.getOctaveStartX(octaveIndex);
 
-            int middleCx = middleCindex * WHITE_KEY_WIDTH - (scrollPane.getViewport().getWidth() / 2)
-                    + (WHITE_KEY_WIDTH / 2);
-            middleCx = Math.max(0, Math.min(middleCx, scrollPane.getHorizontalScrollBar().getMaximum()
+            int targetX = octaveStartX - (scrollPane.getViewport().getWidth() / 2)
+                    + (pianoView.getWhiteKeyWidth() / 2);
+            targetX = Math.max(0, Math.min(targetX, scrollPane.getHorizontalScrollBar().getMaximum()
                     - scrollPane.getViewport().getWidth()));
 
-            scrollPane.getHorizontalScrollBar().setValue(middleCx);
+            scrollPane.getHorizontalScrollBar().setValue(targetX);
         });
+    }
+
+    private void openBitMidiSearch()
+    {
+        if (bitMidiSearchGui == null)
+        {
+            bitMidiSearchGui = new BitMidiSearchGui();
+            bitMidiSearchGui.setLocationRelativeTo(this);
+        }
+        bitMidiSearchGui.setVisible(true);
+        bitMidiSearchGui.toFront();
     }
 
 }
